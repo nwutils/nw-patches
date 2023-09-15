@@ -1,5 +1,6 @@
 name: patch
 on:
+  # TODO: Run patch job on pull_request
   push:
     branches:
       - main
