@@ -1,0 +1,87 @@
+#!/bin/bash
+
+NW_DIR="nw"
+NW_URI=https://github.com/nwjs
+NW_VER=72
+
+UP_DIR="up"
+
+CHROMIUM_URI="https://github.com/chromium/chromium"
+CHROMIUM_VER="109.0.5414.87"
+
+NODE_URI="https://github.com/nodejs/node"
+NODE_VER="19.3.0"
+
+V8_URI="https://github.com/v8/v8"
+V8_VER="10.8.168.21"
+
+if [[ ! -d "patches" ]]; then
+    mkdir patches
+fi
+
+cd patches
+
+if [[ ! -d $NW_DIR ]]; then
+    mkdir $NW_DIR
+fi
+
+if [[ ! -d "$NW_DIR/chromium" ]]; then
+    git clone --branch=nw$NW_VER --depth=1 $NW_URI/chromium.src.git $NW_DIR/chromium
+fi
+
+if [[ ! -d "$NW_DIR/node" ]]; then
+    git clone --branch=nw$NW_VER --depth=1 $NW_URI/node.git $NW_DIR/node
+fi
+
+if [[ ! -d "$NW_DIR/v8" ]]; then
+    git clone --branch=nw$NW_VER --depth=1 $NW_URI/v8.git $NW_DIR/v8
+fi
+
+if [[ ! -d $UP_DIR ]]; then
+    mkdir $UP_DIR
+fi
+
+if [[ ! -d "$UP_DIR/chromium" ]]; then
+    curl -L $CHROMIUM_URI/archive/refs/tags/$CHROMIUM_VER.tar.gz | tar -xz -C $UP_DIR
+    mv $UP_DIR/chromium-$CHROMIUM_VER $UP_DIR/chromium
+fi
+
+if [[ ! -d "$UP_DIR/node" ]]; then
+    curl -L $NODE_URI/archive/refs/tags/v$NODE_VER.tar.gz | tar -xz -C $UP_DIR
+    mv $UP_DIR/node-$NODE_VER $UP_DIR/node
+fi
+
+if [[ ! -d "$UP_DIR/v8" ]]; then
+    curl -L $V8_URI/archive/refs/tags/$V8_VER.tar.gz | tar -xz -C $UP_DIR
+    mv $UP_DIR/v8-$V8_VER $UP_DIR/v8
+fi
+
+if [[ ! -d "0.$NW_VER.x" ]]; then
+    mkdir 0.$NW_VER.x
+fi
+
+diff -r -u --color $UP_DIR/chromium $NW_DIR/chromium > chromium.patch
+
+if [[ ! -d "0.$NW_VER.x/chromium" ]]; then
+    mkdir 0.$NW_VER.x/chromium
+fi
+
+# splitdiff -a -d -p 2 -D 0.$NW_VER.x/chromium 0.$NW_VER.x/chromium.patch
+
+diff -r -u --color $UP_DIR/node $NW_DIR/node > node.patch
+
+if [[ ! -d "0.$NW_VER.x/node" ]]; then
+    mkdir 0.$NW_VER.x/node
+fi
+
+# splitdiff -a -d -p 2 -D 0.$NW_VER.x/node 0.$NW_VER.x/node.patch
+
+diff -r -u --color $UP_DIR/v8 $NW_DIR/v8 > v8.patch
+
+if [[ ! -d "0.$NW_VER.x/v8" ]]; then
+    mkdir 0.$NW_VER.x/v8
+fi
+
+# splitdiff -a -d -p 2 -D 0.$NW_VER.x/v8 0.$NW_VER.x/v8.patch
+
+rm -rf $NW_DIR $UP_DIR
