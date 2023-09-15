@@ -16,9 +16,12 @@ jobs:
         uses: ConorMacBride/install-package@v1.1.0
         with:
           apt: patchutils
-      - uses: actions/checkout@v4.0.0
+
+      - name: Checkout repository
+        uses: actions/checkout@v4.0.0
 
       - name: Make patches
+        # TODO: this check does not work.
         if: steps.cache-patches.outputs.cache-hit != 'true'
         run: |
           chmod 755 .github/patch
