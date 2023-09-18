@@ -22,18 +22,18 @@ jobs:
         uses: actions/checkout@v4.0.0
 
       - name: Make patches
-        # TODO: this check does not work.
-        if: steps.cache-patches.outputs.cache-hit != 'true'
+        # if: steps.cache-patches.outputs.cache-hit != 'true'
         run: |
           chmod 755 .github/patch
           bash .github/patch
 
-      - name: Cache patches
-        id: cache-patches
-        uses: actions/cache@v3.3.2
-        with:
-          path: patches
-          key: ${{ runner.os }}-patches
+      # TODO: Find way to uniquely label caches.
+      # - name: Cache patches
+      #   id: cache-patches
+      #   uses: actions/cache@v3.3.2
+      #   with:
+      #     path: patches
+      #     key: ${{ runner.os }}-patches
 
       - name: Commit patches
         uses: GuillaumeFalourd/git-commit-push@v1.3
