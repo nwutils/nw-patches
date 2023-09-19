@@ -1,0 +1,4666 @@
+Only in nw/node: .git
+Only in up/node: .github
+diff -r -u --color up/node/common.gypi nw/node/common.gypi
+--- up/node/common.gypi	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/common.gypi	2023-09-19 20:50:34.409637059 +0000
+@@ -6,22 +6,31 @@
+     'visibility%': 'hidden',          # V8's visibility setting
+     'target_arch%': 'ia32',           # set v8's target architecture
+     'host_arch%': 'ia32',             # set v8's host architecture
+-    'want_separate_host_toolset%': 0, # V8 should not build target and host
++    'want_separate_host_toolset%': 1, # V8 should not build target and host
+     'library%': 'static_library',     # allow override to 'shared_library' for DLL/.so builds
+     'component%': 'static_library',   # NB. these names match with what V8 expects
+     'msvs_multi_core_compile': '0',   # we do enable multicore compiles, but not using the V8 way
+     'enable_pgo_generate%': '0',
+     'enable_pgo_use%': '0',
+-    'python%': 'python',
++    'python%': 'python3',
+ 
+-    'node_shared%': 'false',
++    'node_shared%': 'true',
+     'force_dynamic_crt%': 0,
+     'node_use_v8_platform%': 'true',
+     'node_use_bundled_v8%': 'true',
++    'node_debug_lib': 'false',
++    'node_shared_libuv': 'false',
+     'node_module_version%': '',
+     'node_with_ltcg%': '',
+     'node_shared_openssl%': 'false',
+ 
++    'build_v8_with_gn': 'false',
++    'openssl_no_asm': 1,
++    'mac_product_name': 'nwjs',
++    'enable_lto': 'false',
++    'v8_enable_pointer_compression': 0,
++    'v8_enable_31bit_smis_on_64bit_arch': 0,
++
+     'node_tag%': '',
+     'uv_library%': 'static_library',
+ 
+@@ -29,7 +38,10 @@
+     'error_on_warn%': 'false',
+ 
+     'openssl_product': '<(STATIC_LIB_PREFIX)openssl<(STATIC_LIB_SUFFIX)',
+-    'openssl_no_asm%': 0,
++    'openssl_fips': '',
++    'node_fipsinstall': 'false',
++    'experimental_quic': 0,
++    'llvm_version': '6.0',
+ 
+     # Don't use ICU data file (icudtl.dat) from V8, we use our own.
+     'icu_use_data_file_flag%': 0,
+@@ -53,6 +65,7 @@
+ 
+     # Enable disassembler for `--print-code` v8 options
+     'v8_enable_disassembler': 1,
++    'v8_host_byteorder': '<!(python -c "import sys; print sys.byteorder")',
+ 
+     # Sets -dOBJECT_PRINT.
+     'v8_enable_object_print%': 1,
+@@ -69,6 +82,11 @@
+     # Disable v8 hugepage by default.
+     'v8_enable_hugepage%': 0,
+ 
++    'v8_use_external_startup_data': 1,
++    'v8_enable_i18n_support%': 1,
++    #'icu_use_data_file_flag%': 1,
++    'win_fastlink': 0,
++
+     # This is more of a V8 dev setting
+     # https://github.com/nodejs/node/pull/22920/files#r222779926
+     'v8_enable_fast_mksnapshot': 0,
+@@ -79,28 +97,47 @@
+     'v8_use_perfetto': 0,
+ 
+     ##### end V8 defaults #####
++    'variables': {
++      'building_nw%' : 0,
++    },
++    'building_nw%' : '<(building_nw)',
+ 
+     'conditions': [
+       ['OS == "win"', {
+         'os_posix': 0,
+         'v8_postmortem_support%': 0,
+         'obj_dir': '<(PRODUCT_DIR)/obj',
+-        'v8_base': '<(PRODUCT_DIR)/lib/libv8_snapshot.a',
++        #'v8_base': '<(PRODUCT_DIR)/lib/libv8_snapshot.a',
++        'clang_dir': 'third_party/llvm-build/Release+Asserts/',
+       }, {
+         'os_posix': 1,
+         'v8_postmortem_support%': 1,
++        'clang_dir': '<!(cd <(DEPTH) && pwd -P)/third_party/llvm-build/Release+Asserts',
+       }],
+       ['GENERATOR == "ninja"', {
+         'obj_dir': '<(PRODUCT_DIR)/obj',
+-        'v8_base': '<(PRODUCT_DIR)/obj/tools/v8_gypfiles/libv8_snapshot.a',
++        #'v8_base': '<(PRODUCT_DIR)/obj/tools/v8_gypfiles/libv8_snapshot.a',
+       }, {
+         'obj_dir%': '<(PRODUCT_DIR)/obj.target',
+-        'v8_base': '<(PRODUCT_DIR)/obj.target/tools/v8_gypfiles/libv8_snapshot.a',
++        #'v8_base': '<(PRODUCT_DIR)/obj.target/tools/v8_gypfiles/libv8_snapshot.a',
++      }],
++      ['target_arch=="x64" or target_arch=="arm64"', {
++        'v8_enable_pointer_compression': 1,
++        'v8_enable_31bit_smis_on_64bit_arch': 1,
++      }],
++      ['OS=="linux" and target_arch=="ia32" and <(building_nw)==1', {
++        'sysroot': '<!(cd <(DEPTH) && pwd -P)/build/linux/debian_sid_i386-sysroot',
++      }],
++      ['OS=="linux" and target_arch=="x64" and <(building_nw)==1', {
++        'sysroot': '<!(cd <(DEPTH) && pwd -P)/build/linux/debian_sid_amd64-sysroot',
++      }],
++      ['OS=="linux" and target_arch=="arm" and <(building_nw)==1', {
++        'sysroot': '<!(cd <(DEPTH) && pwd -P)/build/linux/debian_sid_arm-sysroot',
+       }],
+       ['OS=="mac"', {
+         'clang%': 1,
+         'obj_dir%': '<(PRODUCT_DIR)/obj.target',
+-        'v8_base': '<(PRODUCT_DIR)/libv8_snapshot.a',
++        #'v8_base': '<(PRODUCT_DIR)/libv8_snapshot.a',
+       }],
+       # V8 pointer compression only supports 64bit architectures.
+       ['target_arch in "arm ia32 mips mipsel ppc"', {
+@@ -120,10 +157,131 @@
+     ],
+   },
+ 
++  'conditions': [
++      [ 'clang==1 and OS == "linux" and building_nw==1', {
++        'make_global_settings': [
++          ['CC', '<(clang_dir)/bin/clang'],
++          ['CXX', '<(clang_dir)/bin/clang++'],
++          ['CC.host', '$(CC)'],
++          ['CXX.host', '$(CXX)'],
++        ],
++      }],
++      [ 'clang==1 and OS == "win" and building_nw==1', {
++        'make_global_settings': [
++          ['CC', 'third_party/llvm-build/Release+Asserts/bin/clang-cl'],
++          ['CXX', 'third_party/llvm-build/Release+Asserts/bin/clang-cl'],
++          ['CC.host', '$(CC)'],
++          ['CXX.host', '$(CXX)'],
++        ],
++      }],
++      [ 'OS == "win" and building_nw==1', {
++        'make_global_settings': [
++          ['LD', 'third_party/llvm-build/Release+Asserts/bin/lld-link.exe'],
++        ],
++      }],
++  ],
+   'target_defaults': {
+     'default_configuration': 'Release',
++    'variables': {
++      'conditions': [
++        ['OS=="win" and component=="shared_library"', {
++          # See http://msdn.microsoft.com/en-us/library/aa652367.aspx
++          'win_release_RuntimeLibrary%': '2', # 2 = /MD (nondebug DLL)
++          'win_debug_RuntimeLibrary%': '3',   # 3 = /MDd (debug DLL)
++        }, {
++          # See http://msdn.microsoft.com/en-us/library/aa652367.aspx
++          'win_release_RuntimeLibrary%': '0', # 0 = /MT (nondebug static)
++          'win_debug_RuntimeLibrary%': '1',   # 1 = /MTd (debug static)
++        }],
++      ],
++    },
+     'configurations': {
+-      'Debug': {
++      'Common_Base': {
++        'abstract': 1,
++        'msvs_settings':{
++          'VCCLCompilerTool': {
++            'AdditionalOptions': [
++              '/bigobj',
++              # Tell the compiler to crash on failures. This is undocumented
++              # and unsupported but very handy.
++              '/d2FastFail',
++            ],
++          },
++          'VCLinkerTool': {
++            # Add the default import libs.
++            'AdditionalDependencies': [
++              'kernel32.lib',
++              'gdi32.lib',
++              'winspool.lib',
++              'comdlg32.lib',
++              'advapi32.lib',
++              'shell32.lib',
++              'ole32.lib',
++              'oleaut32.lib',
++              'user32.lib',
++              'uuid.lib',
++              'odbc32.lib',
++              'odbccp32.lib',
++              'delayimp.lib',
++              'credui.lib',
++              'dbghelp.lib',
++              'shlwapi.lib',
++              'winmm.lib',
++              #'msvcprt.lib',
++            ],
++            'AdditionalOptions': [
++              # Suggested by Microsoft Devrel to avoid
++              #   LINK : fatal error LNK1248: image size (80000000) exceeds maximum allowable size (80000000)
++              # which started happening more regularly after VS2013 Update 4.
++              # Needs to be a bit lower for VS2015, or else errors out.
++              '/maxilksize:0x7ff00000',
++              # Tell the linker to crash on failures.
++              '/fastfail',
++            ],
++          },
++        },
++        'conditions': [
++          ['OS=="win" and win_fastlink==1 and MSVS_VERSION != "2013"', {
++            'msvs_settings': {
++              'VCLinkerTool': {
++                # /PROFILE is incompatible with /debug:fastlink
++                'Profile': 'false',
++                'AdditionalOptions': [
++                  # Tell VS 2015+ to create a PDB that references debug
++                  # information in .obj and .lib files instead of copying
++                  # it all.
++                  '/DEBUG:FASTLINK',
++                ],
++              },
++            },
++          }],
++          ['OS=="win"', {
++            'msvs_settings': {
++              'VCCLCompilerTool': {
++                'AdditionalOptions': [
++                  '/Zc:dllexportInlines-',
++                ],
++              },
++            },
++          }],
++          ['OS=="win" and MSVS_VERSION == "2015"', {
++            'msvs_settings': {
++              'VCCLCompilerTool': {
++                'AdditionalOptions': [
++                  # Work around crbug.com/526851, bug in VS 2015 RTM compiler.
++                  '/Zc:sizedDealloc-',
++                  # Disable thread-safe statics to avoid overhead and because
++                  # they are disabled on other platforms. See crbug.com/587210
++                  # and -fno-threadsafe-statics.
++                  '/Zc:threadSafeInit-',
++                ],
++              },
++            },
++          }],
++        ],
++      },
++      'Debug_Base': {
++        'abstract': 1,
+         'variables': {
+           'v8_enable_handle_zapping': 1,
+           'conditions': [
+@@ -134,7 +292,7 @@
+             }],
+           ],
+         },
+-        'defines': [ 'DEBUG', '_DEBUG', 'V8_ENABLE_CHECKS' ],
++        'defines': [ 'DEBUG', '_DEBUG', 'V8_ENABLE_CHECKS', '_HAS_ITERATOR_DEBUGGING=0' ],
+         'cflags': [ '-g', '-O0' ],
+         'conditions': [
+           ['OS in "aix os400"', {
+@@ -148,11 +306,10 @@
+         ],
+         'msvs_settings': {
+           'VCCLCompilerTool': {
+-            'BasicRuntimeChecks': 3,        # /RTC1
++            'RuntimeLibrary': '<(win_debug_RuntimeLibrary)', # static debug
+             'MinimalRebuild': 'false',
+             'OmitFramePointers': 'false',
+             'Optimization': 0,              # /Od, no optimization
+-            'RuntimeLibrary': '<(MSVC_runtimeType)',
+           },
+           'VCLinkerTool': {
+             'LinkIncremental': 2, # enable incremental linking
+@@ -162,7 +319,8 @@
+           'GCC_OPTIMIZATION_LEVEL': '0', # stop gyp from defaulting to -Os
+         },
+       },
+-      'Release': {
++      'Release_Base': {
++        'abstract': 1,
+         'variables': {
+           'v8_enable_handle_zapping': 0,
+           'pgo_generate': ' -fprofile-generate ',
+@@ -247,35 +405,42 @@
+             'InlineFunctionExpansion': 2,   # /Ob2, inline anything eligible
+             'OmitFramePointers': 'true',
+             'Optimization': 3,              # /Ox, full optimization
+-            'RuntimeLibrary': '<(MSVC_runtimeType)',
++            'RuntimeLibrary': '<(win_release_RuntimeLibrary)',
+             'RuntimeTypeInfo': 'false',
+           }
+         },
+         'xcode_settings': {
+           'GCC_OPTIMIZATION_LEVEL': '3', # stop gyp from defaulting to -Os
+         },
+-      }
++      },
++      'Debug': {
++        'inherit_from': ['Common_Base', 'Debug_Base'],
++      },
++      'Release': {
++        'inherit_from': ['Common_Base', 'Release_Base'],
++      },
++      'conditions': [
++        [ 'OS=="win"', {
++              'Debug_x64': { 'inherit_from': ['Debug'] },
++              'Release_x64': { 'inherit_from': ['Release'], },
++        }],
++      ],
+     },
+ 
+     # Defines these mostly for node-gyp to pickup, and warn addon authors of
+     # imminent V8 deprecations, also to sync how dependencies are configured.
+     'defines': [
+       'V8_DEPRECATION_WARNINGS',
+-      'V8_IMMINENT_DEPRECATION_WARNINGS',
++      'V8_REVERSE_JSARGS',
++      #'V8_IMMINENT_DEPRECATION_WARNINGS',
+       '_GLIBCXX_USE_CXX11_ABI=1',
++      '_LIBCPP_HAS_NO_VENDOR_AVAILABILITY_ANNOTATIONS',
+     ],
+ 
+     # Forcibly disable -Werror.  We support a wide range of compilers, it's
+     # simply not feasible to squelch all warnings, never mind that the
+     # libraries in deps/ are not under our control.
+-    'conditions': [
+-      [ 'error_on_warn=="false"', {
+-        'cflags!': ['-Werror'],
+-      }, '(_target_name!="<(node_lib_target_name)" or '
+-          '_target_name!="<(node_core_target_name)")', {
+-        'cflags!': ['-Werror'],
+-      }],
+-    ],
++
+     'msvs_settings': {
+       'VCCLCompilerTool': {
+         'AdditionalOptions': [
+@@ -325,10 +490,16 @@
+     #   drowns out other, more legitimate warnings.
+     # - "C4244: conversion from 'type1' to 'type2', possible loss of data"
+     #   Ususaly safe. Disable for `dep`, enable for `src`
+-    'msvs_disabled_warnings': [4351, 4355, 4800, 4251, 4275, 4244, 4267],
+     'msvs_cygwin_shell': 0, # prevent actions from trying to use cygwin
+ 
++    'msvs_disabled_warnings': [4351, 4355, 4800, 4251, 4275, 4244, 4267, 4595],
+     'conditions': [
++      [ 'error_on_warn=="false"', {
++        'cflags!': ['-Werror'],
++      }, '(_target_name!="<(node_lib_target_name)" or '
++          '_target_name!="<(node_core_target_name)")', {
++        'cflags!': ['-Werror'],
++      }],
+       [ 'configuring_node', {
+         'msvs_configuration_attributes': {
+           'OutputDirectory': '<(DEPTH)/out/$(Configuration)/',
+@@ -375,6 +546,9 @@
+           'V8_COMPRESS_POINTERS_IN_ISOLATE_CAGE',
+         ],
+       }],
++      ['target_arch=="x64"', {
++        'defines': ['V8_VIRTUAL_MEMORY_CAGE'],
++      }],
+       ['v8_enable_pointer_compression == 1 or v8_enable_31bit_smis_on_64bit_arch == 1', {
+         'defines': ['V8_31BIT_SMIS_ON_64BIT_ARCH'],
+       }],
+@@ -388,10 +562,22 @@
+           # POSIX names
+           '_CRT_NONSTDC_NO_DEPRECATE',
+           # Make sure the STL doesn't try to use exceptions
+-          '_HAS_EXCEPTIONS=0',
+-          'BUILDING_V8_SHARED=1',
++          '_HAS_EXCEPTIONS=1',
++          #'BUILDING_V8_SHARED=1',
+           'BUILDING_UV_SHARED=1',
+         ],
++        'conditions': [
++          [ 'building_nw==1 and component=="shared_library"', {
++            'defines': [ '_LIBCPP_NO_AUTO_LINK' ],
++            'include_dirs': [ '<(DEPTH)/buildtools/third_party/libc++/trunk/include'],
++          }],
++          [ 'building_nw==1 and component!="shared_library"', {
++            'defines': [ '_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS' ],
++            'include_dirs': [ #'<(DEPTH)/buildtools/third_party/libc++/trunk/include',
++                              #'<(DEPTH)/buildtools/third_party/libc++',
++                            ],
++          }],
++        ],
+       }],
+       [ 'OS in "linux freebsd openbsd solaris aix os400"', {
+         'cflags': [ '-pthread' ],
+@@ -413,6 +599,9 @@
+           }],
+           ['_toolset=="host"', {
+             'conditions': [
++              ['clang==1 and OS=="linux"', {
++                'cflags': ['-I/usr/include/c++/13', '-I/usr/include/x86_64-linux-gnu/' ],
++              }],
+               [ 'host_arch=="ia32"', {
+                 'cflags': [ '-m32' ],
+                 'ldflags': [ '-m32' ],
+@@ -437,6 +626,17 @@
+           }],
+           ['_toolset=="target"', {
+             'conditions': [
++              [ 'building_nw==1 and OS=="linux"', {
++                'cflags': [ '--sysroot=<(sysroot)', '-nostdinc++', 
++                        '-isystem<(PRODUCT_DIR)/../../buildtools/third_party/libc++/trunk/include', 
++                        '-isystem<(PRODUCT_DIR)/../../buildtools/third_party/libc++', 
++                        '-isystem<(PRODUCT_DIR)/../../buildtools/third_party/libc++abi/trunk/include' ],
++                'ldflags': [ '--sysroot=<(sysroot)','<!(<(DEPTH)/content/nw/tools/sysroot_ld_path.sh <(sysroot))', '-nostdlib++' ],
++              }],
++              ['clang==1', {
++                'cflags': ['-Wno-error=missing-declarations', '-Wno-error=array-bounds'],
++                'defines': [ '_LIBCPP_ABI_NAMESPACE=__1' ],
++              }],
+               [ 'target_arch=="ia32"', {
+                 'cflags': [ '-m32' ],
+                 'ldflags': [ '-m32' ],
+@@ -461,6 +661,10 @@
+           }],
+         ],
+         'conditions': [
++          [ 'OS=="linux" and target_arch=="arm"', {
++            'cflags': [ '--target=arm-linux-gnueabihf' ],
++            'ldflags': [ '--target=arm-linux-gnueabihf' ],
++          }],
+           [ 'OS=="solaris"', {
+             'cflags': [ '-pthreads' ],
+             'ldflags': [ '-pthreads' ],
+Only in nw/node: config.gypi
+diff -r -u --color up/node/deps/ada/ada.gyp nw/node/deps/ada/ada.gyp
+--- up/node/deps/ada/ada.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/ada/ada.gyp	2023-09-19 20:50:34.417637338 +0000
+@@ -2,6 +2,7 @@
+   'variables': {
+     'v8_enable_i18n_support%': 1,
+     'ada_sources': [ 'ada.cpp' ],
++    'icu_gyp_path%': '../../../icu/icu.gyp',
+   },
+   'targets': [
+     {
+diff -r -u --color up/node/deps/base64/base64.gyp nw/node/deps/base64/base64.gyp
+--- up/node/deps/base64/base64.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/base64/base64.gyp	2023-09-19 20:50:34.421637478 +0000
+@@ -82,6 +82,15 @@
+             'OTHER_CFLAGS': [ '-mssse3' ]
+           },
+         }],
++        ['OS=="win"', {
++            'msvs_settings': {
++              'VCCLCompilerTool': {
++                'AdditionalOptions': [
++                  '-mssse3',
++                ],
++              },
++            },
++        }],
+       ],
+     },
+ 
+@@ -98,6 +107,15 @@
+             'OTHER_CFLAGS': [ '-msse4.1' ]
+           },
+         }],
++        ['OS=="win"', {
++            'msvs_settings': {
++              'VCCLCompilerTool': {
++                'AdditionalOptions': [
++                  '-msse4.1',
++                ],
++              },
++            },
++        }],
+       ],
+     },
+ 
+@@ -114,6 +132,15 @@
+             'OTHER_CFLAGS': [ '-msse4.2' ]
+           },
+         }],
++        ['OS=="win"', {
++            'msvs_settings': {
++              'VCCLCompilerTool': {
++                'AdditionalOptions': [
++                  '-msse4.2',
++                ],
++              },
++            },
++        }],
+       ],
+     },
+ 
+diff -r -u --color up/node/deps/cares/cares.gyp nw/node/deps/cares/cares.gyp
+--- up/node/deps/cares/cares.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/cares/cares.gyp	2023-09-19 20:50:34.441638176 +0000
+@@ -87,6 +87,7 @@
+       'src/lib/ares_iphlpapi.h',
+       'src/lib/ares_platform.c',
+     ],
++    'library%': 'static_library',
+   },
+ 
+   'target_defaults': {
+@@ -139,6 +140,7 @@
+             '_WINSOCK_DEPRECATED_NO_WARNINGS',
+           ],
+           'include_dirs': [ 'config/win32' ],
++          'msvs_disabled_warnings': [4133],
+           'sources': [
+             '<@(cares_sources_win)',
+           ],
+diff -r -u --color up/node/deps/cares/src/lib/ares_create_query.c nw/node/deps/cares/src/lib/ares_create_query.c
+--- up/node/deps/cares/src/lib/ares_create_query.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/cares/src/lib/ares_create_query.c	2023-09-19 20:50:34.457638734 +0000
+@@ -16,6 +16,11 @@
+ 
+ #include "ares_setup.h"
+ 
++#ifndef _WIN32
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
++#endif
++
+ #ifdef HAVE_NETINET_IN_H
+ #  include <netinet/in.h>
+ #endif
+@@ -195,3 +200,7 @@
+ 
+   return ARES_SUCCESS;
+ }
++
++#ifndef _WIN32
++#pragma clang diagnostic pop
++#endif
+diff -r -u --color up/node/deps/cares/src/lib/ares_process.c nw/node/deps/cares/src/lib/ares_process.c
+--- up/node/deps/cares/src/lib/ares_process.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/cares/src/lib/ares_process.c	2023-09-19 20:50:34.461638874 +0000
+@@ -522,7 +522,7 @@
+             fromlen = sizeof(from.sa6);
+           }
+           read_len = socket_recvfrom(channel, server->udp_socket, (void *)buf,
+-                                     sizeof(buf), 0, &from.sa, &fromlen);
++                                     sizeof(buf), 0, &from.sa, (socklen_t *)&fromlen);
+         }
+ 
+         if (read_len == 0) {
+diff -r -u --color up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h
+--- up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2023-09-19 20:50:34.653645576 +0000
+@@ -36,6 +36,10 @@
+ #  define __has_declspec_attribute(x) 0
+ #endif
+ 
++#if defined(WIN32)
++#define ssize_t ptrdiff_t
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+diff -r -u --color up/node/deps/nghttp2/nghttp2.gyp nw/node/deps/nghttp2/nghttp2.gyp
+--- up/node/deps/nghttp2/nghttp2.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/nghttp2/nghttp2.gyp	2023-09-19 20:50:34.657645715 +0000
+@@ -54,7 +54,7 @@
+             },
+           },
+         }],
+-        ['debug_nghttp2 == 1', {
++        ['0 == 1', {
+           'defines': [ 'DEBUGBUILD=1' ]
+         }]
+       ],
+Only in up/node/deps: npm
+diff -r -u --color up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c
+--- up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2023-09-19 20:50:35.457673638 +0000
+@@ -357,7 +357,7 @@
+      * internally. So we need to check errno for ENOSYS
+      */
+ #  if !defined(__DragonFly__) && !defined(__NetBSD__)
+-#    if defined(__GNUC__) && __GNUC__>=2 && defined(__ELF__) && !defined(__hpux)
++#    if 0 //defined(__GNUC__) && __GNUC__>=2 && defined(__ELF__) && !defined(__hpux)
+     extern int getentropy(void *buffer, size_t length) __attribute__((weak));
+ 
+     if (getentropy != NULL) {
+diff -r -u --color up/node/deps/openssl/openssl.gyp nw/node/deps/openssl/openssl.gyp
+--- up/node/deps/openssl/openssl.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/openssl/openssl.gyp	2023-09-19 20:50:35.173663726 +0000
+@@ -3,6 +3,10 @@
+     'gas_version%': '0.0',
+     'llvm_version%': '0.0',
+     'nasm_version%': '0.0',
++    'openssl_no_asm%': 0,
++    'is_clang': 1,
++    'openssl_fips%': '',
++    'node_byteorder%': 'little',
+     'openssl-cli': '<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)openssl-cli<(EXECUTABLE_SUFFIX)',
+     'conditions': [
+       ['OS == "win"', {
+@@ -18,13 +22,14 @@
+       ['OS=="mac"', {
+         'obj_dir_abs%': '<(PRODUCT_DIR_ABS)/obj.target',
+         'modules_dir': '<(PRODUCT_DIR_ABS)/obj.target/deps/openssl/lib/openssl-modules',
++        'openssl_no_asm%': 1
+       }],
+     ],
+   },
+   'targets': [
+     {
+       'target_name': 'openssl',
+-      'type': '<(library)',
++      'type': 'static_library',
+       'includes': ['./openssl_common.gypi'],
+       'defines': [
+         # Compile out hardware engines.  Most are stubs that dynamically load
+@@ -84,35 +89,6 @@
+           'ldflags': [ '-fno-lto' ],
+         }],
+      ]
+-    }, {
+-      # openssl-fipsmodule target
+-      'target_name': 'openssl-fipsmodule',
+-      'type': 'shared_library',
+-      'dependencies': ['openssl-cli'],
+-      'includes': ['./openssl_common.gypi'],
+-      'include_dirs+': ['openssl/apps/include'],
+-      'cflags': [ '-fPIC' ],
+-      #'ldflags': [ '-o', 'fips.so' ],
+-      #'ldflags': [ '-Wl,--version-script=providers/fips.ld',],
+-      'conditions': [
+-        [ 'openssl_no_asm==1', {
+-          'includes': ['./openssl-fips_no_asm.gypi'],
+-        }, 'target_arch=="arm64" and OS=="win"', {
+-          # VC-WIN64-ARM inherits from VC-noCE-common that has no asms.
+-          'includes': ['./openssl-fips_no_asm.gypi'],
+-        }, 'gas_version and v(gas_version) >= v("2.26") or '
+-           'nasm_version and v(nasm_version) >= v("2.11.8")', {
+-           # Require AVX512IFMA supported. See
+-           # https://www.openssl.org/docs/man1.1.1/man3/OPENSSL_ia32cap.html
+-           # Currently crypto/poly1305/asm/poly1305-x86_64.pl requires AVX512IFMA.
+-          'includes': ['./openssl-fips_asm.gypi'],
+-        }, {
+-          'includes': ['./openssl-fips_asm_avx2.gypi'],
+-        }],
+-     ],
+-     'direct_dependent_settings': {
+-       'include_dirs': [ 'openssl/include', 'openssl/crypto/include']
+-     }
+-   },
++    },
+   ]
+ }
+diff -r -u --color up/node/deps/openssl/openssl_common.gypi nw/node/deps/openssl/openssl_common.gypi
+--- up/node/deps/openssl/openssl_common.gypi	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/openssl/openssl_common.gypi	2023-09-19 20:50:35.669681038 +0000
+@@ -12,6 +12,8 @@
+     'config/',
+   ],
+   # build options specific to OS
++  'cflags!': ['-fvisibility=hidden'],
++  'cflags_cc!': ['-fvisibility-inlines-hidden'],
+   'conditions': [
+     [ 'OS=="aix"', {
+       # AIX is missing /usr/include/endian.h
+@@ -34,7 +36,7 @@
+       'cflags': [
+         '-W3', '-wd4090', '-Gs0', '-GF', '-Gy', '-nologo','/O2',
+       ],
+-      'msvs_disabled_warnings': [4090],
++      'msvs_disabled_warnings': [4090, 4311],
+       'link_settings': {
+         'libraries': [
+           '-lws2_32.lib',
+diff -r -u --color up/node/deps/uv/include/uv.h nw/node/deps/uv/include/uv.h
+--- up/node/deps/uv/include/uv.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/include/uv.h	2023-09-19 20:50:35.697682015 +0000
+@@ -33,6 +33,8 @@
+ 
+ #ifndef UV_EXTERN
+ #ifdef _WIN32
++#pragma warning(push)
++#pragma warning(disable: 4201)
+   /* Windows - set up dll import/export decorators. */
+ # if defined(BUILDING_UV_SHARED)
+     /* Building shared library. */
+@@ -286,6 +288,7 @@
+                                    uv_free_func free_func);
+ 
+ UV_EXTERN uv_loop_t* uv_default_loop(void);
++UV_EXTERN void uv_init_nw(int);
+ UV_EXTERN int uv_loop_init(uv_loop_t* loop);
+ UV_EXTERN int uv_loop_close(uv_loop_t* loop);
+ /*
+@@ -914,6 +917,9 @@
+                             uv_async_t* async,
+                             uv_async_cb async_cb);
+ UV_EXTERN int uv_async_send(uv_async_t* async);
++#ifdef _WIN32
++UV_EXTERN int uv_async_send_nw(uv_async_t* async);
++#endif
+ 
+ 
+ /*
+@@ -1879,6 +1885,7 @@
+   void* internal_fields;
+   /* Internal flag to signal loop stop. */
+   unsigned int stop_flag;
++  void* keventfunc;
+   UV_LOOP_PRIVATE_FIELDS
+ };
+ 
+@@ -1906,6 +1913,10 @@
+ #undef UV_LOOP_PRIVATE_PLATFORM_FIELDS
+ #undef UV__ERR
+ 
++#ifdef _WIN32
++#pragma warning(pop)
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -r -u --color up/node/deps/uv/src/unix/core.c nw/node/deps/uv/src/unix/core.c
+--- up/node/deps/uv/src/unix/core.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/unix/core.c	2023-09-19 20:50:35.701682155 +0000
+@@ -1751,9 +1751,11 @@
+    * glibc it's... complicated... so for consistency try sched_getaffinity()
+    * before falling back to sysconf(_SC_NPROCESSORS_ONLN).
+    */
++#if defined(CPU_COUNT)
+   if (0 == sched_getaffinity(0, sizeof(set), &set))
+     rc = CPU_COUNT(&set);
+   else
++#endif
+     rc = sysconf(_SC_NPROCESSORS_ONLN);
+ 
+   if (rc < 1)
+diff -r -u --color up/node/deps/uv/src/unix/fs.c nw/node/deps/uv/src/unix/fs.c
+--- up/node/deps/uv/src/unix/fs.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/unix/fs.c	2023-09-19 20:50:35.701682155 +0000
+@@ -25,6 +25,8 @@
+  * return -1 with errno set. The dispatcher in uv__fs_work() takes care of
+  * getting the errno to the right place (req->result or as the return value.)
+  */
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Warray-bounds"
+ 
+ #include "uv.h"
+ #include "internal.h"
+@@ -297,15 +299,13 @@
+   /* z/os doesn't have RTLD_DEFAULT but that's okay
+    * because it doesn't have mkostemp(O_CLOEXEC) either.
+    */
+-#ifdef RTLD_DEFAULT
+-  uv__mkostemp = (int (*)(char*, int)) dlsym(RTLD_DEFAULT, "mkostemp");
++  uv__mkostemp = (int (*)(char*, int)) dlsym(((void *) 0), "mkostemp");
+ 
+   /* We don't care about errors, but we do want to clean them up.
+    * If there has been no error, then dlerror() will just return
+    * NULL.
+    */
+   dlerror();
+-#endif  /* RTLD_DEFAULT */
+ }
+ 
+ 
+@@ -2253,3 +2253,6 @@
+ int uv_fs_get_system_error(const uv_fs_t* req) {
+   return -req->result;
+ }
++
++#pragma clang diagnostic pop
++
+diff -r -u --color up/node/deps/uv/src/unix/getaddrinfo.c nw/node/deps/uv/src/unix/getaddrinfo.c
+--- up/node/deps/uv/src/unix/getaddrinfo.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/unix/getaddrinfo.c	2023-09-19 20:50:35.701682155 +0000
+@@ -87,7 +87,7 @@
+   case EAI_SYSTEM: return UV__ERR(errno);
+ #endif
+   }
+-  assert(!"unknown EAI_* error code");
++  assert(!(int)("unknown EAI_* error code"));
+   abort();
+ #ifndef __SUNPRO_C
+   return 0;  /* Pacify compiler. */
+diff -r -u --color up/node/deps/uv/src/unix/kqueue.c nw/node/deps/uv/src/unix/kqueue.c
+--- up/node/deps/uv/src/unix/kqueue.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/unix/kqueue.c	2023-09-19 20:50:35.705682294 +0000
+@@ -47,6 +47,8 @@
+ 
+ static void uv__fs_event(uv_loop_t* loop, uv__io_t* w, unsigned int fflags);
+ 
++typedef  int (*keventfunc_t)(int kq, const struct kevent *changelist, int nchanges,
++                    struct kevent *eventlist, int nevents, const struct timespec *timeout);
+ 
+ int uv__kqueue_init(uv_loop_t* loop) {
+   loop->backend_fd = kqueue();
+@@ -111,11 +113,11 @@
+ }
+ 
+ 
+-static void uv__kqueue_delete(int kqfd, const struct kevent *ev) {
++static void uv__kqueue_delete(uv_loop_t* loop, int kqfd, const struct kevent *ev) {
+   struct kevent change;
+ 
+   EV_SET(&change, ev->ident, ev->filter, EV_DELETE, 0, 0, 0);
+-
++  keventfunc_t keventfunc = loop->keventfunc ? (keventfunc_t)loop->keventfunc : &kevent;
+   if (0 == kevent(kqfd, &change, 1, NULL, 0, NULL))
+     return;
+ 
+@@ -151,6 +153,8 @@
+   int user_timeout;
+   int reset_timeout;
+ 
++  keventfunc_t keventfunc = loop->keventfunc ? (keventfunc_t)loop->keventfunc : &kevent;
++
+   if (loop->nfds == 0) {
+     assert(uv__queue_empty(&loop->watcher_queue));
+     return;
+@@ -184,7 +188,7 @@
+       EV_SET(events + nevents, w->fd, filter, op, fflags, 0, 0);
+ 
+       if (++nevents == ARRAY_SIZE(events)) {
+-        if (kevent(loop->backend_fd, events, nevents, NULL, 0, NULL))
++        if (keventfunc(loop->backend_fd, events, nevents, NULL, 0, NULL))
+           abort();
+         nevents = 0;
+       }
+@@ -194,7 +198,7 @@
+       EV_SET(events + nevents, w->fd, EVFILT_WRITE, EV_ADD, 0, 0, 0);
+ 
+       if (++nevents == ARRAY_SIZE(events)) {
+-        if (kevent(loop->backend_fd, events, nevents, NULL, 0, NULL))
++        if (keventfunc(loop->backend_fd, events, nevents, NULL, 0, NULL))
+           abort();
+         nevents = 0;
+       }
+@@ -253,7 +257,7 @@
+      */
+     lfields->current_timeout = timeout;
+ 
+-    nfds = kevent(loop->backend_fd,
++    nfds = keventfunc(loop->backend_fd,
+                   events,
+                   nevents,
+                   events,
+@@ -287,7 +291,7 @@
+         reset_timeout = 0;
+       } else if (nfds == 0) {
+         /* Reached the user timeout value. */
+-        assert(timeout != -1);
++        //assert(timeout != -1);
+         return;
+       }
+ 
+@@ -326,7 +330,7 @@
+ 
+       if (w == NULL) {
+         /* File descriptor that we've stopped watching, disarm it. */
+-        uv__kqueue_delete(loop->backend_fd, ev);
++        uv__kqueue_delete(loop, loop->backend_fd, ev);
+         continue;
+       }
+ 
+@@ -345,7 +349,7 @@
+         if (w->pevents & POLLIN)
+           revents |= POLLIN;
+         else
+-          uv__kqueue_delete(loop->backend_fd, ev);
++          uv__kqueue_delete(loop, loop->backend_fd, ev);
+ 
+         if ((ev->flags & EV_EOF) && (w->pevents & UV__POLLRDHUP))
+           revents |= UV__POLLRDHUP;
+@@ -355,14 +359,14 @@
+         if (w->pevents & UV__POLLPRI)
+           revents |= UV__POLLPRI;
+         else
+-          uv__kqueue_delete(loop->backend_fd, ev);
++          uv__kqueue_delete(loop, loop->backend_fd, ev);
+       }
+ 
+       if (ev->filter == EVFILT_WRITE) {
+         if (w->pevents & POLLOUT)
+           revents |= POLLOUT;
+         else
+-          uv__kqueue_delete(loop->backend_fd, ev);
++          uv__kqueue_delete(loop, loop->backend_fd, ev);
+       }
+ 
+       if (ev->flags & EV_ERROR)
+@@ -463,7 +467,8 @@
+   /* MAXPATHLEN == PATH_MAX but the former is what XNU calls it internally. */
+   char pathbuf[MAXPATHLEN];
+ #endif
+-
++  keventfunc_t keventfunc = loop->keventfunc ? (keventfunc_t)loop->keventfunc : &kevent;
++  
+   handle = container_of(w, uv_fs_event_t, event_watcher);
+ 
+   if (fflags & (NOTE_ATTRIB | NOTE_EXTEND))
+@@ -491,7 +496,7 @@
+ 
+   EV_SET(&ev, w->fd, EVFILT_VNODE, EV_ADD | EV_ONESHOT, fflags, 0, 0);
+ 
+-  if (kevent(loop->backend_fd, &ev, 1, NULL, 0, NULL))
++  if (keventfunc(loop->backend_fd, &ev, 1, NULL, 0, NULL))
+     abort();
+ }
+ 
+diff -r -u --color up/node/deps/uv/src/unix/loop.c nw/node/deps/uv/src/unix/loop.c
+--- up/node/deps/uv/src/unix/loop.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/unix/loop.c	2023-09-19 20:50:35.705682294 +0000
+@@ -74,6 +74,8 @@
+   loop->backend_fd = -1;
+   loop->emfile_fd = -1;
+ 
++  loop->keventfunc = NULL;
++
+   loop->timer_counter = 0;
+   loop->stop_flag = 0;
+ 
+diff -r -u --color up/node/deps/uv/src/unix/proctitle.c nw/node/deps/uv/src/unix/proctitle.c
+--- up/node/deps/uv/src/unix/proctitle.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/unix/proctitle.c	2023-09-19 20:50:35.705682294 +0000
+@@ -44,6 +44,14 @@
+ 
+ 
+ char** uv_setup_args(int argc, char** argv) {
++#if 1
++  if (argc > 0) {
++    process_title.len = strlen(argv[0]);
++    process_title.str = uv__malloc(process_title.len + 1);
++    memcpy(process_title.str, argv[0], process_title.len + 1);
++  }
++  return argv;
++#else
+   struct uv__process_title pt;
+   char** new_argv;
+   size_t size;
+@@ -90,6 +98,7 @@
+   process_title = pt;
+ 
+   return new_argv;
++#endif
+ }
+ 
+ 
+@@ -97,9 +106,11 @@
+   struct uv__process_title* pt;
+   size_t len;
+ 
++#if 0
+   /* If uv_setup_args wasn't called or failed, we can't continue. */
+   if (args_mem == NULL)
+     return UV_ENOBUFS;
++#endif
+ 
+   pt = &process_title;
+   len = strlen(title);
+@@ -127,10 +138,11 @@
+ int uv_get_process_title(char* buffer, size_t size) {
+   if (buffer == NULL || size == 0)
+     return UV_EINVAL;
+-
++#if 0
+   /* If uv_setup_args wasn't called or failed, we can't continue. */
+   if (args_mem == NULL)
+     return UV_ENOBUFS;
++#endif
+ 
+   uv_once(&process_title_mutex_once, init_process_title_mutex_once);
+   uv_mutex_lock(&process_title_mutex);
+@@ -152,6 +164,7 @@
+ 
+ 
+ void uv__process_title_cleanup(void) {
++  if (args_mem)
+   uv__free(args_mem);  /* Keep valgrind happy. */
+   args_mem = NULL;
+ }
+diff -r -u --color up/node/deps/uv/src/uv-common.c nw/node/deps/uv/src/uv-common.c
+--- up/node/deps/uv/src/uv-common.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/uv-common.c	2023-09-19 20:50:35.705682294 +0000
+@@ -813,19 +813,43 @@
+ }
+ 
+ 
++static uv_key_t thread_ctx_key;
++static int thread_ctx_initiated = 0;
++static int g_worker_support = 0;
++
+ static uv_loop_t default_loop_struct;
+ static uv_loop_t* default_loop_ptr;
+ 
++void uv_init_nw(int worker_support) {
++  g_worker_support = worker_support;
++}
+ 
+ uv_loop_t* uv_default_loop(void) {
+-  if (default_loop_ptr != NULL)
++  if (!g_worker_support) {
++    if (default_loop_ptr != NULL)
++      return default_loop_ptr;
++    if (uv_loop_init(&default_loop_struct))
++      return NULL;
++    default_loop_ptr = &default_loop_struct;
+     return default_loop_ptr;
++  } else {
++    uv_loop_t* loop;
++    if (!thread_ctx_initiated) {
++      thread_ctx_initiated = 1;
++      uv_key_create(&thread_ctx_key);
++    }
++    loop = (uv_loop_t*)uv_key_get(&thread_ctx_key);
++    if (loop != NULL)
++      return loop;
++
++    loop = malloc(sizeof(uv_loop_t));
++    memset(loop, 0, sizeof(uv_loop_t));
++    if (uv_loop_init(loop))
++      return NULL;
+ 
+-  if (uv_loop_init(&default_loop_struct))
+-    return NULL;
+-
+-  default_loop_ptr = &default_loop_struct;
+-  return default_loop_ptr;
++    uv_key_set(&thread_ctx_key, loop);
++    return loop;
++  }
+ }
+ 
+ 
+@@ -868,8 +892,15 @@
+   memset(loop, -1, sizeof(*loop));
+   loop->data = saved_data;
+ #endif
+-  if (loop == default_loop_ptr)
+-    default_loop_ptr = NULL;
++  if (g_worker_support) {
++    uv_loop_t* default_loop_ptr;
++    default_loop_ptr = (uv_loop_t*)uv_key_get(&thread_ctx_key);
++    if (loop == default_loop_ptr)
++      uv_key_set(&thread_ctx_key, NULL);
++  } else {
++    if (loop == default_loop_ptr)
++      default_loop_ptr = NULL;
++  }
+ 
+   return 0;
+ }
+@@ -879,7 +910,10 @@
+   uv_loop_t* default_loop;
+   int err;
+ 
+-  default_loop = default_loop_ptr;
++  if (g_worker_support)
++    default_loop = (uv_loop_t*)uv_key_get(&thread_ctx_key);
++  else
++    default_loop = default_loop_ptr;
+ 
+   err = uv_loop_close(loop);
+   (void) err;    /* Squelch compiler warnings. */
+diff -r -u --color up/node/deps/uv/src/uv-common.h nw/node/deps/uv/src/uv-common.h
+--- up/node/deps/uv/src/uv-common.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/uv-common.h	2023-09-19 20:50:35.705682294 +0000
+@@ -335,6 +335,7 @@
+ # define UV_REQ_INIT(req, typ)                                                \
+   do {                                                                        \
+     (req)->type = (typ);                                                      \
++    (req)->next_req = NULL;                                                   \
+     (req)->u.io.overlapped.Internal = 0;  /* SET_REQ_SUCCESS() */             \
+   }                                                                           \
+   while (0)
+diff -r -u --color up/node/deps/uv/src/win/async.c nw/node/deps/uv/src/win/async.c
+--- up/node/deps/uv/src/win/async.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/win/async.c	2023-09-19 20:50:35.705682294 +0000
+@@ -82,6 +82,23 @@
+   return 0;
+ }
+ 
++int uv_async_send_nw(uv_async_t* handle) {
++  uv_loop_t* loop = handle->loop;
++
++  if (handle->type != UV_ASYNC) {
++    /* Can't set errno because that's not thread-safe. */
++    return -1;
++  }
++
++  /* The user should make sure never to call uv_async_send to a closing */
++  /* or closed handle. */
++  assert(!(handle->flags & UV_HANDLE_CLOSING));
++
++  POST_COMPLETION_FOR_REQ(loop, &handle->async_req);
++
++  return 0;
++}
++
+ 
+ void uv__process_async_wakeup_req(uv_loop_t* loop, uv_async_t* handle,
+     uv_req_t* req) {
+diff -r -u --color up/node/deps/uv/src/win/core.c nw/node/deps/uv/src/win/core.c
+--- up/node/deps/uv/src/win/core.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/win/core.c	2023-09-19 20:50:35.705682294 +0000
+@@ -193,7 +193,7 @@
+    * FDs even though they return the proper error code in the release build.
+    */
+ #if defined(_DEBUG) && (defined(_MSC_VER) || defined(__MINGW64_VERSION_MAJOR))
+-  _CrtSetReportHook(uv__crt_dbg_report_handler);
++  //_CrtSetReportHook(uv__crt_dbg_report_handler);
+ #endif
+ 
+   /* Initialize tracking of all uv loops */
+diff -r -u --color up/node/deps/uv/src/win/process.c nw/node/deps/uv/src/win/process.c
+--- up/node/deps/uv/src/win/process.c	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/win/process.c	2023-09-19 20:50:35.709682434 +0000
+@@ -1104,6 +1104,8 @@
+     process_flags |= DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP;
+   }
+ 
++  process_flags |= CREATE_NO_WINDOW;
++
+   if (!CreateProcessW(application_path,
+                      arguments,
+                      NULL,
+diff -r -u --color up/node/deps/uv/src/win/req-inl.h nw/node/deps/uv/src/win/req-inl.h
+--- up/node/deps/uv/src/win/req-inl.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/src/win/req-inl.h	2023-09-19 20:50:35.709682434 +0000
+@@ -88,7 +88,8 @@
+ 
+ 
+ INLINE static void uv__insert_pending_req(uv_loop_t* loop, uv_req_t* req) {
+-  req->next_req = NULL;
++  if (req->next_req)
++    return;
+   if (loop->pending_reqs_tail) {
+ #ifdef _DEBUG
+     /* Ensure the request is not already in the queue, or the queue
+@@ -153,6 +154,7 @@
+   while (next != NULL) {
+     req = next;
+     next = req->next_req != first ? req->next_req : NULL;
++    req->next_req = NULL;
+ 
+     switch (req->type) {
+       case UV_READ:
+diff -r -u --color up/node/deps/uv/uv.gyp nw/node/deps/uv/uv.gyp
+--- up/node/deps/uv/uv.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/uv/uv.gyp	2023-09-19 20:50:35.725682993 +0000
+@@ -1,5 +1,6 @@
+ {
+   'variables': {
++    'uv_library%': 'static_library',
+     'conditions': [
+       ['OS=="win"', {
+         'shared_unix_defines': [ ],
+@@ -159,11 +160,7 @@
+         'include',
+         'src/',
+       ],
+-      'defines': [
+-        '<@(shared_mac_defines)',
+-        '<@(shared_unix_defines)',
+-        '<@(shared_zos_defines)',
+-      ],
++      'defines': [ 'BUILDING_UV_SHARED=1', '_GNU_SOURCE' ],
+       'direct_dependent_settings': {
+         'defines': [
+           '<@(shared_mac_defines)',
+@@ -187,10 +184,11 @@
+           '-Wall',
+           '-Wextra',
+           '-Wno-unused-parameter',
+-          '-Wstrict-prototypes',
++          '-Wstrict-prototypes', '-Wno-error=gnu-folding-constant', '-Wno-varargs'
+         ],
+         'OTHER_CFLAGS': [ '-g', '--std=gnu89' ],
+       },
++      'msvs_disabled_warnings': [4267, 4477],
+       'conditions': [
+         [ 'OS=="win"', {
+           'defines': [
+@@ -263,6 +261,7 @@
+             '-Wno-unused-parameter',
+             '-Wstrict-prototypes',
+             '-fno-strict-aliasing',
++            '-Wno-varargs',
+           ],
+         }],
+         [ 'OS in "mac ios"', {
+@@ -275,7 +274,7 @@
+           ]
+         }],
+         [ 'OS=="linux"', {
+-          'defines': [ '_GNU_SOURCE' ],
++          'defines': [ '_FILE_OFFSET_BITS=64' ],
+           'sources': [
+             '<@(uv_sources_linux)',
+           ],
+@@ -392,7 +391,7 @@
+             '<@(uv_sources_bsd_common)',
+           ],
+         }],
+-        ['uv_library=="shared_library"', {
++        ['component=="shared_library"', {
+           'defines': [ 'BUILDING_UV_SHARED=1' ]
+         }],
+         ['OS=="zos"', {
+diff -r -u --color up/node/deps/zlib/zlib.gyp nw/node/deps/zlib/zlib.gyp
+--- up/node/deps/zlib/zlib.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/deps/zlib/zlib.gyp	2023-09-19 20:50:37.009727809 +0000
+@@ -7,7 +7,7 @@
+     'ZLIB_ROOT': '.',
+     'use_system_zlib%': 0,
+     'arm_fpu%': '',
+-    'llvm_version%': '0.0',
++    'llvm_version': '10.0',
+   },
+   'conditions': [
+     ['use_system_zlib==0', {
+@@ -32,6 +32,17 @@
+                 }],
+               ],
+             }],
++            ['OS=="win"', {
++                  'msvs_settings': {
++                    'VCCLCompilerTool': {
++                      'AdditionalOptions': [
++                        '-mssse3',
++                        '-msse4.2',
++                        '-mpclmul',
++                      ],
++                    },
++                  },
++            }],
+             ['arm_fpu=="neon"', {
+               'defines': [ 'ADLER32_SIMD_NEON' ],
+             }],
+@@ -122,7 +133,18 @@
+                   '-mpclmul',
+                 ],
+               },
+-            }]
++            }],
++            ['OS=="win"', {
++                  'msvs_settings': {
++                    'VCCLCompilerTool': {
++                      'AdditionalOptions': [
++                        '-mssse3',
++                        '-msse4.2',
++                        '-mpclmul',
++                      ],
++                    },
++                  },
++            }],
+           ],
+           'defines': [ 'CRC32_SIMD_SSE42_PCLMUL' ],
+           'include_dirs': [ '<(ZLIB_ROOT)' ],
+@@ -212,6 +234,17 @@
+               ],
+               'defines': [ 'DEFLATE_SLIDE_HASH_SSE2' ],
+               'conditions': [
++                ['OS=="win"', {
++                  'msvs_settings': {
++                    'VCCLCompilerTool': {
++                      'AdditionalOptions': [
++                        '-mssse3',
++                        '-msse4.2',
++                        '-mpclmul',
++                      ],
++                    },
++                  },
++                }],
+                 ['target_arch=="x64"', {
+                   'defines': [ 'INFLATE_CHUNK_READ_64LE' ],
+                 }],
+Only in nw/node/lib: dummystream.js
+diff -r -u --color up/node/lib/internal/bootstrap/switches/is_main_thread.js nw/node/lib/internal/bootstrap/switches/is_main_thread.js
+--- up/node/lib/internal/bootstrap/switches/is_main_thread.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/bootstrap/switches/is_main_thread.js	2023-09-19 20:50:37.085730462 +0000
+@@ -124,6 +124,18 @@
+   }
+ }
+ 
++function createWritableDummyStream(fd) {
++  var DummyStream = require('dummystream');
++  var stream = new DummyStream();
++  stream.fd = fd;
++
++  stream._isStdio = true;
++  stream.isTTY = false;
++
++  return stream;
++
++}
++
+ let stdin;
+ let stdout;
+ let stderr;
+@@ -147,7 +159,10 @@
+ 
+ function getStdout() {
+   if (stdout) return stdout;
+-  stdout = createWritableStdioStream(1);
++  if (process.platform === 'win32')
++    stdout = createWritableDummyStream(1);
++  else
++    stdout = createWritableStdioStream(1);
+   stdout.destroySoon = stdout.destroy;
+   // Override _destroy so that the fd is never actually closed.
+   stdoutDestroy = stdout._destroy;
+@@ -169,6 +184,9 @@
+ 
+ function getStderr() {
+   if (stderr) return stderr;
++  if (process.platform === 'win32')
++    stderr = createWritableDummyStream(2);
++  else
+   stderr = createWritableStdioStream(2);
+   stderr.destroySoon = stderr.destroy;
+   stderrDestroy = stderr._destroy;
+diff -r -u --color up/node/lib/internal/bootstrap/web/exposed-wildcard.js nw/node/lib/internal/bootstrap/web/exposed-wildcard.js
+--- up/node/lib/internal/bootstrap/web/exposed-wildcard.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/bootstrap/web/exposed-wildcard.js	2023-09-19 20:50:37.085730462 +0000
+@@ -6,6 +6,8 @@
+  * See more details at https://webidl.spec.whatwg.org/#Exposed.
+  */
+ 
++if (process.__nwjs) {
++} else {
+ const {
+   globalThis,
+ } = primordials;
+@@ -112,3 +114,5 @@
+   [
+     'CompressionStream', 'DecompressionStream',
+   ]);
++
++} //not nwjs
+diff -r -u --color up/node/lib/internal/main/run_main_module.js nw/node/lib/internal/main/run_main_module.js
+--- up/node/lib/internal/main/run_main_module.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/main/run_main_module.js	2023-09-19 20:50:37.093730741 +0000
+@@ -7,13 +7,21 @@
+   markBootstrapComplete,
+ } = require('internal/process/pre_execution');
+ 
++if (process.__nwjs) {
++prepareMainThreadExecution(true);
++markBootstrapComplete();
++    var Module = require('module');
++    var module = new Module('.', null);
++    global.process.mainModule = module;
++    module._compile('global.module = module;\n' +
++                    'global.require = global.__nw_require = require;\n', 'nw-emulate-node');
++    if (process.argv[1]) {
++      Module.runMain();
++    }
++} else {
+ prepareMainThreadExecution(true);
+-
+ markBootstrapComplete();
+-
+-// Necessary to reset RegExp statics before user code runs.
+ RegExpPrototypeExec(/^/, '');
+-
+ // Note: this loads the module through the ESM loader if the module is
+ // determined to be an ES module. This hangs from the CJS module loader
+ // because we currently allow monkey-patching of the module loaders
+@@ -21,3 +29,4 @@
+ // runMain here might be monkey-patched by users in --require.
+ // XXX: the monkey-patchability here should probably be deprecated.
+ require('internal/modules/cjs/loader').Module.runMain(process.argv[1]);
++}
+diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/internal/modules/cjs/loader.js
+--- up/node/lib/internal/modules/cjs/loader.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/modules/cjs/loader.js	2023-09-19 20:50:37.093730741 +0000
+@@ -169,6 +169,19 @@
+   }
+ }
+ 
++function extensionUrl(str) {
++  if (typeof str !== 'string') {
++    throw new Error('Expected a string');
++  }
++
++  var pathName = path.resolve(str).replace(/\\/g, '/');
++
++  var relative = path.relative(global.__dirname, pathName);
++
++  var ret = encodeURI('chrome-extension://' + global.__nwjs_ext_id + '/' + relative);
++  return ret;
++};
++
+ function stat(filename) {
+   filename = path.toNamespacedPath(filename);
+   if (statCache !== null) {
+@@ -359,7 +372,14 @@
+  * @return {PackageConfig}
+  */
+ function readPackage(requestPath) {
+-  return packageJsonReader.read(path.resolve(requestPath, 'package.json'));
++  const jsonPath = path.resolve(requestPath, 'package.json');
++  if (global.__nwjs_cv) {
++    var url = extensionUrl(jsonPath);
++    var request = new global.XMLHttpRequest();
++    request.open('GET', url, false);
++    request.send(null);
++  }
++  return packageJsonReader.read(jsonPath);
+ }
+ 
+ let _readPackage = readPackage;
+@@ -924,6 +944,11 @@
+     setOwnProperty(process, 'mainModule', module);
+     setOwnProperty(module.require, 'main', process.mainModule);
+     module.id = '.';
++    if (process.__nwjs) {
++      // require() in DOM needs this module as parent
++      module._compile('global.module = module;\n' +
++                      'global.require = require;\n', 'nw-emulate-node');
++    }
+   }
+ 
+   reportModuleToWatchMode(filename);
+@@ -1240,6 +1265,12 @@
+ 
+ // Native extension for .js
+ Module._extensions['.js'] = function(module, filename) {
++  if (global.__nwjs_cv) {
++    var url = extensionUrl(filename);
++    var request = new global.XMLHttpRequest();
++    request.open('GET', url, false);
++    request.send(null);
++  }
+   // If already analyzed the source, then it will be cached.
+   const cached = cjsParseCache.get(module);
+   let content;
+@@ -1298,6 +1329,13 @@
+     manifest.assertIntegrity(moduleURL, content);
+   }
+ 
++  if (global.__nwjs_cv) {
++    var url = extensionUrl(filename);
++    var request = new global.XMLHttpRequest();
++    request.open('GET', url, false);
++    request.send(null);
++  }
++
+   try {
+     setOwnProperty(module, 'exports', JSONParse(stripBOM(content)));
+   } catch (err) {
+@@ -1316,6 +1354,14 @@
+     manifest.assertIntegrity(moduleURL, content);
+   }
+   // Be aware this doesn't use `content`
++
++  if (global.__nwjs_cv) {
++    var url = extensionUrl(filename);
++    var request = new global.XMLHttpRequest();
++    request.open('GET', url, false);
++    request.send(null);
++  }
++
+   return process.dlopen(module, path.toNamespacedPath(filename));
+ };
+ 
+@@ -1376,6 +1422,7 @@
+     ArrayPrototypeUnshift(paths, path.resolve(homeDir, '.node_libraries'));
+     ArrayPrototypeUnshift(paths, path.resolve(homeDir, '.node_modules'));
+   }
++  paths.unshift(process.cwd());
+ 
+   if (nodePath) {
+     ArrayPrototypeUnshiftApply(paths, ArrayPrototypeFilter(
+diff -r -u --color up/node/lib/internal/modules/esm/loader.js nw/node/lib/internal/modules/esm/loader.js
+--- up/node/lib/internal/modules/esm/loader.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/modules/esm/loader.js	2023-09-19 20:50:37.093730741 +0000
+@@ -353,6 +353,7 @@
+  * @returns {DefaultModuleLoader | CustomizedModuleLoader}
+  */
+ function createModuleLoader(useCustomLoadersIfPresent = true) {
++  /*
+   if (useCustomLoadersIfPresent &&
+       // Don't spawn a new worker if we're already in a worker thread created by instantiating CustomizedModuleLoader;
+       // doing so would cause an infinite loop.
+@@ -366,6 +367,7 @@
+       return new CustomizedModuleLoader();
+     }
+   }
++  */
+ 
+   return new DefaultModuleLoader();
+ }
+diff -r -u --color up/node/lib/internal/modules/esm/utils.js nw/node/lib/internal/modules/esm/utils.js
+--- up/node/lib/internal/modules/esm/utils.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/modules/esm/utils.js	2023-09-19 20:50:37.093730741 +0000
+@@ -50,8 +50,6 @@
+   defaultConditions = ObjectFreeze([
+     'node',
+     'import',
+-    ...addonConditions,
+-    ...userConditions,
+   ]);
+   defaultConditionsSet = new SafeSet(defaultConditions);
+ }
+@@ -99,8 +97,8 @@
+   initializeDefaultConditions();
+   // Setup per-isolate callbacks that locate data or callbacks that we keep
+   // track of for different ESM modules.
+-  setInitializeImportMetaObjectCallback(initializeImportMetaObject);
+-  setImportModuleDynamicallyCallback(importModuleDynamicallyCallback);
++  //setInitializeImportMetaObjectCallback(initializeImportMetaObject);
++  //setImportModuleDynamicallyCallback(importModuleDynamicallyCallback);
+ }
+ 
+ function isLoaderWorker() {
+diff -r -u --color up/node/lib/internal/modules/helpers.js nw/node/lib/internal/modules/helpers.js
+--- up/node/lib/internal/modules/helpers.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/modules/helpers.js	2023-09-19 20:50:37.093730741 +0000
+@@ -46,8 +46,6 @@
+   cjsConditions = new SafeSet([
+     'require',
+     'node',
+-    ...addonConditions,
+-    ...userConditions,
+   ]);
+ }
+ 
+diff -r -u --color up/node/lib/internal/modules/run_main.js nw/node/lib/internal/modules/run_main.js
+--- up/node/lib/internal/modules/run_main.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/modules/run_main.js	2023-09-19 20:50:37.093730741 +0000
+@@ -34,7 +34,7 @@
+    * (or an empty list when none have been registered).
+    */
+   const userImports = getOptionValue('--import');
+-  if (userLoaders.length > 0 || userImports.length > 0)
++  if ((userLoaders && userLoaders.length > 0) || (userImports && userImports.length > 0))
+     return true;
+   const { readPackageScope } = require('internal/modules/cjs/loader');
+   // Determine the module format of the main
+diff -r -u --color up/node/lib/internal/process/execution.js nw/node/lib/internal/process/execution.js
+--- up/node/lib/internal/process/execution.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/process/execution.js	2023-09-19 20:50:37.097730881 +0000
+@@ -157,18 +157,8 @@
+     if (exceptionHandlerState.captureFn !== null) {
+       exceptionHandlerState.captureFn(er);
+     } else if (!process.emit('uncaughtException', er, type)) {
+-      // If someone handled it, then great. Otherwise, die in C++ land
+-      // since that means that we'll exit the process, emit the 'exit' event.
+-      try {
+-        if (!process._exiting) {
+-          process._exiting = true;
+-          process.exitCode = kGenericUserError;
+-          process.emit('exit', kGenericUserError);
+-        }
+-      } catch {
+-        // Nothing to be done about it at this point.
+-      }
+-      return false;
++      // NWJS#6153: prevent the crash
++      // return true;
+     }
+ 
+     // If we handled an error, then make sure any ticks get processed
+diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/internal/process/pre_execution.js
+--- up/node/lib/internal/process/pre_execution.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/process/pre_execution.js	2023-09-19 20:50:37.097730881 +0000
+@@ -67,11 +67,15 @@
+ 
+   // Patch the process object with legacy properties and normalizations
+   patchProcessObject(expandArgv1);
+-  setupTraceCategoryState();
++  //setupTraceCategoryState();
+   setupPerfHooks();
+   setupInspectorHooks();
++
+   setupWarningHandler();
+-  setupFetch();
++  if (process.__nwjs) {
++  } else {
++    setupFetch();
++  }
+   setupWebCrypto();
+   setupCustomEvent();
+   setupCodeCoverage();
+diff -r -u --color up/node/lib/internal/source_map/source_map_cache.js nw/node/lib/internal/source_map/source_map_cache.js
+--- up/node/lib/internal/source_map/source_map_cache.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/source_map/source_map_cache.js	2023-09-19 20:50:37.097730881 +0000
+@@ -50,6 +50,8 @@
+ }
+ 
+ function setSourceMapsEnabled(val) {
++  if (val === undefined)
++    val = false;
+   validateBoolean(val, 'val');
+ 
+   setSourceMapsNative(val);
+diff -r -u --color up/node/lib/internal/worker/io.js nw/node/lib/internal/worker/io.js
+--- up/node/lib/internal/worker/io.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/internal/worker/io.js	2023-09-19 20:50:37.105731160 +0000
+@@ -207,7 +207,9 @@
+   },
+ });
+ 
++
+ const originalCreateEvent = EventTarget.prototype[kCreateEvent];
++
+ ObjectDefineProperty(
+   MessagePort.prototype,
+   kCreateEvent,
+diff -r -u --color up/node/lib/url.js nw/node/lib/url.js
+--- up/node/lib/url.js	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/lib/url.js	2023-09-19 20:50:37.109731299 +0000
+@@ -30,6 +30,7 @@
+ } = primordials;
+ 
+ const { toASCII } = require('internal/idna');
++
+ const { encodeStr, hexTable } = require('internal/querystring');
+ const querystring = require('querystring');
+ 
+diff -r -u --color up/node/node.gyp nw/node/node.gyp
+--- up/node/node.gyp	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/node.gyp	2023-09-19 20:50:37.113731439 +0000
+@@ -1,17 +1,30 @@
+ {
+   'variables': {
+     'v8_use_siphash%': 0,
++    'v8_enable_shared_ro_heap%': 0,
++    'icu_gyp_path%': '../icu/icu.gyp',
++    'coverage': 'false',
++    'node_report': 'false',
++    'debug_node': 'false',
+     'v8_trace_maps%': 0,
+-    'v8_enable_pointer_compression%': 0,
+-    'v8_enable_31bit_smis_on_64bit_arch%': 0,
++    'v8_enable_pointer_compression': 0,
++    'v8_enable_31bit_smis_on_64bit_arch': 0,
++    'openssl_quic': 'false',
++    'node_shared_libuv': 'false',
+     'node_no_browser_globals%': 'false',
+     'node_snapshot_main%': '',
+-    'node_use_node_snapshot%': 'false',
++    'node_use_node_snapshot': 'false',
+     'node_use_v8_platform%': 'true',
+-    'node_use_bundled_v8%': 'true',
+-    'node_shared%': 'false',
+     'force_dynamic_crt%': 0,
+     'ossfuzz' : 'false',
++    'node_use_bundled_v8': 'false',
++    'node_shared': 'true',
++    'v8_enable_inspector': 0,
++    'debug_http2': 0,
++    'debug_nghttp2': 0,
++    'node_enable_d8': 'false',
++    'node_use_node_code_cache': 'false',
++    'enable_lto': 'false',
+     'node_module_version%': '',
+     'node_shared_brotli%': 'false',
+     'node_shared_zlib%': 'false',
+@@ -19,13 +32,16 @@
+     'node_shared_cares%': 'false',
+     'node_shared_libuv%': 'false',
+     'node_shared_nghttp2%': 'false',
+-    'node_use_openssl%': 'true',
+-    'node_shared_openssl%': 'false',
++    'node_use_openssl': 'true',
++    'node_shared_openssl': 'false',
++    'openssl_fips': '',
++    'openssl_is_fips': 'false',
++    'node_use_large_pages': 'false',
+     'node_v8_options%': '',
+     'node_enable_v8_vtunejit%': 'false',
+-    'node_core_target_name%': 'node',
+-    'node_lib_target_name%': 'libnode',
+-    'node_intermediate_lib_type%': 'static_library',
++    'node_core_target_name%': 'nodebin',
++    'node_lib_target_name%': 'node',
++    'node_intermediate_lib_type%': 'shared_library',
+     'node_builtin_modules_path%': '',
+     'linked_module_files': [
+     ],
+@@ -34,9 +50,301 @@
+     # The lengths of their file names combined should not exceed the
+     # Windows command length limit or there would be an error.
+     # See https://docs.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/command-line-string-limitation
++    'node_tag%': '',
++    'node_release_urlbase%': '',
++    'node_byteorder%': 'little',
++    'python%': 'python3',
++    'icu_small%': 'false',
++    'v8_postmortem_support%' : 'false',
++    'V8_LIBBASE%': '<(PRODUCT_DIR)/../nw/obj/v8/libv8_libbase.a',
++    'V8_PLTFRM%': '<(PRODUCT_DIR)/../nw/obj/v8/libv8_libplatform.a',
++    'LIBCXX%': '<(PRODUCT_DIR)/../nw/obj/buildtools/third_party/libc++/libcpp.a',
++    'LIBCXXABI%': '<(PRODUCT_DIR)/../nw/obj/buildtools/third_party/libc++abi/libc++abi.a',
+     'library_files': [
+-      '<@(node_library_files)',
+-      '<@(linked_module_files)',
++    '<@(linked_module_files)',
++'lib/constants.js',
++'lib/assert.js',
++'lib/internal/constants.js',
++'lib/internal/assert.js',
++'lib/internal/crypto/keys.js',
++'lib/internal/crypto/webcrypto.js',
++'lib/internal/crypto/diffiehellman.js',
++'lib/internal/crypto/pbkdf2.js',
++'lib/internal/crypto/ec.js',
++'lib/internal/crypto/random.js',
++'lib/internal/crypto/sig.js',
++'lib/internal/crypto/x509.js',
++'lib/internal/crypto/hashnames.js',
++'lib/internal/crypto/scrypt.js',
++'lib/internal/crypto/cipher.js',
++'lib/internal/crypto/hkdf.js',
++'lib/internal/crypto/keygen.js',
++'lib/internal/crypto/hash.js',
++'lib/internal/crypto/aes.js',
++'lib/internal/crypto/util.js',
++'lib/internal/crypto/cfrg.js',
++'lib/internal/crypto/mac.js',
++'lib/internal/crypto/rsa.js',
++'lib/internal/crypto/certificate.js',
++'lib/internal/crypto/webidl.js',
++'lib/internal/socketaddress.js',
++'lib/internal/dns/utils.js',
++'lib/internal/dns/promises.js',
++'lib/internal/stream_base_commons.js',
++'lib/internal/legacy/processbinding.js',
++'lib/internal/querystring.js',
++'lib/internal/linkedlist.js',
++'lib/internal/async_hooks.js',
++'lib/internal/v8_prof_processor.js',
++'lib/internal/trace_events_async_hooks.js',
++'lib/internal/cli_table.js',
++'lib/internal/child_process.js',
++'lib/internal/inspector_async_hook.js',
++'lib/internal/repl/utils.js',
++'lib/internal/repl/await.js',
++'lib/internal/repl/history.js',
++'lib/internal/fixed_queue.js',
++'lib/internal/watchdog.js',
++'lib/internal/source_map/prepare_stack_trace.js',
++'lib/internal/source_map/source_map.js',
++'lib/internal/source_map/source_map_cache.js',
++'lib/internal/error_serdes.js',
++'lib/internal/net.js',
++'lib/internal/v8_prof_polyfill.js',
++'lib/internal/v8/startup_snapshot.js',
++'lib/internal/console/global.js',
++'lib/internal/console/constructor.js',
++'lib/internal/blocklist.js',
++'lib/internal/debugger/inspect_repl.js',
++'lib/internal/debugger/inspect_client.js',
++'lib/internal/debugger/inspect.js',
++'lib/internal/cluster/utils.js',
++'lib/internal/cluster/child.js',
++'lib/internal/cluster/worker.js',
++'lib/internal/cluster/primary.js',
++'lib/internal/cluster/round_robin_handle.js',
++'lib/internal/cluster/shared_handle.js',
++'lib/internal/assert/assertion_error.js',
++'lib/internal/assert/calltracker.js',
++'lib/internal/blob.js',
++'lib/internal/worker.js',
++'lib/internal/child_process/serialization.js',
++'lib/internal/process/esm_loader.js',
++'lib/internal/process/per_thread.js',
++'lib/internal/process/permission.js',
++'lib/internal/process/policy.js',
++'lib/internal/process/pre_execution.js',
++'lib/internal/process/promises.js',
++'lib/internal/process/report.js',
++'lib/internal/process/task_queues.js',
++'lib/internal/process/signal.js',
++'lib/internal/process/worker_thread_only.js',
++'lib/internal/process/execution.js',
++'lib/internal/process/warning.js',
++'lib/internal/encoding.js',
++'lib/internal/priority_queue.js',
++'lib/internal/modules/package_json_reader.js',
++'lib/internal/modules/esm/fetch_module.js',
++'lib/internal/modules/esm/formats.js',
++'lib/internal/modules/esm/handle_process_exit.js',
++'lib/internal/modules/esm/loader.js',
++'lib/internal/modules/esm/module_map.js',
++'lib/internal/modules/esm/resolve.js',
++'lib/internal/modules/esm/shared_constants.js',
++'lib/internal/modules/esm/translators.js',
++'lib/internal/modules/esm/module_job.js',
++'lib/internal/modules/esm/get_format.js',
++'lib/internal/modules/esm/create_dynamic_module.js',
++'lib/internal/modules/esm/initialize_import_meta.js',
++'lib/internal/modules/esm/assert.js',
++'lib/internal/modules/esm/load.js',
++'lib/internal/modules/esm/package_config.js',
++'lib/internal/modules/esm/utils.js',
++'lib/internal/modules/esm/worker.js',
++'lib/internal/modules/run_main.js',
++'lib/internal/modules/helpers.js',
++'lib/internal/modules/cjs/loader.js',
++'lib/internal/util/colors.js',
++'lib/internal/util/comparisons.js',
++'lib/internal/util/embedding.js',
++'lib/internal/util/types.js',
++'lib/internal/util/iterable_weak_map.js',
++'lib/internal/util/inspector.js',
++'lib/internal/util/inspect.js',
++'lib/internal/util/debuglog.js',
++'lib/internal/util/parse_args/parse_args.js',
++'lib/internal/util/parse_args/utils.js',
++'lib/internal/histogram.js',
++'lib/internal/main/check_syntax.js',
++'lib/internal/main/embedding.js',
++'lib/internal/main/print_help.js',
++'lib/internal/main/worker_thread.js',
++'lib/internal/main/eval_string.js',
++'lib/internal/main/prof_process.js',
++'lib/internal/main/eval_stdin.js',
++'lib/internal/main/run_main_module.js',
++'lib/internal/main/inspect.js',
++'lib/internal/main/repl.js',
++'lib/internal/fs/read/context.js',
++'lib/internal/fs/utils.js',
++'lib/internal/fs/promises.js',
++'lib/internal/fs/read/utf8.js',
++'lib/internal/fs/dir.js',
++'lib/internal/fs/watchers.js',
++'lib/internal/fs/cp/cp-sync.js',
++'lib/internal/fs/cp/cp.js',
++'lib/internal/fs/rimraf.js',
++'lib/internal/fs/sync_write_stream.js',
++'lib/internal/fs/streams.js',
++'lib/internal/readline/utils.js',
++'lib/internal/readline/callbacks.js',
++'lib/internal/readline/emitKeypressEvents.js',
++'lib/internal/readline/promises.js',
++'lib/internal/readline/interface.js',
++'lib/internal/buffer.js',
++'lib/internal/webstreams/readablestream.js',
++'lib/internal/webstreams/transfer.js',
++'lib/internal/webstreams/encoding.js',
++'lib/internal/webstreams/queuingstrategies.js',
++'lib/internal/webstreams/util.js',
++'lib/internal/webstreams/writablestream.js',
++'lib/internal/webstreams/transformstream.js',
++'lib/internal/vm/module.js',
++'lib/internal/idna.js',
++'lib/internal/bootstrap/realm.js',
++'lib/internal/bootstrap/node.js',
++'lib/internal/main/watch_mode.js',
++'lib/internal/watch_mode/files_watcher.js',
++'lib/internal/bootstrap/switches/is_main_thread.js',
++'lib/internal/bootstrap/switches/does_own_process_state.js',
++'lib/internal/bootstrap/switches/does_not_own_process_state.js',
++'lib/internal/bootstrap/switches/is_not_main_thread.js',
++'lib/internal/bootstrap/web/exposed-wildcard.js',
++'lib/internal/bootstrap/web/exposed-window-or-worker.js',
++'lib/internal/event_target.js',
++'lib/internal/events/symbols.js',
++'lib/internal/policy/sri.js',
++'lib/internal/policy/manifest.js',
++'lib/internal/util.js',
++'lib/internal/webidl.js',
++'lib/internal/abort_controller.js',
++'lib/internal/http2/util.js',
++'lib/internal/http2/compat.js',
++'lib/internal/http2/core.js',
++'lib/internal/socket_list.js',
++'lib/internal/js_stream_socket.js',
++'lib/internal/validators.js',
++'lib/internal/per_context/messageport.js',
++'lib/internal/per_context/primordials.js',
++'lib/internal/per_context/domexception.js',
++'lib/internal/tty.js',
++'lib/internal/http.js',
++'lib/internal/streams/utils.js',
++'lib/internal/streams/legacy.js',
++'lib/internal/streams/buffer_list.js',
++'lib/internal/streams/readable.js',
++'lib/internal/streams/destroy.js',
++'lib/internal/streams/from.js',
++'lib/internal/streams/duplex.js',
++'lib/internal/streams/passthrough.js',
++'lib/internal/streams/pipeline.js',
++'lib/internal/streams/lazy_transform.js',
++'lib/internal/streams/add-abort-signal.js',
++'lib/internal/streams/end-of-stream.js',
++'lib/internal/streams/transform.js',
++'lib/internal/streams/state.js',
++'lib/internal/streams/writable.js',
++'lib/internal/streams/operators.js',
++'lib/internal/dgram.js',
++'lib/internal/errors.js',
++'lib/internal/tls/secure-pair.js',
++'lib/internal/tls/secure-context.js',
++'lib/internal/freelist.js',
++'lib/internal/heap_utils.js',
++'lib/internal/worker/js_transferable.js',
++'lib/internal/worker/io.js',
++'lib/internal/url.js',
++'lib/internal/perf/utils.js',
++'lib/internal/perf/event_loop_delay.js',
++'lib/internal/perf/event_loop_utilization.js',
++'lib/internal/perf/nodetiming.js',
++'lib/internal/perf/performance_entry.js',
++'lib/internal/perf/usertiming.js',
++'lib/internal/perf/performance.js',
++'lib/internal/perf/timerify.js',
++'lib/internal/perf/observe.js',
++'lib/internal/repl.js',
++'lib/internal/timers.js',
++'lib/internal/freeze_intrinsics.js',
++'lib/internal/options.js',
++'lib/internal/promise_hooks.js',
++'lib/internal/structured_clone.js',
++'lib/string_decoder.js',
++'lib/_http_client.js',
++'lib/dns.js',
++'lib/dns/promises.js',
++'lib/_stream_passthrough.js',
++'lib/crypto.js',
++'lib/querystring.js',
++'lib/async_hooks.js',
++'lib/_http_incoming.js',
++'lib/path/win32.js',
++'lib/path/posix.js',
++'lib/_stream_transform.js',
++'lib/child_process.js',
++'lib/_http_agent.js',
++'lib/v8.js',
++'lib/net.js',
++'lib/path.js',
++'lib/sys.js',
++'lib/fs.js',
++'lib/os.js',
++'lib/domain.js',
++'lib/_http_outgoing.js',
++'lib/stream/web.js',
++'lib/stream/promises.js',
++'lib/stream/consumers.js',
++'lib/_http_common.js',
++'lib/assert/strict.js',
++'lib/_stream_wrap.js',
++'lib/_tls_wrap.js',
++'lib/_stream_readable.js',
++'lib/timers/promises.js',
++'lib/util/types.js',
++'lib/fs/promises.js',
++'lib/readline.js',
++'lib/_tls_common.js',
++'lib/_stream_writable.js',
++'lib/cluster.js',
++'lib/buffer.js',
++'lib/_stream_duplex.js',
++'lib/punycode.js',
++'lib/util.js',
++'lib/dummystream.js',
++'lib/inspector.js',
++'lib/tty.js',
++'lib/http.js',
++'lib/http2.js',
++'lib/tls.js',
++'lib/dgram.js',
++'lib/worker_threads.js',
++'lib/process.js',
++'lib/_http_server.js',
++'lib/perf_hooks.js',
++'lib/trace_events.js',
++'lib/module.js',
++'lib/https.js',
++'lib/zlib.js',
++'lib/events.js',
++'lib/vm.js',
++'lib/url.js',
++'lib/console.js',
++'lib/repl.js',
++'lib/diagnostics_channel.js',
++'lib/timers.js',
++'lib/wasi.js',
++'lib/stream.js',
++      'lib/dummystream.js',
+     ],
+     'deps_files': [
+       'deps/v8/tools/splaytree.mjs',
+@@ -53,9 +361,12 @@
+       'deps/acorn/acorn/dist/acorn.js',
+       'deps/acorn/acorn-walk/dist/walk.js',
+       'deps/minimatch/index.js',
+-      '<@(node_builtin_shareable_builtins)',
++      'deps/cjs-module-lexer/lexer.js',
++      'deps/cjs-module-lexer/dist/lexer.js',
++      'deps/undici/undici.js', #nwjs: reverting ca5be26b318affe7ee63a4b9c0489393c7dae661
+     ],
+     'node_sources': [
++      'deps/ada/ada.cpp',
+       'src/api/async_resource.cc',
+       'src/api/callback.cc',
+       'src/api/embed_helpers.cc',
+@@ -90,6 +401,7 @@
+       'src/json_parser.cc',
+       'src/module_wrap.cc',
+       'src/node.cc',
++      'src/node_snapshot_stub.cc',
+       'src/node_api.cc',
+       'src/node_binding.cc',
+       'src/node_blob.cc',
+@@ -157,11 +469,11 @@
+       'src/tcp_wrap.cc',
+       'src/timers.cc',
+       'src/timer_wrap.cc',
+-      'src/tracing/agent.cc',
+-      'src/tracing/node_trace_buffer.cc',
+-      'src/tracing/node_trace_writer.cc',
+-      'src/tracing/trace_event.cc',
+-      'src/tracing/traced_value.cc',
++      #'src/tracing/agent.cc',
++      #'src/tracing/node_trace_buffer.cc',
++      #'src/tracing/node_trace_writer.cc',
++      #'src/tracing/trace_event.cc',
++      #'src/tracing/traced_value.cc',
+       'src/tty_wrap.cc',
+       'src/udp_wrap.cc',
+       'src/util.cc',
+@@ -436,6 +748,9 @@
+       }],
+     ],
+   },
++  'includes': [
++    '../../build/util/version.gypi',
++  ],
+ 
+   'targets': [
+     {
+@@ -763,11 +1078,19 @@
+       'includes': [
+         'node.gypi',
+       ],
++      'msvs_disabled_warnings': [4146, 4267, 4003, 4065, 4477],
++
++      'xcode_settings': {
++        'WARNING_CFLAGS': [ '-Wno-error=deprecated-declarations' ],
++      },
+ 
+       'include_dirs': [
+         'src',
+         'deps/postject',
++        'deps/ada',
+         '<(SHARED_INTERMEDIATE_DIR)' # for node_natives.h
++        '../../v8', # include/v8_platform.h
++        '../../v8/include'
+       ],
+       'dependencies': [
+         'deps/base64/base64.gyp:base64',
+@@ -775,14 +1098,27 @@
+         'deps/histogram/histogram.gyp:histogram',
+         'deps/uvwasi/uvwasi.gyp:uvwasi',
+         'deps/simdutf/simdutf.gyp:simdutf',
+-        'deps/ada/ada.gyp:ada',
+         'node_js2c#host',
++        #'deps/ada/ada.gyp:ada',
+       ],
+ 
++      'direct_dependent_settings': {
++        'include_dirs': [
++          '../../v8/include',
++          'deps/uv/include',
++          'deps/cares/include',
++        ],
++        'defines': [
++          'BUILDING_NW_NODE=1',
++          'V8_REVERSE_JSARGS',
++        ],
++
++      },
++
+       'sources': [
+         '<@(node_sources)',
+         # Dependency headers
+-        'deps/v8/include/v8.h',
++        #'deps/v8/include/v8.h',
+         'deps/postject/postject-api.h',
+         # javascript files to make for an even more pleasant IDE experience
+         '<@(library_files)',
+@@ -804,6 +1140,12 @@
+         'NODE_WANT_INTERNALS=1',
+         # Warn when using deprecated V8 APIs.
+         'V8_DEPRECATION_WARNINGS=1',
++        'BUILDING_NW_NODE=1',
++        'V8_REVERSE_JSARGS',
++        '_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH',
++        'V8_SHARED',
++        'USING_V8_SHARED',
++        'V8_USE_EXTERNAL_STARTUP_DATA',
+         'NODE_OPENSSL_SYSTEM_CERT_PATH="<(openssl_system_ca_path)"',
+       ],
+ 
+@@ -812,6 +1154,12 @@
+       'msvs_disabled_warnings!': [4244],
+ 
+       'conditions': [
++        [ 'OS=="win" or OS=="linux"', {
++          'include_dirs': [
++            '<(PRODUCT_DIR)/../../buildtools/third_party/libc++/trunk/include',
++            '<(PRODUCT_DIR)/../../buildtools/third_party/libc++',
++          ],
++        }],
+         [ 'openssl_default_cipher_list!=""', {
+           'defines': [
+             'NODE_OPENSSL_DEFAULT_CIPHER_LIST="<(openssl_default_cipher_list)"'
+@@ -855,15 +1203,14 @@
+           'conditions': [
+             [ 'node_intermediate_lib_type!="static_library"', {
+               'sources': [
+-                'src/res/node.rc',
++                'src/res/node-nw.rc',
+               ],
+             }],
+-          ],
+-          'libraries': [
+-            'Dbghelp',
+-            'Psapi',
+-            'Winmm',
+-            'Ws2_32',
++            [ 'component == "shared_library"', {
++              'libraries': [ 'Winmm', 'ws2_32', '-lpsapi.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libbase.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libplatform.lib', '<(PRODUCT_DIR)/../nw/nw.dll.lib', '<(PRODUCT_DIR)/../nw/libc++.dll.lib'],
++            }, {
++              'libraries': [ 'Winmm', 'ws2_32', '-lpsapi.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libbase.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libplatform.lib', '<(PRODUCT_DIR)/../nw/nw.dll.lib', '<(PRODUCT_DIR)/../nw/obj/buildtools/third_party/libc++/libcpp.lib'],
++            }],
+           ],
+         }],
+         [ 'node_use_openssl=="true"', {
+@@ -1019,7 +1366,7 @@
+       'include_dirs': [
+         'src',
+         'tools/msvs/genfiles',
+-        'deps/v8/include',
++        '../../v8/include',
+         'deps/cares/include',
+         'deps/uv/include',
+         'deps/uvwasi/include',
+@@ -1203,6 +1550,7 @@
+         }],
+         [ 'OS in "linux mac"', {
+           'defines': ['NODE_JS2C_USE_STRING_LITERALS'],
++	  'ldflags': [ '-lstdc++' ],
+         }],
+         [ 'debug_node=="true"', {
+           'cflags!': [ '-O3' ],
+diff -r -u --color up/node/node.gypi nw/node/node.gypi
+--- up/node/node.gypi	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/node.gypi	2023-09-19 20:50:37.113731439 +0000
+@@ -69,12 +69,12 @@
+         'NOMINMAX',
+         '_UNICODE=1',
+       ],
+-      'msvs_precompiled_header': 'tools/msvs/pch/node_pch.h',
+-      'msvs_precompiled_source': 'tools/msvs/pch/node_pch.cc',
+-      'sources': [
+-        '<(_msvs_precompiled_header)',
+-        '<(_msvs_precompiled_source)',
+-      ],
++      #'msvs_precompiled_header': 'tools/msvs/pch/node_pch.h',
++      #'msvs_precompiled_source': 'tools/msvs/pch/node_pch.cc',
++      #'sources': [
++      #  '<(_msvs_precompiled_header)',
++      #  '<(_msvs_precompiled_source)',
++      #],
+     }, { # POSIX
+       'defines': [ '__POSIX__' ],
+     }],
+@@ -83,8 +83,8 @@
+     }],
+     [ 'node_use_bundled_v8=="true"', {
+       'dependencies': [
+-        'tools/v8_gypfiles/v8.gyp:v8_snapshot',
+-        'tools/v8_gypfiles/v8.gyp:v8_libplatform',
++        #'tools/v8_gypfiles/v8.gyp:v8_snapshot',
++        #'tools/v8_gypfiles/v8.gyp:v8_libplatform',
+       ],
+     }],
+     [ 'node_use_v8_platform=="true"', {
+@@ -110,11 +110,19 @@
+         'NODE_RELEASE_URLBASE="<(node_release_urlbase)"',
+       ]
+     }],
++    ['node_target_type=="shared_library"', {
++      'direct_dependent_settings': {
++        'defines': [
++          'USING_UV_SHARED=1',
++          'BUILDING_NODE_EXTENSION=1',
++        ],
++      },
++    }],
+     [ 'v8_enable_i18n_support==1', {
+       'defines': [ 'NODE_HAVE_I18N_SUPPORT=1' ],
+       'dependencies': [
+-        '<(icu_gyp_path):icui18n',
+-        '<(icu_gyp_path):icuuc',
++        '../icu/icu.gyp:icui18n',
++        '../icu/icu.gyp:icuuc',
+       ],
+       'conditions': [
+         [ 'icu_small=="true"', {
+@@ -151,7 +159,7 @@
+           'msvs_settings': {
+             'VCLinkerTool': {
+               'AdditionalOptions': [
+-                '/WHOLEARCHIVE:zlib<(STATIC_LIB_SUFFIX)',
++                '/WHOLEARCHIVE:obj\\third_party\\node-nw\\deps\\zlib\\zlib<(STATIC_LIB_SUFFIX)',
+               ],
+             },
+           },
+@@ -190,7 +198,7 @@
+           'msvs_settings': {
+             'VCLinkerTool': {
+               'AdditionalOptions': [
+-                '/WHOLEARCHIVE:libuv<(STATIC_LIB_SUFFIX)',
++                '/WHOLEARCHIVE:obj\\third_party\\node-nw\\deps\\uv\\libuv<(STATIC_LIB_SUFFIX)',
+               ],
+             },
+           },
+@@ -210,6 +218,9 @@
+     [ 'node_shared_nghttp2=="false"', {
+       'dependencies': [ 'deps/nghttp2/nghttp2.gyp:nghttp2' ],
+     }],
++    [ 'OS=="win" and component=="shared_library"', {
++      'libraries': [ '<(PRODUCT_DIR)/../nw/v8.dll.lib' ]
++    }],
+ 
+     [ 'node_shared_brotli=="false"', {
+       'dependencies': [ 'deps/brotli/brotli.gyp:brotli' ],
+@@ -226,6 +237,18 @@
+         # we need to use node's preferred "darwin" rather than gyp's preferred "mac"
+         'NODE_PLATFORM="darwin"',
+       ],
++     'postbuilds': [
++       {
++         'postbuild_name': 'Fix Framework Link',
++         'action': [
++           'install_name_tool',
++           '-change',
++           '@executable_path/../Frameworks/<(mac_product_name) Framework.framework/Versions/<(version_full)/<(mac_product_name) Framework',
++           '@loader_path/<(mac_product_name) Framework',
++           '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
++         ],
++       },
++     ],
+     }],
+     [ 'OS=="freebsd"', {
+       'libraries': [
+@@ -280,20 +303,21 @@
+         'NODE_PLATFORM="sunos"',
+       ],
+     }],
+-    [ '(OS=="freebsd" or OS=="linux") and node_shared=="false"'
+-        ' and force_load=="true"', {
+-      'ldflags': [
+-        '-Wl,-z,noexecstack',
+-        '-Wl,--whole-archive <(v8_base)',
+-        '-Wl,--no-whole-archive',
+-      ]
++    [ 'OS=="linux"', {
++      'cflags': [ "-Wno-unused-result" ],
+     }],
+-    [ 'node_use_bundled_v8=="true" and v8_postmortem_support==1 and force_load=="true"', {
+-      'xcode_settings': {
+-        'OTHER_LDFLAGS': [
+-          '-Wl,-force_load,<(v8_base)',
+-        ],
+-      },
++    [ 'OS=="linux" and component == "shared_library"', {
++          'ldflags': [ '-L<(PRODUCT_DIR)/../nw/lib/', '-lv8',
++                      '-Wl,--whole-archive <(V8_LIBBASE)',
++                      '<(V8_PLTFRM)',
++                      '-Wl,--no-whole-archive' ]
++    }],
++    [ 'OS=="linux" and component != "shared_library"', {
++          'ldflags': [ '-L<(PRODUCT_DIR)/../nw/lib/', '-lnw',
++                      '-Wl,--whole-archive',
++                      '<(LIBCXX)',
++                      '-Wl,--no-whole-archive'
++                     ]
+     }],
+     [ 'debug_node=="true"', {
+       'cflags!': [ '-O3' ],
+@@ -305,6 +329,49 @@
+         ],
+       },
+     }],
++    [ 'OS=="mac" and component == "shared_library"', {
++      'xcode_settings': {
++        'OTHER_LDFLAGS': [
++          '-L<(PRODUCT_DIR)/../nw/', '-lv8',
++          '<(PRODUCT_DIR)/../nw/nwjs\ Framework.framework/nwjs\ Framework',
++                  '-Wl,-force_load <(V8_LIBBASE)',
++                  '-Wl,-force_load <(LIBCXXABI)',
++                  '-Wl,-force_load <(V8_PLTFRM)',
++        ],
++      },
++      'postbuilds': [
++        {
++          'postbuild_name': 'Fix iculib Link',
++          'action': [
++            'install_name_tool',
++            '-change',
++            '/usr/local/lib/libicuuc.dylib',
++            '@rpath/libicuuc.dylib',
++            '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
++          ],
++        },
++        {
++          'postbuild_name': 'Fix iculib Link2',
++          'action': [
++            'install_name_tool',
++            '-change',
++            '/usr/local/lib/libicui18n.dylib',
++            '@rpath/libicui18n.dylib',
++            '${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}'
++          ],
++        },
++      ],
++    }],
++    [ 'OS=="mac" and component != "shared_library"', {
++     'xcode_settings': {
++       'OTHER_LDFLAGS': [
++         '<(PRODUCT_DIR)/../nw/nwjs\ Framework.framework/nwjs\ Framework',
++                 '-Wl,-force_load <(V8_LIBBASE)',
++                 '-Wl,-force_load <(LIBCXX)',
++                 '-Wl,-force_load <(V8_PLTFRM)',
++       ],
++     },
++    }],
+     [ 'coverage=="true" and node_shared=="false" and OS in "mac freebsd linux"', {
+       'cflags!': [ '-O3' ],
+       'ldflags': [ '--coverage',
+@@ -344,7 +411,8 @@
+     }],
+     [ 'OS in "freebsd linux"', {
+       'ldflags': [ '-Wl,-z,relro',
+-                   '-Wl,-z,now' ]
++                   '-Wl,-z,now',
++                   '-Wl,--gc-sections' ]
+     }],
+     [ 'node_use_openssl=="true"', {
+       'defines': [ 'HAVE_OPENSSL=1' ],
+@@ -355,7 +423,7 @@
+             './deps/openssl/openssl.gyp:openssl',
+ 
+             # For tests
+-            './deps/openssl/openssl.gyp:openssl-cli',
++            #'./deps/openssl/openssl.gyp:openssl-cli',
+           ],
+           'conditions': [
+             # -force_load or --whole-archive are not applicable for
+@@ -363,22 +431,22 @@
+             [ 'force_load=="true"', {
+               'xcode_settings': {
+                 'OTHER_LDFLAGS': [
+-                  '-Wl,-force_load,<(PRODUCT_DIR)/<(openssl_product)',
++                  #'-Wl,-force_load,<(PRODUCT_DIR)/<(openssl_product)',
+                 ],
+               },
+               'msvs_settings': {
+                 'VCLinkerTool': {
+                   'AdditionalOptions': [
+-                    '/WHOLEARCHIVE:<(openssl_product)',
++                    '/WHOLEARCHIVE:obj\\third_party\\node-nw\\deps\\openssl\\openssl<(STATIC_LIB_SUFFIX)',
+                   ],
+                 },
+               },
+               'conditions': [
+                 ['OS in "linux freebsd" and node_shared=="false"', {
+                   'ldflags': [
+-                    '-Wl,--whole-archive,'
+-                      '<(obj_dir)/deps/openssl/<(openssl_product)',
+-                    '-Wl,--no-whole-archive',
++                    #'-Wl,--whole-archive,'
++                    #  '<(obj_dir)/deps/openssl/<(openssl_product)',
++                    #'-Wl,--no-whole-archive',
+                   ],
+                 }],
+                 # openssl.def is based on zlib.def, zlib symbols
+diff -r -u --color up/node/src/aliased_buffer.h nw/node/src/aliased_buffer.h
+--- up/node/src/aliased_buffer.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/aliased_buffer.h	2023-09-19 20:50:37.113731439 +0000
+@@ -6,6 +6,7 @@
+ #include <cinttypes>
+ #include "memory_tracker.h"
+ #include "v8.h"
++#include "util-inl.h"
+ 
+ namespace node {
+ 
+diff -r -u --color up/node/src/api/callback.cc nw/node/src/api/callback.cc
+--- up/node/src/api/callback.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/api/callback.cc	2023-09-19 20:50:37.113731439 +0000
+@@ -3,6 +3,10 @@
+ #include "env-inl.h"
+ #include "v8.h"
+ 
++extern "C" {
++extern void* g_get_node_env();
++}
++
+ namespace node {
+ 
+ using v8::Context;
+@@ -132,13 +136,16 @@
+ 
+   auto weakref_cleanup = OnScopeLeave([&]() { env_->RunWeakRefCleanup(); });
+ 
+-  Local<Context> context = env_->context();
+   if (!tick_info->has_tick_scheduled()) {
+-    context->GetMicrotaskQueue()->PerformCheckpoint(isolate);
++    if (env_ && !env_->context().IsEmpty() && env_->context()->GetMicrotaskQueue())
++      env_->context()->GetMicrotaskQueue()->PerformCheckpoint(env_->isolate());
++    else
++      v8::MicrotasksScope::PerformCheckpoint(env_->isolate());
+ 
+     perform_stopping_check();
+   }
+ 
++  Local<Context> context = env_->context();
+   // Make sure the stack unwound properly. If there are nested MakeCallback's
+   // then it should return early and not reach this code.
+   if (env_->async_hooks()->fields()[AsyncHooks::kTotals]) {
+@@ -280,6 +287,8 @@
+   // the two contexts need not be the same.
+   Environment* env =
+       Environment::GetCurrent(callback->GetCreationContext().ToLocalChecked());
++  if (!env)
++    env = (Environment*)g_get_node_env();
+   CHECK_NOT_NULL(env);
+   Context::Scope context_scope(env->context());
+   MaybeLocal<Value> ret =
+diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
+--- up/node/src/api/environment.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/api/environment.cc	2023-09-19 20:50:37.113731439 +0000
+@@ -44,6 +44,8 @@
+ using v8::String;
+ using v8::Value;
+ 
++extern bool node_is_nwjs;
++
+ bool AllowWasmCodeGenerationCallback(Local<Context> context,
+                                      Local<String>) {
+   Local<Value> wasm_code_gen =
+@@ -128,10 +130,16 @@
+ }
+ 
+ void NodeArrayBufferAllocator::Free(void* data, size_t size) {
++  if (data == &zero_fill_field_)
++    return;
+   total_mem_usage_.fetch_sub(size, std::memory_order_relaxed);
+   allocator_->Free(data, size);
+ }
+ 
++void NodeArrayBufferAllocator::Free(void* data, size_t size, AllocationMode mode) {
++  Free(data, size);
++}
++
+ DebuggingArrayBufferAllocator::~DebuggingArrayBufferAllocator() {
+   CHECK(allocations_.empty());
+ }
+@@ -254,12 +262,12 @@
+             errors::PerIsolateMessageListener,
+             Isolate::MessageErrorLevel::kMessageError |
+                 Isolate::MessageErrorLevel::kMessageWarning);
+-
++#if 0
+   auto* abort_callback = s.should_abort_on_uncaught_exception_callback ?
+       s.should_abort_on_uncaught_exception_callback :
+       ShouldAbortOnUncaughtException;
+   isolate->SetAbortOnUncaughtExceptionCallback(abort_callback);
+-
++#endif
+   auto* fatal_error_cb = s.fatal_error_callback ?
+       s.fatal_error_callback : OnFatalError;
+   isolate->SetFatalErrorHandler(fatal_error_cb);
+@@ -301,14 +309,18 @@
+         shadow_realm::HostCreateShadowRealmContextCallback);
+   }
+ 
++#if 0
+   if ((s.flags & SHOULD_NOT_SET_PROMISE_REJECTION_CALLBACK) == 0) {
+     auto* promise_reject_cb = s.promise_reject_callback ?
+       s.promise_reject_callback : PromiseRejectCallback;
+     isolate->SetPromiseRejectCallback(promise_reject_cb);
+   }
++#endif
+ 
++#if 0
+   if (s.flags & DETAILED_SOURCE_POSITIONS_FOR_PROFILING)
+     v8::CpuProfiler::UseDetailedSourcePositionsForProfiling(isolate);
++#endif
+ }
+ 
+ void SetIsolateUpForNode(v8::Isolate* isolate,
+@@ -639,8 +651,8 @@
+ // InitializeContext, because embedders don't necessarily
+ // call NewContext and so they will experience breakages.
+ Local<Context> NewContext(Isolate* isolate,
+-                          Local<ObjectTemplate> object_template) {
+-  auto context = Context::New(isolate, nullptr, object_template);
++                          Local<ObjectTemplate> object_template, bool create) {
++  auto context = create ? Context::New(isolate, nullptr, object_template) : isolate->GetEnteredOrMicrotaskContext();
+   if (context.IsEmpty()) return context;
+ 
+   if (InitializeContext(context).IsNothing()) {
+diff -r -u --color up/node/src/api/hooks.cc nw/node/src/api/hooks.cc
+--- up/node/src/api/hooks.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/api/hooks.cc	2023-09-19 20:50:37.113731439 +0000
+@@ -21,6 +21,14 @@
+   env->RunAtExitCallbacks();
+ }
+ 
++void AtExit(void (*cb)(void* arg), void* arg) {
++  //auto env = Environment::GetThreadLocalEnv();
++  thread_ctx_st* tls_ctx = (struct thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (tls_ctx && tls_ctx->env) {
++    AtExit(tls_ctx->env, cb, arg);
++  }
++}
++
+ void AtExit(Environment* env, void (*cb)(void* arg), void* arg) {
+   CHECK_NOT_NULL(env);
+   env->AtExit(cb, arg);
+diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
+--- up/node/src/async_wrap.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/async_wrap.cc	2023-09-19 20:50:37.113731439 +0000
+@@ -108,6 +108,7 @@
+ 
+ 
+ void AsyncWrap::EmitTraceEventBefore() {
++#if 0
+   switch (provider_type()) {
+ #define V(PROVIDER)                                                           \
+     case PROVIDER_ ## PROVIDER:                                               \
+@@ -120,6 +121,7 @@
+     default:
+       UNREACHABLE();
+   }
++#endif
+ }
+ 
+ 
+@@ -130,6 +132,7 @@
+ 
+ 
+ void AsyncWrap::EmitTraceEventAfter(ProviderType type, double async_id) {
++#if 0
+   switch (type) {
+ #define V(PROVIDER)                                                           \
+     case PROVIDER_ ## PROVIDER:                                               \
+@@ -142,6 +145,7 @@
+     default:
+       UNREACHABLE();
+   }
++#endif
+ }
+ 
+ 
+@@ -181,6 +185,11 @@
+   SET_HOOK_FN(destroy);
+   SET_HOOK_FN(promise_resolve);
+ #undef SET_HOOK_FN
++
++  {
++    Local<v8::Private> priv = v8::Private::New(env->isolate());
++    env->set_promise_wrap_private(priv);
++  }
+ }
+ 
+ static void SetPromiseHooks(const FunctionCallbackInfo<Value>& args) {
+@@ -535,6 +544,7 @@
+ }
+ 
+ void AsyncWrap::EmitTraceEventDestroy() {
++#if 0
+   switch (provider_type()) {
+   #define V(PROVIDER)                                                         \
+     case PROVIDER_ ## PROVIDER:                                               \
+@@ -547,6 +557,7 @@
+     default:
+       UNREACHABLE();
+   }
++#endif
+ }
+ 
+ void AsyncWrap::EmitDestroy(Environment* env, double async_id) {
+@@ -603,6 +614,7 @@
+     }
+   }
+ 
++#if 0
+   switch (provider_type()) {
+ #define V(PROVIDER)                                                           \
+     case PROVIDER_ ## PROVIDER:                                               \
+@@ -624,7 +636,7 @@
+     default:
+       UNREACHABLE();
+   }
+-
++#endif
+   if (silent) return;
+ 
+   EmitAsyncInit(env(), resource,
+diff -r -u --color up/node/src/env-inl.h nw/node/src/env-inl.h
+--- up/node/src/env-inl.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/env-inl.h	2023-09-19 20:50:37.121731718 +0000
+@@ -192,13 +192,23 @@
+ 
+ inline Environment* Environment::GetCurrent(
+     const v8::FunctionCallbackInfo<v8::Value>& info) {
+-  return GetCurrent(info.GetIsolate()->GetCurrentContext());
++  Environment* ret = GetCurrent(info.GetIsolate()->GetCurrentContext());
++  if (!ret) { //NWJS#7493: access node var directly from another context
++    node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++    return tls_ctx->env;
++  }
++  return ret;
+ }
+ 
+ template <typename T>
+ inline Environment* Environment::GetCurrent(
+     const v8::PropertyCallbackInfo<T>& info) {
+-  return GetCurrent(info.GetIsolate()->GetCurrentContext());
++  Environment* ret = GetCurrent(info.GetIsolate()->GetCurrentContext());
++  if (!ret) {
++    node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++    return tls_ctx->env;
++  }
++  return ret;
+ }
+ 
+ inline v8::Isolate* Environment::isolate() const {
+diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
+--- up/node/src/env.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/env.cc	2023-09-19 20:50:37.121731718 +0000
+@@ -61,6 +61,8 @@
+ using v8::Value;
+ using worker::Worker;
+ 
++extern bool node_is_nwjs;
++
+ int const ContextEmbedderTag::kNodeContextTag = 0x6e6f64;
+ void* const ContextEmbedderTag::kNodeContextTagPtr = const_cast<void*>(
+     static_cast<const void*>(&ContextEmbedderTag::kNodeContextTag));
+@@ -735,8 +737,8 @@
+         isolate_data->worker_context()->env()->builtin_loader());
+   } else if (isolate_data->snapshot_data() != nullptr) {
+     // ... otherwise, if a snapshot was provided, use its code cache.
+-    builtin_loader()->RefreshCodeCache(
+-        isolate_data->snapshot_data()->code_cache);
++    //builtin_loader()->RefreshCodeCache(
++    //    isolate_data->snapshot_data()->code_cache);
+   }
+ 
+   // We'll be creating new objects so make sure we've entered the context.
+@@ -774,16 +776,19 @@
+   inspector_agent_ = std::make_unique<inspector::Agent>(this);
+ #endif
+ 
++#if 0
+   if (tracing::AgentWriterHandle* writer = GetTracingAgentWriter()) {
+     trace_state_observer_ = std::make_unique<TrackingTraceStateObserver>(this);
+     if (TracingController* tracing_controller = writer->GetTracingController())
+       tracing_controller->AddTraceStateObserver(trace_state_observer_.get());
+   }
++#endif
+ 
+   destroy_async_id_list_.reserve(512);
+ 
+   performance_state_ = std::make_unique<performance::PerformanceState>(
+       isolate, MAYBE_FIELD_PTR(env_info, performance_state));
++#if 0
+ 
+   if (*TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED(
+           TRACING_CATEGORY_NODE1(environment)) != 0) {
+@@ -800,6 +805,7 @@
+                                       "args",
+                                       std::move(traced_value));
+   }
++#endif
+ 
+   if (options_->experimental_permission) {
+     permission()->EnablePermissions();
+@@ -833,7 +839,7 @@
+ void Environment::InitializeMainContext(Local<Context> context,
+                                         const EnvSerializeInfo* env_info) {
+   principal_realm_ = std::make_unique<PrincipalRealm>(
+-      this, context, MAYBE_FIELD_PTR(env_info, principal_realm));
++     this, context, MAYBE_FIELD_PTR(env_info, principal_realm), node_is_nwjs);
+   if (env_info != nullptr) {
+     DeserializeProperties(env_info);
+   }
+@@ -933,6 +939,7 @@
+ void Environment::InitializeLibuv() {
+   HandleScope handle_scope(isolate());
+   Context::Scope context_scope(context());
++  uv_initialized_ = true;
+ 
+   CHECK_EQ(0, uv_timer_init(event_loop(), timer_handle()));
+   uv_unref(reinterpret_cast<uv_handle_t*>(timer_handle()));
+@@ -1335,7 +1342,7 @@
+ }
+ 
+ void Environment::ToggleImmediateRef(bool ref) {
+-  if (started_cleanup_) return;
++  if (started_cleanup_|| !uv_initialized_) return;
+ 
+   if (ref) {
+     // Idle handle is needed only to stop the event loop from blocking in poll.
+diff -r -u --color up/node/src/env.h nw/node/src/env.h
+--- up/node/src/env.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/env.h	2023-09-19 20:50:37.121731718 +0000
+@@ -1004,6 +1004,7 @@
+   void TrackContext(v8::Local<v8::Context> context);
+   void UntrackContext(v8::Local<v8::Context> context);
+ 
++  bool uv_initialized_ = false;
+   std::list<binding::DLib> loaded_addons_;
+   v8::Isolate* const isolate_;
+   IsolateData* const isolate_data_;
+diff -r -u --color up/node/src/env_properties.h nw/node/src/env_properties.h
+--- up/node/src/env_properties.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/env_properties.h	2023-09-19 20:50:37.125731858 +0000
+@@ -360,6 +360,7 @@
+   V(microtask_queue_ctor_template, v8::FunctionTemplate)                       \
+   V(pipe_constructor_template, v8::FunctionTemplate)                           \
+   V(promise_wrap_template, v8::ObjectTemplate)                                 \
++  V(promise_wrap_private, v8::Private)                                         \
+   V(sab_lifetimepartner_constructor_template, v8::FunctionTemplate)            \
+   V(script_context_constructor_template, v8::FunctionTemplate)                 \
+   V(secure_context_constructor_template, v8::FunctionTemplate)                 \
+diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
+--- up/node/src/heap_utils.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/heap_utils.cc	2023-09-19 20:50:37.125731858 +0000
+@@ -346,9 +346,11 @@
+ inline void TakeSnapshot(Environment* env,
+                          v8::OutputStream* out,
+                          HeapProfiler::HeapSnapshotOptions options) {
++#if 0
+   HeapSnapshotPointer snapshot{
+       env->isolate()->GetHeapProfiler()->TakeHeapSnapshot(options)};
+   snapshot->Serialize(out, HeapSnapshot::kJSON);
++#endif
+ }
+ 
+ }  // namespace
+@@ -434,6 +436,7 @@
+ }
+ 
+ void CreateHeapSnapshotStream(const FunctionCallbackInfo<Value>& args) {
++#if 0
+   Environment* env = Environment::GetCurrent(args);
+   CHECK_EQ(args.Length(), 1);
+   auto options = GetHeapSnapshotOptions(args[0]);
+@@ -444,6 +447,7 @@
+       CreateHeapSnapshotStream(env, std::move(snapshot));
+   if (stream)
+     args.GetReturnValue().Set(stream->object());
++#endif
+ }
+ 
+ void TriggerHeapSnapshot(const FunctionCallbackInfo<Value>& args) {
+diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspector/node_inspector.gypi
+--- up/node/src/inspector/node_inspector.gypi	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/inspector/node_inspector.gypi	2023-09-19 20:50:37.125731858 +0000
+@@ -87,7 +87,7 @@
+       ],
+       'action': [
+         '<(python)',
+-        'tools/inspector_protocol/convert_protocol_to_json.py',
++        '../../v8/third_party/inspector_protocol/convert_protocol_to_json.py',
+         '<@(_inputs)',
+         '<@(_outputs)',
+       ],
+@@ -116,7 +116,7 @@
+     {
+       'action_name': 'concatenate_protocols',
+       'inputs': [
+-        '../../deps/v8/include/js_protocol.pdl',
++        #'../../../../v8/src/inspector/js_protocol.json',
+         '<(SHARED_INTERMEDIATE_DIR)/src/node_protocol.json',
+       ],
+       'outputs': [
+@@ -124,7 +124,7 @@
+       ],
+       'action': [
+         '<(python)',
+-        'tools/inspector_protocol/concatenate_protocols.py',
++        '../../v8/third_party/inspector_protocol/concatenate_protocols.py',
+         '<@(_inputs)',
+         '<@(_outputs)',
+       ],
+diff -r -u --color up/node/src/inspector/tracing_agent.cc nw/node/src/inspector/tracing_agent.cc
+--- up/node/src/inspector/tracing_agent.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/inspector/tracing_agent.cc	2023-09-19 20:50:37.125731858 +0000
+@@ -88,7 +88,7 @@
+   void AppendTraceEvent(
+       v8::platform::tracing::TraceObject* trace_event) override {
+     if (!json_writer_)
+-      json_writer_.reset(TraceWriter::CreateJSONTraceWriter(stream_, "value"));
++      json_writer_.reset(TraceWriter::CreateJSONTraceWriter(stream_));
+     json_writer_->AppendTraceEvent(trace_event);
+   }
+ 
+@@ -153,6 +153,7 @@
+   if (categories_set.empty())
+     return DispatchResponse::Error("At least one category should be enabled");
+ 
++#if 0
+   tracing::AgentWriterHandle* writer = GetTracingAgentWriter();
+   if (writer != nullptr) {
+     trace_writer_ =
+@@ -161,6 +162,7 @@
+                                        frontend_object_id_, main_thread_),
+                                    tracing::Agent::kIgnoreDefaultCategories);
+   }
++#endif
+   return DispatchResponse::OK();
+ }
+ 
+diff -r -u --color up/node/src/inspector_agent.cc nw/node/src/inspector_agent.cc
+--- up/node/src/inspector_agent.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/inspector_agent.cc	2023-09-19 20:50:37.125731858 +0000
+@@ -785,6 +785,9 @@
+ std::unique_ptr<InspectorSession> Agent::Connect(
+     std::unique_ptr<InspectorSessionDelegate> delegate,
+     bool prevent_shutdown) {
++  if (!client_)
++    return nullptr;
++
+   THROW_IF_INSUFFICIENT_PERMISSIONS(parent_env_,
+                                     permission::PermissionScope::kInspector,
+                                     "Connect",
+@@ -794,8 +797,6 @@
+     return std::unique_ptr<InspectorSession>{};
+   }
+ 
+-  CHECK_NOT_NULL(client_);
+-
+   int session_id = client_->connectFrontend(std::move(delegate),
+                                             prevent_shutdown);
+   return std::unique_ptr<InspectorSession>(
+diff -r -u --color up/node/src/inspector_js_api.cc nw/node/src/inspector_js_api.cc
+--- up/node/src/inspector_js_api.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/inspector_js_api.cc	2023-09-19 20:50:37.125731858 +0000
+@@ -94,6 +94,7 @@
+                        : AsyncWrap(env, wrap, PROVIDER_INSPECTORJSBINDING),
+                          callback_(env->isolate(), callback) {
+     Agent* inspector = env->inspector_agent();
++    if (inspector)
+     session_ = ConnectionType::Connect(
+         inspector, std::make_unique<JSBindingsSessionDelegate>(env, this));
+   }
+diff -r -u --color up/node/src/large_pages/node_large_page.cc nw/node/src/large_pages/node_large_page.cc
+--- up/node/src/large_pages/node_large_page.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/large_pages/node_large_page.cc	2023-09-19 20:50:37.129731997 +0000
+@@ -99,8 +99,8 @@
+ // This symbol must be declared weak because this file becomes part of all
+ // Node.js targets (like node_mksnapshot, node_mkcodecache, and cctest) and
+ // those files do not supply the symbol.
+-extern char __attribute__((weak)) __node_text_start;
+-extern char __start_lpstub;
++char __node_text_start;
++char __start_lpstub;
+ }  // extern "C"
+ #endif  // defined(__linux__) || defined(__FreeBSD__)
+ 
+diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
+--- up/node/src/node.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node.cc	2023-09-19 20:50:37.129731997 +0000
+@@ -44,12 +44,18 @@
+ #include "node_v8_platform-inl.h"
+ #include "node_version.h"
+ 
++#include <iostream>
++
++#include <vector>
++#include "node_webkit.h"
++
+ #if HAVE_OPENSSL
+ #include "node_crypto.h"
+ #endif
+ 
+ #if defined(NODE_HAVE_I18N_SUPPORT)
+ #include "node_i18n.h"
++#include <unicode/udata.h>
+ #endif
+ 
+ #if HAVE_INSPECTOR
+@@ -126,6 +132,10 @@
+ #include <tuple>
+ #include <vector>
+ 
++extern "C" {
++NODE_EXTERN void* g_get_node_env();
++}
++
+ namespace node {
+ 
+ using v8::EscapableHandleScope;
+@@ -136,6 +146,15 @@
+ using v8::V8;
+ using v8::Value;
+ 
++NODE_EXTERN v8::Persistent<v8::Context> g_context;
++NODE_EXTERN v8::Persistent<v8::Context> g_dom_context;
++static UVRunFn g_nw_uv_run = nullptr;
++static NWTickCallback g_nw_tick_callback = nullptr;
++static const char* g_native_blob_path = nullptr;
++bool node_is_nwjs = false;
++
++NODE_EXTERN void OnMessage(v8::Local<v8::Message> message, v8::Local<v8::Value> error);
++
+ namespace per_process {
+ 
+ // node_revert.h
+@@ -338,7 +357,7 @@
+     return StartExecution(env, "internal/main/watch_mode");
+   }
+ 
+-  if (!first_argv.empty() && first_argv != "-") {
++  if ((!first_argv.empty() && first_argv != "-") || node_is_nwjs) {
+     return StartExecution(env, "internal/main/run_main_module");
+   }
+ 
+@@ -794,11 +813,13 @@
+   // Register built-in bindings
+   binding::RegisterBuiltinBindings();
+ 
++  if (!node_is_nwjs) {
+   // Make inherited handles noninheritable.
+   if (!(flags & ProcessInitializationFlags::kEnableStdioInheritance) &&
+       !(flags & ProcessInitializationFlags::kNoStdioInitialization)) {
+     uv_disable_stdio_inheritance();
+   }
++  } //node_is_nwjs
+ 
+   // Cache the original command line to be
+   // used in diagnostic reports.
+@@ -848,7 +869,7 @@
+   if (!per_process::cli_options->title.empty())
+     uv_set_process_title(per_process::cli_options->title.c_str());
+ 
+-#if defined(NODE_HAVE_I18N_SUPPORT)
++#if 0 //defined(NODE_HAVE_I18N_SUPPORT)
+   if (!(flags & ProcessInitializationFlags::kNoICU)) {
+     // If the parameter isn't given, use the env variable.
+     if (per_process::cli_options->icu_data_dir.empty())
+@@ -899,6 +920,115 @@
+   return ExitCode::kNoFailure;
+ }
+ 
++#ifdef V8_USE_EXTERNAL_STARTUP_DATA
++// Helper class to load the startup data files from disk.
++//
++// This is meant as a convenience for stand-alone binaries like d8, cctest,
++// unittest. A V8 embedder would likely either handle startup data on their
++// own or just disable the feature if they don't want to handle it at all,
++// while tools like cctest need to work in either configuration. Hence this is
++// not meant for inclusion in the general v8 library.
++class StartupDataHandler {
++ public:
++  // Load startup data, and call the v8::V8::Set*DataBlob API functions.
++  //
++  // natives_blob and snapshot_blob will be loaded realitive to exec_path,
++  // which would usually be the equivalent of argv[0].
++  StartupDataHandler(const char* exec_path, const char* natives_blob,
++                     const char* snapshot_blob);
++  ~StartupDataHandler();
++
++ private:
++  static char* RelativePath(char** buffer, const char* exec_path,
++                            const char* name);
++
++  void LoadFromFiles(const char* natives_blob, const char* snapshot_blob);
++
++  void Load(const char* blob_file, v8::StartupData* startup_data,
++            void (*setter_fn)(v8::StartupData*));
++
++  v8::StartupData natives_;
++  v8::StartupData snapshot_;
++
++  // Disallow copy & assign.
++  StartupDataHandler(const StartupDataHandler& other);
++  void operator=(const StartupDataHandler& other);
++};
++
++StartupDataHandler::StartupDataHandler(const char* exec_path,
++                                       const char* natives_blob,
++                                       const char* snapshot_blob) {
++  // If we have (at least one) explicitly given blob, use those.
++  // If not, use the default blob locations next to the d8 binary.
++  if (natives_blob || snapshot_blob) {
++    LoadFromFiles(natives_blob, snapshot_blob);
++  } else {
++    char* natives;
++    char* snapshot;
++    LoadFromFiles(RelativePath(&natives, exec_path, "natives_blob.bin"),
++                  RelativePath(&snapshot, exec_path, "snapshot_blob.bin"));
++
++    free(natives);
++    free(snapshot);
++  }
++}
++
++
++StartupDataHandler::~StartupDataHandler() {
++  delete[] natives_.data;
++  delete[] snapshot_.data;
++}
++
++
++char* StartupDataHandler::RelativePath(char** buffer, const char* exec_path,
++                                       const char* name) {
++  const char* last_slash = strrchr(exec_path, '/');
++  if (last_slash) {
++    int after_slash = last_slash - exec_path + 1;
++    int name_length = static_cast<int>(strlen(name));
++    *buffer = reinterpret_cast<char*>(calloc(after_slash + name_length + 1, 1));
++    strncpy(*buffer, exec_path, after_slash);
++    strncat(*buffer, name, name_length);
++  } else {
++    *buffer = strdup(name);
++  }
++  return *buffer;
++}
++
++
++void StartupDataHandler::LoadFromFiles(const char* natives_blob,
++                                       const char* snapshot_blob) {
++  //Load(natives_blob, &natives_, v8::V8::SetNativesDataBlob);
++  Load(snapshot_blob, &snapshot_, v8::V8::SetSnapshotDataBlob);
++}
++
++
++void StartupDataHandler::Load(const char* blob_file,
++                              v8::StartupData* startup_data,
++                              void (*setter_fn)(v8::StartupData*)) {
++  startup_data->data = NULL;
++  startup_data->raw_size = 0;
++
++  if (!blob_file) return;
++
++  FILE* file = fopen(blob_file, "rb");
++  if (!file) return;
++
++  fseek(file, 0, SEEK_END);
++  startup_data->raw_size = ftell(file);
++  rewind(file);
++
++  startup_data->data = new char[startup_data->raw_size];
++  int read_size = static_cast<int>(fread(const_cast<char*>(startup_data->data),
++                                         1, startup_data->raw_size, file));
++  fclose(file);
++
++  if (startup_data->raw_size == read_size) (*setter_fn)(startup_data);
++}
++
++#endif  // V8_USE_EXTERNAL_STARTUP_DATA
++
++
+ int InitializeNodeWithArgs(std::vector<std::string>* argv,
+                            std::vector<std::string>* exec_argv,
+                            std::vector<std::string>* errors,
+@@ -932,9 +1062,9 @@
+     }
+   }
+ 
+-  if (!(flags & ProcessInitializationFlags::kNoUseLargePages) &&
+-      (per_process::cli_options->use_largepages == "on" ||
+-       per_process::cli_options->use_largepages == "silent")) {
++  if (false) { //!(flags & ProcessInitializationFlags::kNoUseLargePages) &&
++    //      (per_process::cli_options->use_largepages == "on" ||
++    //   per_process::cli_options->use_largepages == "silent")) {
+     int lp_result = node::MapStaticCodeToLargePages();
+     if (per_process::cli_options->use_largepages == "on" && lp_result != 0) {
+       result->errors_.emplace_back(node::LargePagesError(lp_result));
+@@ -1075,6 +1205,22 @@
+ #endif  // HAVE_OPENSSL && !defined(OPENSSL_IS_BORINGSSL)
+   }
+ 
++#ifdef V8_USE_EXTERNAL_STARTUP_DATA
++  std::string argv0 = args[0];
++  //StartupDataHandler startup_data(argv[0], nullptr, nullptr);
++#if defined(__APPLE__)
++  V8::InitializeExternalStartupData(g_native_blob_path);
++#else
++  V8::InitializeExternalStartupData(argv0.c_str());
++#endif
++#endif
++  V8::InitializeICUDefaultLocation(argv0.c_str());
++  UErrorCode err = U_ZERO_ERROR;
++  void* icu_data = V8::RawICUData();
++  if (icu_data)
++    udata_setCommonData((uint8_t*)icu_data, &err);
++
++
+   if (!(flags & ProcessInitializationFlags::kNoInitializeNodeV8Platform)) {
+     per_process::v8_platform.Initialize(
+         static_cast<int>(per_process::cli_options->v8_thread_pool_size));
+@@ -1085,7 +1231,7 @@
+     V8::Initialize();
+   }
+ 
+-  performance::performance_v8_start = PERFORMANCE_NOW();
++  //performance::performance_v8_start = PERFORMANCE_NOW();
+   per_process::v8_initialized = true;
+ 
+   return result;
+@@ -1305,6 +1451,10 @@
+   return 0;
+ }
+ 
++NODE_EXTERN v8::Handle<v8::Value> CallNWTickCallback(Environment* env, const v8::Handle<v8::Value> ret) {
++  return (*g_nw_tick_callback)(env, ret);
++}
++
+ }  // namespace node
+ 
+ #if !HAVE_INSPECTOR
+@@ -1312,3 +1462,460 @@
+ 
+ NODE_BINDING_CONTEXT_AWARE_INTERNAL(inspector, Initialize)
+ #endif  // !HAVE_INSPECTOR
++
++extern "C" {
++void wakeup_callback(uv_async_t* handle) {
++  // do nothing, just make libuv exit loop.
++}
++
++void idle_callback(uv_idle_t* handle) {
++  // do nothing, just make libuv exit loop.
++}
++
++void timer_callback(uv_timer_t* timer) {
++  // libuv would block unexpectedly with zero-timeout timer
++  // this is a workaround of libuv bug #574:
++  // https://github.com/joyent/libuv/issues/574
++  uv_idle_start(static_cast<uv_idle_t*>(timer->data), idle_callback);
++}
++
++void close_async_cb(uv_handle_t* handle) {
++  delete reinterpret_cast<uv_async_t*>(handle);
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (tls_ctx)
++    tls_ctx->close_async_handle_done = 1;
++}
++
++void close_timer_cb(uv_handle_t* handle) {
++  delete reinterpret_cast<uv_timer_t*>(handle);
++}
++
++void close_quit_timer_cb(uv_handle_t* handle) {
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (tls_ctx)
++    tls_ctx->close_quit_timer_done = 1;
++}
++
++void close_idle_cb(uv_handle_t* handle) {
++  delete reinterpret_cast<uv_idle_t*>(handle);
++}
++
++NODE_EXTERN int g_uv_run(void* loop, int mode) {
++  return uv_run((uv_loop_t*)loop, (uv_run_mode)mode);
++}
++
++NODE_EXTERN void g_set_uv_run(UVRunFn uv_run_fn) {
++  node::g_nw_uv_run = uv_run_fn;
++}
++
++NODE_EXTERN int g_node_start(int argc, char** argv) {
++  return node::Start(argc, argv);
++}
++
++NODE_EXTERN void g_set_blob_path(const char* path) {
++  node::g_native_blob_path = path;
++}
++
++NODE_EXTERN void g_msg_pump_nest_enter(msg_pump_context_t* ctx) {
++  ctx->loop = uv_loop_new();
++
++  //ctx->wakeup_events->push_back((uv_async_t*)ctx->wakeup_event);
++  ctx->wakeup_event = new uv_async_t;
++  uv_async_init((uv_loop_t*)ctx->loop, (uv_async_t*)ctx->wakeup_event, wakeup_callback);
++}
++
++NODE_EXTERN void g_msg_pump_pre_loop(msg_pump_context_t* ctx) {
++  ctx->idle_handle = new uv_idle_t;
++  uv_idle_init((uv_loop_t*)ctx->loop, (uv_idle_t*)ctx->idle_handle);
++
++  ctx->delay_timer = new uv_timer_t;
++  ((uv_timer_t*)ctx->delay_timer)->data = ctx->idle_handle;
++  uv_timer_init((uv_loop_t*)ctx->loop, (uv_timer_t*)ctx->delay_timer);
++}
++
++NODE_EXTERN void g_msg_pump_did_work(msg_pump_context_t* ctx) {
++  if (!node::thread_ctx_created) return;
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (tls_ctx && tls_ctx->env) {
++    v8::Isolate* isolate = tls_ctx->env->isolate();
++    if (!isolate)
++      return;
++    v8::HandleScope handleScope(isolate);
++    v8::Context::Scope cscope(tls_ctx->env->context());
++    (*node::g_nw_uv_run)((uv_loop_t*)ctx->loop, UV_RUN_NOWAIT);
++    node::CallNWTickCallback(tls_ctx->env, v8::Undefined(isolate));
++  }
++}
++
++NODE_EXTERN void g_msg_pump_need_work(msg_pump_context_t* ctx) {
++  node::thread_ctx_st* tls_ctx = nullptr;
++  if (node::thread_ctx_created) {
++    tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++    if (tls_ctx && tls_ctx->env) {
++      tls_ctx->env->context()->Enter();
++    }
++  }
++  (*node::g_nw_uv_run)((uv_loop_t*)ctx->loop, UV_RUN_ONCE);
++  if (tls_ctx && tls_ctx->env) {
++    tls_ctx->env->context()->Exit();
++  }
++}
++
++NODE_EXTERN void g_msg_pump_delay_work(msg_pump_context_t* ctx, int sec) {
++  node::thread_ctx_st* tls_ctx = nullptr;
++  if (node::thread_ctx_created) {
++    tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++    if (tls_ctx && tls_ctx->env) {
++      tls_ctx->env->context()->Enter();
++    }
++  }
++  uv_timer_start((uv_timer_t*)ctx->delay_timer, timer_callback, sec, 0);
++  (*node::g_nw_uv_run)((uv_loop_t*)ctx->loop, UV_RUN_ONCE);
++  uv_idle_stop((uv_idle_t*)ctx->idle_handle);
++  uv_timer_stop((uv_timer_t*)ctx->delay_timer);
++  if (tls_ctx && tls_ctx->env) {
++    tls_ctx->env->context()->Exit();
++  }
++}
++
++NODE_EXTERN void g_msg_pump_nest_leave(msg_pump_context_t* ctx) {
++  uv_close((uv_handle_t*)(ctx->wakeup_event), close_async_cb);
++  // Delete external loop.
++  uv_loop_close((uv_loop_t*)ctx->loop);
++  free((uv_loop_t*)ctx->loop);
++  ctx->loop = nullptr;
++    // // Restore previous async handle.
++  //ctx->wakeup_event = ctx->wakeup_events->back();
++  //ctx->wakeup_events->pop_back();
++}
++
++NODE_EXTERN uv_loop_t* g_uv_default_loop() {
++  return uv_default_loop();
++}
++
++NODE_EXTERN void g_msg_pump_clean_ctx(msg_pump_context_t* ctx) {
++  uv_close((uv_handle_t*)ctx->idle_handle, close_idle_cb);
++  uv_run((uv_loop_t*)ctx->loop, UV_RUN_NOWAIT);
++  ctx->idle_handle = nullptr;
++
++  uv_close((uv_handle_t*)ctx->delay_timer, close_timer_cb);
++  uv_run((uv_loop_t*)ctx->loop, UV_RUN_NOWAIT);
++  ctx->delay_timer = nullptr;
++}
++
++NODE_EXTERN void g_msg_pump_sched_work(uv_async_t* wakeup_event) {
++#ifdef _WIN32
++  uv_async_send_nw(wakeup_event);
++#else
++  uv_async_send(wakeup_event);
++#endif
++}
++
++NODE_EXTERN void g_msg_pump_ctor(uv_async_t** wakeup_event, int worker_support) {
++  uv_init_nw(worker_support);
++  node::g_worker_support = worker_support;
++  *wakeup_event = new uv_async_t;
++  uv_async_init(uv_default_loop(), *wakeup_event, wakeup_callback);
++  node::g_nw_uv_run = (UVRunFn)uv_run;
++}
++
++NODE_EXTERN void g_msg_pump_dtor(uv_async_t** wakeup_event) {
++  node::thread_ctx_st* tls_ctx = nullptr;
++  tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (tls_ctx)
++    tls_ctx->close_async_handle_done = 0;
++  uv_close(reinterpret_cast<uv_handle_t*>(*wakeup_event), close_async_cb);
++  while (tls_ctx && !tls_ctx->close_async_handle_done)
++    uv_run(uv_default_loop(), UV_RUN_NOWAIT);
++  uv_loop_close(uv_default_loop());
++  *wakeup_event = nullptr;
++  if (tls_ctx)
++    free(tls_ctx);
++  uv_key_set(&node::thread_ctx_key, NULL);
++}
++
++NODE_EXTERN bool g_is_node_initialized() {
++  return node::node_is_initialized;
++}
++
++NODE_EXTERN void g_call_tick_callback(node::Environment* env) {
++  if (!env->can_call_into_js())
++    return;
++  v8::HandleScope handle_scope(env->isolate());
++  v8::Context::Scope context_scope(env->context());
++
++  v8::Local<v8::Object> process = env->process_object();
++  node::InternalCallbackScope scope(env, process, {0, 0});
++}
++
++// copied beginning of Start() until v8::Initialize()
++NODE_EXTERN void g_setup_nwnode(int argc, char** argv, bool worker) {
++  node::per_process::node_start_time = static_cast<double>(uv_now(uv_default_loop()));
++  node::node_is_initialized = true;
++  node::node_is_nwjs = true;
++}
++
++static void walk_cb(uv_handle_t* handle, void* arg) {
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)arg;
++  if (uv_is_active(handle))
++    tls_ctx->handle_counter++;  
++}
++
++static void quit_timer_cb(uv_timer_t* timer) {
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  assert(tls_ctx);
++  tls_ctx->quit_flag = 1;
++  //std::cerr << "quit timer timeout";
++}
++
++NODE_EXTERN void g_stop_nw_instance() {
++  if (!node::g_worker_support)
++    return;
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (!tls_ctx) //NWJS#6615
++    return;
++  bool more;
++  uv_timer_t quit_timer;
++  uv_loop_t* loop = tls_ctx->env->event_loop();
++  uv_timer_init(loop, &quit_timer);
++  uv_timer_start(&quit_timer, quit_timer_cb, 10000, 0);
++  do {
++    tls_ctx->handle_counter = 0;
++    uv_walk(loop, walk_cb, tls_ctx);
++    //std::cerr << "handles: " << tls_ctx->handle_counter;
++    // quit timer and async hanle for loop wakeup
++    if (tls_ctx->handle_counter <= 2)
++      more = false;
++    else
++    //uv_print_active_handles(tls_ctx->env->event_loop(), stderr);
++      more = uv_run(loop, UV_RUN_ONCE);
++    if (more == false) {
++      node::EmitBeforeExit(tls_ctx->env);
++
++      // Emit `beforeExit` if the loop became alive either after emitting
++      // event, or after running some callbacks.
++      more = uv_loop_alive(loop);
++      if (uv_run(loop, UV_RUN_NOWAIT) != 0)
++        more = true;
++      tls_ctx->handle_counter = 0;
++      uv_walk(loop, walk_cb, tls_ctx);
++      //std::cerr << "handles: " << tls_ctx->handle_counter;
++      if (tls_ctx->handle_counter <= 2)
++        more = false;
++    }
++  } while (more == true && !tls_ctx->quit_flag);
++  uv_timer_stop(&quit_timer);
++  tls_ctx->close_quit_timer_done = 0;
++  uv_close(reinterpret_cast<uv_handle_t*>(&quit_timer), close_quit_timer_cb);
++  while (!tls_ctx->close_quit_timer_done)
++    uv_run(loop, UV_RUN_NOWAIT);
++  struct node::node_module* mp, *mp2;
++  for (mp = tls_ctx->modlist_builtin; mp != nullptr;) {
++    mp2 = mp->nm_link;
++    free(mp);
++    mp = mp2;
++  }
++  for (mp = tls_ctx->modlist_linked; mp != nullptr;) {
++    mp2 = mp->nm_link;
++    free(mp);
++    mp = mp2;
++  }
++  node::NodePlatform* platform = (node::NodePlatform*)tls_ctx->env->isolate_data()->platform();
++  v8::Isolate* isolate = tls_ctx->env->isolate();
++  node::FreeEnvironment(tls_ctx->env);
++  platform->UnregisterIsolate(isolate);
++  delete platform;
++  tls_ctx->env = nullptr;
++
++  //std::cerr << "QUIT LOOP" << std::endl;
++}
++
++NODE_EXTERN void g_start_nw_instance(int argc, char *argv[], v8::Handle<v8::Context> context, void* icu_data) {
++
++  UErrorCode err = U_ZERO_ERROR;
++  if (icu_data)
++    udata_setCommonData((uint8_t*)icu_data, &err);
++
++  v8::Isolate* isolate = v8::Isolate::GetCurrent();
++  v8::HandleScope handle_scope(isolate);
++  v8::Context::Scope context_scope(context);
++
++  argv = uv_setup_args(argc, argv);
++
++  if (!node::thread_ctx_created) {
++    node::thread_ctx_created = 1;
++    uv_key_create(&node::thread_ctx_key);
++  }
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (!tls_ctx) {
++    tls_ctx = (node::thread_ctx_st*)malloc(sizeof(node::thread_ctx_st));
++    memset(tls_ctx, 0, sizeof(node::thread_ctx_st));
++    uv_key_set(&node::thread_ctx_key, tls_ctx);
++    node::binding::RegisterBuiltinBindings();
++  }
++  node::NodePlatform* platform = new node::NodePlatform(node::per_process::cli_options->v8_thread_pool_size, new v8::TracingController());
++  platform->RegisterIsolate(isolate, uv_default_loop());
++  node::IsolateData* isolate_data = node::CreateIsolateData(isolate, uv_default_loop(), platform);
++  node::NewContext(isolate, v8::Local<v8::ObjectTemplate>(), false);
++  std::vector<std::string> args(argv, argv + argc);
++  std::vector<std::string> exec_args;
++  tls_ctx->env = node::CreateEnvironment(isolate_data, context, args, exec_args);
++  isolate->SetFatalErrorHandler(node::OnFatalError);
++  isolate->AddMessageListener(node::errors::PerIsolateMessageListener);
++  //isolate->SetAutorunMicrotasks(false);
++#if 0
++  const char* path = argc > 1 ? argv[1] : nullptr;
++  StartInspector(tls_ctx->env, path, node::debug_options);
++#endif
++  {
++    node::InternalCallbackScope callback_scope(
++          tls_ctx->env,
++          v8::Object::New(isolate),
++          { 1, 0 },
++          node::InternalCallbackScope::kSkipAsyncHooks);
++    node::LoadEnvironment(tls_ctx->env, node::StartExecutionCallback{});
++  }
++}
++
++NODE_EXTERN void g_set_nw_tick_callback(NWTickCallback tick_callback) {
++  node::g_nw_tick_callback = tick_callback;
++}
++
++NODE_EXTERN void* g_get_node_env() {
++  if (!node::thread_ctx_created)
++    return nullptr;
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  return tls_ctx->env;
++}
++
++NODE_EXTERN void g_get_node_context(v8::Local<v8::Context>* ret) {
++  *ret = v8::Local<v8::Context>::New(v8::Isolate::GetCurrent(), node::g_context);
++}
++
++NODE_EXTERN void g_set_node_context(v8::Isolate* isolate, v8::Local<v8::Context>* context) {
++  node::g_context.Reset(isolate, *context);
++}
++
++NODE_EXTERN void* g_get_current_env(v8::Handle<v8::Context> context) {
++  return node::Environment::GetCurrent(context);
++}
++
++NODE_EXTERN void g_emit_exit(node::Environment* env) {
++  node::EmitExit(env);
++}
++
++NODE_EXTERN void g_run_at_exit(node::Environment* env) {
++  node::RunAtExit(env);
++}
++
++NODE_EXTERN void g_promise_reject_callback(v8::PromiseRejectMessage* data) {
++  node::PromiseRejectCallback(*data);
++}
++
++NODE_EXTERN void g_uv_init_nw(int worker) {
++  uv_init_nw(worker);
++}
++
++#ifdef __APPLE__
++
++void UvNoOp(uv_async_t* handle) {
++}
++
++NODE_EXTERN bool g_nw_enter_dom() {
++  if (!node::thread_ctx_created)
++    return false;
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (tls_ctx && tls_ctx->env) {
++    v8::Isolate* isolate = tls_ctx->env->isolate();
++    v8::HandleScope handleScope(isolate);
++    v8::Local<v8::Context> context = isolate->GetEnteredOrMicrotaskContext();
++    if (context == tls_ctx->env->context()) {
++      context->Exit();
++      return true;
++    }
++  }
++  return false;
++}
++
++NODE_EXTERN void g_nw_leave_dom(bool reenter) {
++  if (!node::thread_ctx_created)
++    return;
++  node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++  if (reenter && tls_ctx && tls_ctx->env) {
++    v8::Isolate* isolate = tls_ctx->env->isolate();
++    v8::HandleScope handleScope(isolate);
++    tls_ctx->env->context()->Enter();
++  }
++}
++
++NODE_EXTERN void g_msg_pump_ctor_osx(msg_pump_context_t* ctx, void* EmbedThreadRunner, void* kevent_hook, void* data, int worker_support) {
++  uv_init_nw(worker_support);
++  node::g_worker_support = worker_support;
++  // Add dummy handle for libuv, otherwise libuv would quit when there is
++  // nothing to do.
++  ctx->dummy_uv_handle = new uv_async_t;
++  uv_async_init(uv_default_loop(), (uv_async_t*)ctx->dummy_uv_handle, UvNoOp);
++
++  // Start worker that will interrupt main loop when having uv events.
++  ctx->embed_sem = new uv_sem_t;
++  uv_sem_init((uv_sem_t*)ctx->embed_sem, 0);
++  ctx->embed_thread = new uv_thread_t;
++  uv_thread_create((uv_thread_t*)ctx->embed_thread, (uv_thread_cb)EmbedThreadRunner, data);
++
++  uv_loop_t* uvloop = uv_default_loop();
++  uvloop->keventfunc = kevent_hook;
++
++  ctx->loop = uvloop;
++
++  // Execute loop for once.
++  uv_run(uv_default_loop(), UV_RUN_NOWAIT);
++  node::g_nw_uv_run = (UVRunFn)uv_run;
++}
++
++NODE_EXTERN void g_msg_pump_dtor_osx(msg_pump_context_t* ctx) {
++  uv_thread_join((uv_thread_t*)ctx->embed_thread);
++
++  delete (uv_async_t*)ctx->dummy_uv_handle;
++  ctx->dummy_uv_handle = nullptr;
++
++  delete (uv_sem_t*)ctx->embed_sem;
++  ctx->embed_sem = nullptr;
++
++  delete (uv_thread_t*)ctx->embed_thread;
++  ctx->embed_thread = nullptr;
++}
++
++NODE_EXTERN int g_nw_uvrun_nowait() {
++  return (*node::g_nw_uv_run)(uv_default_loop(), UV_RUN_NOWAIT);
++}
++
++NODE_EXTERN int g_uv_runloop_once() {
++  if (node::thread_ctx_created) {
++    node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)uv_key_get(&node::thread_ctx_key);
++    if (tls_ctx && tls_ctx->env) {
++      v8::Isolate* isolate = tls_ctx->env->isolate();
++      v8::HandleScope handleScope(isolate);
++      v8::Context::Scope cscope(tls_ctx->env->context());
++      return (*node::g_nw_uv_run)(uv_default_loop(), UV_RUN_ONCE);
++    }
++  }
++  return (*node::g_nw_uv_run)(uv_default_loop(), UV_RUN_ONCE);
++}
++
++NODE_EXTERN int g_uv_backend_timeout() {
++  return  uv_backend_timeout(uv_default_loop());
++}
++
++NODE_EXTERN void g_uv_sem_post(msg_pump_context_t* ctx) {
++  uv_sem_post((uv_sem_t*)ctx->embed_sem);
++}
++
++NODE_EXTERN int g_uv_backend_fd() {
++  return uv_backend_fd(uv_default_loop());
++}
++
++NODE_EXTERN void g_uv_sem_wait(msg_pump_context_t* ctx) {
++  uv_sem_wait((uv_sem_t*)ctx->embed_sem);
++}
++#endif
++}
+diff -r -u --color up/node/src/node.h nw/node/src/node.h
+--- up/node/src/node.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node.h	2023-09-19 20:50:37.129731997 +0000
+@@ -586,7 +586,7 @@
+ NODE_EXTERN v8::Local<v8::Context> NewContext(
+     v8::Isolate* isolate,
+     v8::Local<v8::ObjectTemplate> object_template =
+-        v8::Local<v8::ObjectTemplate>());
++    v8::Local<v8::ObjectTemplate>(), bool create = true);
+ 
+ // Runs Node.js-specific tweaks on an already constructed context
+ // Return value indicates success of operation
+@@ -1174,6 +1174,13 @@
+     }                                                                 \
+   }
+ 
++#define NODE_MODULE_REF(modname)                \
++  extern void _node_ref_ ## modname();
++
++#define NODE_MODULE_REF2(modname)                                      \
++  _node_ref_ ## modname();
++
++
+ #define NODE_MODULE_CONTEXT_AWARE_X(modname, regfunc, priv, flags)    \
+   extern "C" {                                                        \
+     static node::node_module _module =                                \
+@@ -1191,6 +1198,9 @@
+     NODE_C_CTOR(_register_ ## modname) {                              \
+       node_module_register(&_module);                                 \
+     }                                                                 \
++  }                                                                   \
++  void _node_ref_ ## modname() { \
++    node_module_register(&_module); \
+   }
+ 
+ // Usage: `NODE_MODULE(NODE_GYP_MODULE_NAME, InitializerFunction)`
+diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
+--- up/node/src/node_binding.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_binding.cc	2023-09-19 20:50:37.129731997 +0000
+@@ -1,3 +1,4 @@
++#include "uv.h"
+ #include "node_binding.h"
+ #include <atomic>
+ #include "env-inl.h"
+@@ -249,21 +250,40 @@
+ static node_module* modlist_linked;
+ static thread_local node_module* thread_local_modpending;
+ 
++uv_key_t thread_ctx_key;
++int thread_ctx_created = 0;
++int g_worker_support = 0;
++
+ // This is set by node::Init() which is used by embedders
+ bool node_is_initialized = false;
+ 
+ extern "C" void node_module_register(void* m) {
+-  struct node_module* mp = reinterpret_cast<struct node_module*>(m);
++  struct node_module* mp;
++  if (g_worker_support) {
++    mp = (struct node_module*)malloc(sizeof(struct node_module));
++    memcpy(mp, m, sizeof(struct node_module));
++  } else
++    mp = reinterpret_cast<struct node_module*>(m);
++  if (!thread_ctx_created) {
++    thread_ctx_created = 1;
++    uv_key_create(&thread_ctx_key);
++  }
++  thread_ctx_st* tls_ctx = (struct thread_ctx_st*)uv_key_get(&thread_ctx_key);
++  if (!tls_ctx) {
++    tls_ctx = (struct thread_ctx_st*)malloc(sizeof(struct thread_ctx_st));
++    memset(tls_ctx, 0, sizeof(struct thread_ctx_st));
++    uv_key_set(&thread_ctx_key, tls_ctx);
++  }
+ 
+   if (mp->nm_flags & NM_F_INTERNAL) {
+-    mp->nm_link = modlist_internal;
+-    modlist_internal = mp;
++    mp->nm_link = tls_ctx->modlist_internal;
++    tls_ctx->modlist_internal = mp;
+   } else if (!node_is_initialized) {
+     // "Linked" modules are included as part of the node project.
+     // Like builtins they are registered *before* node::Init runs.
+     mp->nm_flags = NM_F_LINKED;
+-    mp->nm_link = modlist_linked;
+-    modlist_linked = mp;
++    mp->nm_link = tls_ctx->modlist_linked;
++    tls_ctx->modlist_linked = mp;
+   } else {
+     thread_local_modpending = mp;
+   }
+@@ -432,6 +452,7 @@
+   auto context = env->context();
+ 
+   CHECK_NULL(thread_local_modpending);
++  thread_ctx_st* tls_ctx = (struct thread_ctx_st*)uv_key_get(&thread_ctx_key);
+ 
+   if (args.Length() < 2) {
+     return THROW_ERR_MISSING_ARGS(
+@@ -500,7 +521,9 @@
+         return true;
+       } else {
+         mp = dlib->GetSavedModuleFromGlobalHandleMap();
+-        if (mp == nullptr || mp->nm_context_register_func == nullptr) {
++        //NWJS: the checking of context aware module is not needed
++        //since this is supported in NW worker
++        if (mp == nullptr) { // || mp->nm_context_register_func == nullptr) {
+           dlib->Close();
+           THROW_ERR_DLOPEN_FAILED(
+               env, "Module did not self-register: '%s'.", *filename);
+@@ -540,6 +563,7 @@
+ 
+     // Do not keep the lock while running userland addon loading code.
+     Mutex::ScopedUnlock unlock(lock);
++
+     if (mp->nm_context_register_func != nullptr) {
+       mp->nm_context_register_func(exports, module, context, mp->nm_priv);
+     } else if (mp->nm_register_func != nullptr) {
+@@ -627,7 +651,8 @@
+   node::Utf8Value module_v(isolate, module);
+   Local<Object> exports;
+ 
+-  node_module* mod = FindModule(modlist_internal, *module_v, NM_F_INTERNAL);
++  thread_ctx_st* tls_ctx = (struct thread_ctx_st*)uv_key_get(&thread_ctx_key);
++  node_module* mod = FindModule(tls_ctx->modlist_internal, *module_v, NM_F_INTERNAL);
+   if (mod != nullptr) {
+     exports = InitInternalBinding(realm, mod);
+     realm->internal_bindings.insert(mod);
+diff -r -u --color up/node/src/node_binding.h nw/node/src/node_binding.h
+--- up/node/src/node_binding.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_binding.h	2023-09-19 20:50:37.129731997 +0000
+@@ -91,6 +91,22 @@
+ // Globals per process
+ // This is set by node::Init() which is used by embedders
+ extern bool node_is_initialized;
++extern int g_worker_support;
++extern int thread_ctx_created;
++extern uv_key_t thread_ctx_key;
++
++struct thread_ctx_st {
++  node::Environment* env;
++  node::node_module* modpending;
++  node::node_module* modlist_builtin;
++  node::node_module* modlist_linked;
++  node::node_module* modlist_addon;
++  node::node_module* modlist_internal;
++  int handle_counter;
++  int quit_flag;
++  int close_quit_timer_done;
++  int close_async_handle_done;
++};
+ 
+ namespace binding {
+ 
+diff -r -u --color up/node/src/node_buffer.cc nw/node/src/node_buffer.cc
+--- up/node/src/node_buffer.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_buffer.cc	2023-09-19 20:50:37.129731997 +0000
+@@ -122,7 +122,7 @@
+       ArrayBuffer::NewBackingStore(data, length, [](void*, size_t, void* arg) {
+         static_cast<CallbackInfo*>(arg)->OnBackingStoreFree();
+       }, self);
+-  Local<ArrayBuffer> ab = ArrayBuffer::New(env->isolate(), std::move(bs));
++  Local<ArrayBuffer> ab = ArrayBuffer::NewNode(env->isolate(), std::move(bs));
+ 
+   // V8 simply ignores the BackingStore deleter callback if data == nullptr,
+   // but our API contract requires it being called.
+@@ -1178,7 +1178,7 @@
+                                      sizeof(*zero_fill_field),
+                                      [](void*, size_t, void*) {},
+                                      nullptr);
+-    ab = ArrayBuffer::New(env->isolate(), std::move(backing));
++    ab = ArrayBuffer::NewNode(env->isolate(), std::move(backing));
+   }
+ 
+   ab->SetPrivate(
+diff -r -u --color up/node/src/node_builtins.cc nw/node/src/node_builtins.cc
+--- up/node/src/node_builtins.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_builtins.cc	2023-09-19 20:50:37.129731997 +0000
+@@ -282,7 +282,7 @@
+     }
+   }
+ 
+-  const bool has_cache = cached_data.data != nullptr;
++  const bool has_cache = false; //cached_data.data != nullptr;
+   ScriptCompiler::CompileOptions options =
+       has_cache ? ScriptCompiler::kConsumeCodeCache
+                 : ScriptCompiler::kNoCompileOptions;
+@@ -336,6 +336,7 @@
+                                                                : "is accepted");
+   }
+ 
++#if 0
+   if (*result == Result::kWithoutCache) {
+     // We failed to accept this cache, maybe because it was rejected, maybe
+     // because it wasn't present. Either way, we'll attempt to replace this
+@@ -350,6 +351,7 @@
+           id, BuiltinCodeCacheData(std::move(new_cached_data)));
+     }
+   }
++#endif
+ 
+   return scope.Escape(fun);
+ }
+diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
+--- up/node/src/node_contextify.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_contextify.cc	2023-09-19 20:50:37.133732137 +0000
+@@ -33,6 +33,7 @@
+ #include "util-inl.h"
+ 
+ namespace node {
++extern bool node_is_nwjs;
+ namespace contextify {
+ 
+ using errors::TryCatchScope;
+@@ -262,6 +263,11 @@
+   // the context from its constructor.
+   v8_context->SetEmbedderData(ContextEmbedderIndex::kSandboxObject,
+                               sandbox_obj);
++  if (node_is_nwjs) {
++    void* data = env->context()->GetAlignedPointerFromEmbedderData(2); //v8ContextPerContextDataIndex
++    v8_context->SetAlignedPointerInEmbedderData(2, data);
++    v8_context->SetAlignedPointerInEmbedderData(50, (void*)0x08110800);
++  }
+ 
+   // Delegate the code generation validation to
+   // node::ModifyCodeGenerationFromStrings.
+@@ -806,6 +812,7 @@
+   ContextifyScript* contextify_script =
+       new ContextifyScript(env, args.This());
+ 
++#if 0
+   if (*TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED(
+           TRACING_CATEGORY_NODE2(vm, script)) != 0) {
+     Utf8Value fn(isolate, filename);
+@@ -814,6 +821,7 @@
+                        "filename",
+                        TRACE_STR_COPY(*fn));
+   }
++#endif
+ 
+   ScriptCompiler::CachedData* cached_data = nullptr;
+   if (!cached_data_buf.IsEmpty()) {
+diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
+--- up/node/src/node_errors.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_errors.cc	2023-09-19 20:50:37.133732137 +0000
+@@ -34,6 +34,8 @@
+ using v8::Undefined;
+ using v8::Value;
+ 
++extern bool node_is_nwjs;
++
+ bool IsExceptionDecorated(Environment* env, Local<Value> er) {
+   if (!er.IsEmpty() && er->IsObject()) {
+     Local<Object> err_obj = er.As<Object>();
+@@ -1119,9 +1121,12 @@
+     // error is supposed to be thrown at this point.
+     // Since we don't have access to Environment here, there is not
+     // much we can do, so we just print whatever is useful and crash.
++#if 0
+     PrintToStderrAndFlush(
+         FormatCaughtException(isolate, context, error, message));
+     Abort();
++#endif
++    return;
+   }
+ 
+   // Invoke process._fatalException() to give user a chance to handle it.
+@@ -1129,16 +1134,17 @@
+   // monkey-patchable.
+   Local<Object> process_object = env->process_object();
+   Local<String> fatal_exception_string = env->fatal_exception_string();
+-  Local<Value> fatal_exception_function =
++  Local<Value> fatal_exception_function_value =
+       process_object->Get(env->context(),
+                           fatal_exception_string).ToLocalChecked();
+   // If the exception happens before process._fatalException is attached
+   // during bootstrap, or if the user has patched it incorrectly, exit
+   // the current Node.js instance.
+-  if (!fatal_exception_function->IsFunction()) {
++  int exit_code = 0;
++  if (!fatal_exception_function_value->IsFunction()) {
+     ReportFatalException(
+         env, error, message, EnhanceFatalException::kDontEnhance);
+-    env->Exit(ExitCode::kInvalidFatalExceptionMonkeyPatching);
++    exit_code = (int)ExitCode::kInvalidFatalExceptionMonkeyPatching;
+     return;
+   }
+ 
+@@ -1156,7 +1162,7 @@
+     Local<Value> argv[2] = { error,
+                              Boolean::New(env->isolate(), from_promise) };
+ 
+-    maybe_handled = fatal_exception_function.As<Function>()->Call(
++    maybe_handled = fatal_exception_function_value.As<Function>()->Call(
+         env->context(), process_object, arraysize(argv), argv);
+   }
+ 
+@@ -1185,7 +1191,10 @@
+ 
+   // If the global uncaught exception handler sets process.exitCode,
+   // exit with that code. Otherwise, exit with `ExitCode::kGenericUserError`.
+-  env->Exit(env->exit_code(ExitCode::kGenericUserError));
++  exit_code = (int)env->exit_code(ExitCode::kGenericUserError);
++  if (!node_is_nwjs && exit_code) {
++    exit(exit_code);
++  }
+ }
+ 
+ void TriggerUncaughtException(Isolate* isolate, const v8::TryCatch& try_catch) {
+diff -r -u --color up/node/src/node_file.cc nw/node/src/node_file.cc
+--- up/node/src/node_file.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_file.cc	2023-09-19 20:50:37.133732137 +0000
+@@ -991,9 +991,9 @@
+   } else {  // access(path, mode, undefined, ctx)
+     CHECK_EQ(argc, 4);
+     FSReqWrapSync req_wrap_sync;
+-    FS_SYNC_TRACE_BEGIN(access);
++    //FS_SYNC_TRACE_BEGIN(access);
+     SyncCall(env, args[3], &req_wrap_sync, "access", uv_fs_access, *path, mode);
+-    FS_SYNC_TRACE_END(access);
++    //FS_SYNC_TRACE_END(access);
+   }
+ }
+ 
+diff -r -u --color up/node/src/node_http2.cc nw/node/src/node_http2.cc
+--- up/node/src/node_http2.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_http2.cc	2023-09-19 20:50:37.133732137 +0000
+@@ -630,6 +630,7 @@
+ 
+ void Http2Stream::EmitStatistics() {
+   CHECK_NOT_NULL(session());
++#if 0
+   if (LIKELY(!HasHttp2Observer(env())))
+     return;
+ 
+@@ -647,9 +648,11 @@
+     if (HasHttp2Observer(env))
+       entry->Notify(env);
+   });
++#endif
+ }
+ 
+ void Http2Session::EmitStatistics() {
++#if 0
+   if (LIKELY(!HasHttp2Observer(env())))
+     return;
+ 
+@@ -667,6 +670,7 @@
+     if (HasHttp2Observer(env))
+       entry->Notify(env);
+   });
++#endif
+ }
+ 
+ // Closes the session and frees the associated resources
+diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
+--- up/node/src/node_internals.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_internals.h	2023-09-19 20:50:37.137732277 +0000
+@@ -55,6 +55,8 @@
+ // Forward declaration
+ class Environment;
+ 
++NODE_EXTERN v8::Handle<v8::Value> CallTickCallback(Environment* env, const v8::Handle<v8::Value> ret);
++
+ // Convert a struct sockaddr to a { address: '1.2.3.4', port: 1234 } JS object.
+ // Sets address and port properties on the info object and returns it.
+ // If |info| is omitted, a new object is returned.
+@@ -108,6 +110,7 @@
+   void* AllocateUninitialized(size_t size) override;
+   void Free(void* data, size_t size) override;
+   void* Reallocate(void* data, size_t old_size, size_t size) override;
++  void Free(void* data, size_t size, AllocationMode mode) override;
+   virtual void RegisterPointer(void* data, size_t size) {
+     total_mem_usage_.fetch_add(size, std::memory_order_relaxed);
+   }
+diff -r -u --color up/node/src/node_main_instance.cc nw/node/src/node_main_instance.cc
+--- up/node/src/node_main_instance.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_main_instance.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -30,6 +30,8 @@
+ using v8::Local;
+ using v8::Locker;
+ 
++extern bool node_is_nwjs;
++
+ NodeMainInstance::NodeMainInstance(const SnapshotData* snapshot_data,
+                                    uv_loop_t* event_loop,
+                                    MultiIsolatePlatform* platform,
+@@ -43,6 +45,8 @@
+       isolate_data_(),
+       isolate_params_(std::make_unique<Isolate::CreateParams>()),
+       snapshot_data_(snapshot_data) {
++  if (node_is_nwjs)
++    array_buffer_allocator_.reset();
+   isolate_params_->array_buffer_allocator = array_buffer_allocator_.get();
+ 
+   isolate_ =
+diff -r -u --color up/node/src/node_messaging.cc nw/node/src/node_messaging.cc
+--- up/node/src/node_messaging.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_messaging.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -313,6 +313,14 @@
+   SerializerDelegate(Environment* env, Local<Context> context, Message* m)
+       : env_(env), context_(context), msg_(m) {}
+ 
++  void* ReallocateBufferMemory(void* old_buffer, size_t size, size_t* actual_size) override {
++    *actual_size = size;
++    return realloc(old_buffer, size);
++  }
++
++  void FreeBufferMemory(void* buffer) override {
++    free(buffer);
++  }
+   void ThrowDataCloneError(Local<String> message) override {
+     ThrowDataCloneException(context_, message);
+   }
+diff -r -u --color up/node/src/node_metadata.cc nw/node/src/node_metadata.cc
+--- up/node/src/node_metadata.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_metadata.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -23,7 +23,8 @@
+ #endif
+ #endif  // HAVE_OPENSSL
+ 
+-#ifdef OPENSSL_INFO_QUIC
++#if 0
++//#ifdef OPENSSL_INFO_QUIC
+ #include <ngtcp2/version.h>
+ #include <nghttp3/version.h>
+ #endif
+@@ -114,7 +115,7 @@
+   unicode = U_UNICODE_VERSION;
+ #endif  // NODE_HAVE_I18N_SUPPORT
+ 
+-#ifdef OPENSSL_INFO_QUIC
++#if 0 //def OPENSSL_INFO_QUIC
+   ngtcp2 = NGTCP2_VERSION;
+   nghttp3 = NGHTTP3_VERSION;
+ #endif
+diff -r -u --color up/node/src/node_options.cc nw/node/src/node_options.cc
+--- up/node/src/node_options.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_options.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -982,8 +982,8 @@
+             &PerProcessOptions::trace_sigint,
+             kAllowedInEnvvar);
+ 
+-  Insert(iop, &PerProcessOptions::get_per_isolate_options);
+-
++  //Insert(iop, &PerProcessOptions::get_per_isolate_options);
++#if 0
+   AddOption("--node-memory-debug",
+             "Run with extra debug checks for memory leaks in Node.js itself",
+             NoOp{},
+@@ -995,6 +995,7 @@
+             "Generate a blob that can be embedded into the single executable "
+             "application",
+             &PerProcessOptions::experimental_sea_config);
++#endif
+ }
+ 
+ inline std::string RemoveBrackets(const std::string& host) {
+diff -r -u --color up/node/src/node_perf.cc nw/node/src/node_perf.cc
+--- up/node/src/node_perf.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_perf.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -90,10 +90,12 @@
+ 
+ void PerformanceState::Mark(PerformanceMilestone milestone, uint64_t ts) {
+   this->milestones[milestone] = static_cast<double>(ts);
++#if 0
+   TRACE_EVENT_INSTANT_WITH_TIMESTAMP0(
+       TRACING_CATEGORY_NODE1(bootstrap),
+       GetPerformanceMilestoneName(milestone),
+       TRACE_EVENT_SCOPE_THREAD, ts / 1000);
++#endif
+ }
+ 
+ // Allows specific Node.js lifecycle milestones to be set from JavaScript
+@@ -203,6 +205,7 @@
+ 
+ static void InstallGarbageCollectionTracking(
+     const FunctionCallbackInfo<Value>& args) {
++#if 0
+   Environment* env = Environment::GetCurrent(args);
+   // Reset current_gc_type to 0
+   env->performance_state()->current_gc_type = 0;
+@@ -211,6 +214,7 @@
+   env->isolate()->AddGCEpilogueCallback(MarkGarbageCollectionEnd,
+                                         static_cast<void*>(env));
+   env->AddCleanupHook(GarbageCollectionCleanupHook, env);
++#endif
+ }
+ 
+ static void RemoveGarbageCollectionTracking(
+diff -r -u --color up/node/src/node_platform.cc nw/node/src/node_platform.cc
+--- up/node/src/node_platform.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_platform.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -345,8 +345,8 @@
+   // TODO(addaleax): It's a bit icky that we use global state here, but we can't
+   // really do anything about it unless V8 starts exposing a way to access the
+   // current v8::Platform instance.
+-  SetTracingController(tracing_controller_);
+-  DCHECK_EQ(GetTracingController(), tracing_controller_);
++  //SetTracingController(tracing_controller_);
++  //DCHECK_EQ(GetTracingController(), tracing_controller_);
+ 
+   thread_pool_size = GetActualThreadPoolSize(thread_pool_size);
+   worker_thread_task_runner_ =
+diff -r -u --color up/node/src/node_process.h nw/node/src/node_process.h
+--- up/node/src/node_process.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_process.h	2023-09-19 20:50:37.137732277 +0000
+@@ -42,7 +42,7 @@
+                                               const char* warning,
+                                               const char* deprecation_code);
+ 
+-v8::MaybeLocal<v8::Object> CreateProcessObject(Realm* env);
++v8::MaybeLocal<v8::Object> CreateProcessObject(Realm* env, bool node_is_nwjs);
+ void PatchProcessObject(const v8::FunctionCallbackInfo<v8::Value>& args);
+ 
+ namespace process {
+diff -r -u --color up/node/src/node_process_object.cc nw/node/src/node_process_object.cc
+--- up/node/src/node_process_object.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_process_object.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -78,7 +78,7 @@
+   info.GetReturnValue().Set(uv_os_getppid());
+ }
+ 
+-MaybeLocal<Object> CreateProcessObject(Realm* realm) {
++MaybeLocal<Object> CreateProcessObject(Realm* realm, bool node_is_nwjs) {
+   Isolate* isolate = realm->isolate();
+   EscapableHandleScope scope(isolate);
+   Local<Context> context = realm->context();
+@@ -93,6 +93,8 @@
+   }
+ 
+   // process[exit_info_private_symbol]
++  if (node_is_nwjs)
++    READONLY_PROPERTY(process, "__nwjs", Integer::New(realm->env()->isolate(), 1));
+   if (process
+           ->SetPrivate(context,
+                        realm->env()->exit_info_private_symbol(),
+diff -r -u --color up/node/src/node_realm.cc nw/node/src/node_realm.cc
+--- up/node/src/node_realm.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_realm.cc	2023-09-19 20:50:37.137732277 +0000
+@@ -18,8 +18,8 @@
+ using v8::String;
+ using v8::Value;
+ 
+-Realm::Realm(Environment* env, v8::Local<v8::Context> context, Kind kind)
+-    : env_(env), isolate_(context->GetIsolate()), kind_(kind) {
++Realm::Realm(Environment* env, v8::Local<v8::Context> context, Kind kind, bool nwjs)
++    : nwjs_(nwjs), env_(env), isolate_(context->GetIsolate()), kind_(kind) {
+   context_.Reset(isolate_, context);
+   env->AssignToContext(context, this, ContextInfo(""));
+ }
+@@ -79,7 +79,7 @@
+   // process. Distinguish them and create process object only in the principal
+   // realm.
+   Local<Object> process_object =
+-      node::CreateProcessObject(this).FromMaybe(Local<Object>());
++      node::CreateProcessObject(this, nwjs_).FromMaybe(Local<Object>());
+   set_process_object(process_object);
+ }
+ 
+@@ -295,8 +295,8 @@
+ 
+ PrincipalRealm::PrincipalRealm(Environment* env,
+                                v8::Local<v8::Context> context,
+-                               const RealmSerializeInfo* realm_info)
+-    : Realm(env, context, kPrincipal) {
++                               const RealmSerializeInfo* realm_info, bool nwjs)
++  : Realm(env, context, kPrincipal, nwjs) {
+   // Create properties if not deserializing from snapshot.
+   // Or the properties are deserialized with DeserializeProperties() when the
+   // env drained the deserialize requests.
+diff -r -u --color up/node/src/node_realm.h nw/node/src/node_realm.h
+--- up/node/src/node_realm.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_realm.h	2023-09-19 20:50:37.137732277 +0000
+@@ -55,7 +55,7 @@
+   template <typename T>
+   static inline Realm* GetCurrent(const v8::PropertyCallbackInfo<T>& info);
+ 
+-  Realm(Environment* env, v8::Local<v8::Context> context, Kind kind);
++  Realm(Environment* env, v8::Local<v8::Context> context, Kind kind, bool nwjs = false);
+ 
+   Realm(const Realm&) = delete;
+   Realm& operator=(const Realm&) = delete;
+@@ -132,6 +132,7 @@
+ 
+   virtual v8::MaybeLocal<v8::Value> BootstrapRealm() = 0;
+ 
++  bool nwjs_ = false;
+   Environment* env_;
+   // Shorthand for isolate pointer.
+   v8::Isolate* isolate_;
+@@ -161,7 +162,7 @@
+  public:
+   PrincipalRealm(Environment* env,
+                  v8::Local<v8::Context> context,
+-                 const RealmSerializeInfo* realm_info);
++                 const RealmSerializeInfo* realm_info, bool nodejs);
+   ~PrincipalRealm();
+ 
+   SET_MEMORY_INFO_NAME(PrincipalRealm)
+diff -r -u --color up/node/src/node_trace_events.cc nw/node/src/node_trace_events.cc
+--- up/node/src/node_trace_events.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_trace_events.cc	2023-09-19 20:50:37.141732416 +0000
+@@ -76,6 +76,7 @@
+ }
+ 
+ void NodeCategorySet::Enable(const FunctionCallbackInfo<Value>& args) {
++#if 0
+   NodeCategorySet* category_set;
+   ASSIGN_OR_RETURN_UNWRAP(&category_set, args.Holder());
+   CHECK_NOT_NULL(category_set);
+@@ -87,9 +88,14 @@
+     GetTracingAgentWriter()->Enable(categories);
+     category_set->enabled_ = true;
+   }
++#endif
++}
++
++void Dummy(const FunctionCallbackInfo<Value>& args) {
+ }
+ 
+ void NodeCategorySet::Disable(const FunctionCallbackInfo<Value>& args) {
++#if 0
+   NodeCategorySet* category_set;
+   ASSIGN_OR_RETURN_UNWRAP(&category_set, args.Holder());
+   CHECK_NOT_NULL(category_set);
+@@ -98,9 +104,11 @@
+     GetTracingAgentWriter()->Disable(categories);
+     category_set->enabled_ = false;
+   }
++#endif
+ }
+ 
+ void GetEnabledCategories(const FunctionCallbackInfo<Value>& args) {
++#if 0
+   Environment* env = Environment::GetCurrent(args);
+   std::string categories =
+       GetTracingAgentWriter()->agent()->GetEnabledCategories();
+@@ -111,6 +119,7 @@
+                           NewStringType::kNormal,
+                           categories.size()).ToLocalChecked());
+   }
++#endif
+ }
+ 
+ static void SetTraceCategoryStateUpdateHandler(
+@@ -154,6 +163,7 @@
+                   .Check();
+   target->Set(context, trace,
+               binding->Get(context, trace).ToLocalChecked()).Check();
++  SetMethod(context, target, "trace", Dummy);
+ }
+ 
+ void NodeCategorySet::RegisterExternalReferences(
+diff -r -u --color up/node/src/node_types.cc nw/node/src/node_types.cc
+--- up/node/src/node_types.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_types.cc	2023-09-19 20:50:37.141732416 +0000
+@@ -38,7 +38,6 @@
+   V(Proxy)                                                                    \
+   V(ModuleNamespaceObject)                                                    \
+ 
+-
+ #define V(type) \
+   static void Is##type(const FunctionCallbackInfo<Value>& args) {             \
+     args.GetReturnValue().Set(args[0]->Is##type());                           \
+diff -r -u --color up/node/src/node_v8_platform-inl.h nw/node/src/node_v8_platform-inl.h
+--- up/node/src/node_v8_platform-inl.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_v8_platform-inl.h	2023-09-19 20:50:37.145732556 +0000
+@@ -18,6 +18,7 @@
+ 
+ namespace node {
+ 
++#if 0
+ // Ensures that __metadata trace events are only emitted
+ // when tracing is enabled.
+ class NodeTraceStateObserver
+@@ -80,6 +81,7 @@
+  private:
+   v8::TracingController* controller_;
+ };
++#endif
+ 
+ struct V8Platform {
+   bool initialized_ = false;
+@@ -88,6 +90,7 @@
+   inline void Initialize(int thread_pool_size) {
+     CHECK(!initialized_);
+     initialized_ = true;
++#if 0
+     tracing_agent_ = std::make_unique<tracing::Agent>();
+     node::tracing::TraceEventHelper::SetAgent(tracing_agent_.get());
+     node::tracing::TracingController* controller =
+@@ -103,6 +106,10 @@
+     // Tracing must be initialized before platform threads are created.
+     platform_ = new NodePlatform(thread_pool_size, controller);
+     v8::V8::InitializePlatform(platform_);
++#endif
++    tracing_agent_.reset(nullptr);
++    platform_ = new NodePlatform(thread_pool_size, new v8::TracingController());
++    v8::V8::InitializePlatform(platform_);
+   }
+   // Make sure V8Platform don not call into Libuv threadpool,
+   // see DefaultProcessExitHandlerInternal in environment.cc
+@@ -110,7 +117,7 @@
+     if (!initialized_)
+       return;
+     initialized_ = false;
+-    node::tracing::TraceEventHelper::SetAgent(nullptr);
++    //node::tracing::TraceEventHelper::SetAgent(nullptr);
+     StopTracingAgent();
+     platform_->Shutdown();
+     delete platform_;
+@@ -119,7 +126,7 @@
+     // stopped.
+     tracing_agent_.reset(nullptr);
+     // The observer remove itself in OnTraceEnabled
+-    trace_state_observer_.reset(nullptr);
++    //trace_state_observer_.reset(nullptr);
+   }
+ 
+   inline void DrainVMTasks(v8::Isolate* isolate) {
+@@ -127,6 +134,7 @@
+   }
+ 
+   inline void StartTracingAgent() {
++#if 0
+     constexpr auto convert_to_set =
+         [](std::vector<std::string_view> categories) -> std::set<std::string> {
+       std::set<std::string> out;
+@@ -149,9 +157,10 @@
+                   per_process::cli_options->trace_event_file_pattern)),
+           tracing::Agent::kUseDefaultCategories);
+     }
++#endif
+   }
+ 
+-  inline void StopTracingAgent() { tracing_file_writer_.reset(); }
++  inline void StopTracingAgent() {} // tracing_file_writer_.reset(); }
+ 
+   inline tracing::AgentWriterHandle* GetTracingAgentWriter() {
+     return &tracing_file_writer_;
+@@ -159,7 +168,7 @@
+ 
+   inline NodePlatform* Platform() { return platform_; }
+ 
+-  std::unique_ptr<NodeTraceStateObserver> trace_state_observer_;
++  //std::unique_ptr<NodeTraceStateObserver> trace_state_observer_;
+   std::unique_ptr<tracing::Agent> tracing_agent_;
+   tracing::AgentWriterHandle tracing_file_writer_;
+   NodePlatform* platform_;
+Only in nw/node/src: node_webkit.h
+diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
+--- up/node/src/node_worker.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/node_worker.cc	2023-09-19 20:50:37.145732556 +0000
+@@ -177,7 +177,7 @@
+     isolate->AddNearHeapLimitCallback(Worker::NearHeapLimit, w);
+ 
+     {
+-      Locker locker(isolate);
++      //Locker locker(isolate);
+       Isolate::Scope isolate_scope(isolate);
+       // V8 computes its stack limit the first time a `Locker` is used based on
+       // --stack-size. Reset it to the correct value.
+@@ -283,13 +283,15 @@
+ 
+   Debug(this, "Creating isolate for worker with id %llu", thread_id_.id);
+ 
++  v8::SetTLSPlatform(platform_);
++
+   WorkerThreadData data(this);
+   if (isolate_ == nullptr) return;
+   CHECK(data.loop_is_usable());
+ 
+   Debug(this, "Starting worker with id %llu", thread_id_.id);
+   {
+-    Locker locker(isolate_);
++    //Locker locker(isolate_);
+     Isolate::Scope isolate_scope(isolate_);
+     SealHandleScope outer_seal(isolate_);
+ 
+@@ -349,6 +351,10 @@
+       }
+ 
+       if (is_stopped()) return;
++      node::thread_ctx_st* tls_ctx = (node::thread_ctx_st*)malloc(sizeof(node::thread_ctx_st));
++      memset(tls_ctx, 0, sizeof(node::thread_ctx_st));
++      uv_key_set(&node::thread_ctx_key, tls_ctx);
++      node::binding::RegisterBuiltinBindings();
+       CHECK(!context.IsEmpty());
+       Context::Scope context_scope(context);
+       {
+Only in nw/node/src/res: node-nw.rc
+diff -r -u --color up/node/src/tracing/agent.h nw/node/src/tracing/agent.h
+--- up/node/src/tracing/agent.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/tracing/agent.h	2023-09-19 20:50:37.149732696 +0000
+@@ -84,7 +84,7 @@
+ class Agent {
+  public:
+   Agent();
+-  ~Agent();
++  ~Agent() {}
+ 
+   TracingController* GetTracingController() {
+     TracingController* controller = tracing_controller_.get();
+@@ -156,8 +156,8 @@
+ };
+ 
+ void AgentWriterHandle::reset() {
+-  if (agent_ != nullptr)
+-    agent_->Disconnect(id_);
++  //if (agent_ != nullptr)
++  //  agent_->Disconnect(id_);
+   agent_ = nullptr;
+ }
+ 
+diff -r -u --color up/node/src/tracing/trace_event.h nw/node/src/tracing/trace_event.h
+--- up/node/src/tracing/trace_event.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/tracing/trace_event.h	2023-09-19 20:50:37.153732835 +0000
+@@ -5,6 +5,9 @@
+ #ifndef SRC_TRACING_TRACE_EVENT_H_
+ #define SRC_TRACING_TRACE_EVENT_H_
+ 
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wunused-value"
++
+ #include "v8-platform.h"
+ #include "tracing/agent.h"
+ #include "trace_event_common.h"
+@@ -69,8 +72,7 @@
+ // for best performance when tracing is disabled.
+ // const uint8_t*
+ //     TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED(const char* category_group)
+-#define TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED              \
+-  node::tracing::TraceEventHelper::GetCategoryGroupEnabled
++#define TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED 
+ 
+ // Get the number of times traces have been recorded. This is used to implement
+ // the TRACE_EVENT_IS_NEW_TRACE facility.
+@@ -90,7 +92,7 @@
+ //                    const uint8_t* arg_types,
+ //                    const uint64_t* arg_values,
+ //                    unsigned int flags)
+-#define TRACE_EVENT_API_ADD_TRACE_EVENT node::tracing::AddTraceEventImpl
++#define TRACE_EVENT_API_ADD_TRACE_EVENT //node::tracing::AddTraceEventImpl
+ 
+ // Add a trace event to the platform tracing system.
+ // uint64_t TRACE_EVENT_API_ADD_TRACE_EVENT_WITH_TIMESTAMP(
+@@ -106,18 +108,15 @@
+ //                    const uint64_t* arg_values,
+ //                    unsigned int flags,
+ //                    int64_t timestamp)
+-#define TRACE_EVENT_API_ADD_TRACE_EVENT_WITH_TIMESTAMP \
+-  node::tracing::AddTraceEventWithTimestampImpl
++#define TRACE_EVENT_API_ADD_TRACE_EVENT_WITH_TIMESTAMP
++  //  node::tracing::AddTraceEventWithTimestampImpl
+ 
+ // Set the duration field of a COMPLETE trace event.
+ // void TRACE_EVENT_API_UPDATE_TRACE_EVENT_DURATION(
+ //     const uint8_t* category_group_enabled,
+ //     const char* name,
+ //     uint64_t id)
+-#define TRACE_EVENT_API_UPDATE_TRACE_EVENT_DURATION                           \
+-  if (auto controller =                                                       \
+-         node::tracing::TraceEventHelper::GetTracingController())             \
+-      controller->UpdateTraceEventDuration
++#define TRACE_EVENT_API_UPDATE_TRACE_EVENT_DURATION  
+ 
+ // Adds a metadata event to the trace log. The |AppendValueAsTraceFormat| method
+ // on the convertable value will be called at flush time.
+@@ -152,8 +151,9 @@
+ // configuration for each isolate,
+ // https://code.google.com/p/v8/issues/detail?id=4563
+ #define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO_CUSTOM_VARIABLES(             \
+-    category_group, atomic, category_group_enabled)                          \
+-  category_group_enabled =                                                   \
++    category_group, atomic, category_group_enabled)
++#if 0
++category_group_enabled =                                                \
+       reinterpret_cast<const uint8_t*>(TRACE_EVENT_API_ATOMIC_LOAD(atomic)); \
+   if (!category_group_enabled) {                                             \
+     category_group_enabled =                                                 \
+@@ -162,6 +162,7 @@
+         atomic, reinterpret_cast<TRACE_EVENT_API_ATOMIC_WORD_VALUE>(         \
+                     category_group_enabled));                                \
+   }
++#endif
+ 
+ #define INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(category_group)             \
+   static TRACE_EVENT_API_ATOMIC_WORD INTERNAL_TRACE_EVENT_UID(atomic) {0}; \
+@@ -172,7 +173,8 @@
+ 
+ // Implementation detail: internal macro to create static category and add
+ // event if the category is enabled.
+-#define INTERNAL_TRACE_EVENT_ADD(phase, category_group, name, flags, ...)    \
++#define INTERNAL_TRACE_EVENT_ADD(phase, category_group, name, flags, ...)
++#if 0
+   do {                                                                       \
+     INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(category_group);                  \
+     if (INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE()) {  \
+@@ -182,7 +184,7 @@
+           node::tracing::kNoId, flags, ##__VA_ARGS__);                       \
+     }                                                                        \
+   } while (0)
+-
++#endif
+ // Implementation detail: internal macro to create static category and add begin
+ // event if the category is enabled. Also adds the end event when the scope
+ // ends.
+@@ -221,7 +223,8 @@
+ // Implementation detail: internal macro to create static category and add
+ // event if the category is enabled.
+ #define INTERNAL_TRACE_EVENT_ADD_WITH_ID(phase, category_group, name, id,      \
+-                                         flags, ...)                           \
++                                         flags, ...)                           
++#if 0
+   do {                                                                         \
+     INTERNAL_TRACE_EVENT_GET_CATEGORY_INFO(category_group);                    \
+     if (INTERNAL_TRACE_EVENT_CATEGORY_GROUP_ENABLED_FOR_RECORDING_MODE()) {    \
+@@ -234,6 +237,7 @@
+           node::tracing::kNoId, trace_event_flags, ##__VA_ARGS__);             \
+     }                                                                          \
+   } while (0)
++#endif
+ 
+ // Adds a trace event with a given timestamp.
+ #define INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP(phase, category_group, name, \
+@@ -455,6 +459,7 @@
+   const char* str_;
+ };
+ 
++#if 0
+ static inline uint64_t AddTraceEventImpl(
+     char phase, const uint8_t* category_group_enabled, const char* name,
+     const char* scope, uint64_t id, uint64_t bind_id, int32_t num_args,
+@@ -500,6 +505,7 @@
+       phase, category_group_enabled, name, scope, id, bind_id, num_args,
+       arg_names, arg_types, arg_values, arg_convertables, flags, timestamp);
+ }
++#endif
+ 
+ static V8_INLINE void AddMetadataEventImpl(
+     const uint8_t* category_group_enabled, const char* name, int32_t num_args,
+@@ -717,4 +723,6 @@
+ }  // namespace tracing
+ }  // namespace node
+ 
++#pragma clang diagnostic pop
++
+ #endif  // SRC_TRACING_TRACE_EVENT_H_
+diff -r -u --color up/node/src/tracing/trace_event_common.h nw/node/src/tracing/trace_event_common.h
+--- up/node/src/tracing/trace_event_common.h	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/tracing/trace_event_common.h	2023-09-19 20:50:37.153732835 +0000
+@@ -382,10 +382,7 @@
+   INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_MARK, category_group, name, \
+                            TRACE_EVENT_FLAG_COPY)
+ 
+-#define TRACE_EVENT_COPY_MARK_WITH_TIMESTAMP(category_group, name, timestamp) \
+-  INTERNAL_TRACE_EVENT_ADD_WITH_TIMESTAMP(                                    \
+-      TRACE_EVENT_PHASE_MARK, category_group, name, timestamp,                \
+-      TRACE_EVENT_FLAG_COPY)
++#define TRACE_EVENT_COPY_MARK_WITH_TIMESTAMP(category_group, name, timestamp)
+ 
+ // Similar to TRACE_EVENT_ENDx but with a custom |at| timestamp provided.
+ // - |id| is used to match the _BEGIN event with the _END event.
+@@ -726,6 +723,8 @@
+   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_NESTABLE_ASYNC_BEGIN, \
+                                    category_group, name, id,               \
+                                    TRACE_EVENT_FLAG_NONE)
++#undef TRACE_EVENT_NESTABLE_ASYNC_BEGIN0
++#define TRACE_EVENT_NESTABLE_ASYNC_BEGIN0(category_group, name, id)
+ #define TRACE_EVENT_NESTABLE_ASYNC_BEGIN1(category_group, name, id, arg1_name, \
+                                           arg1_val)                            \
+   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_NESTABLE_ASYNC_BEGIN,     \
+@@ -743,6 +742,8 @@
+   INTERNAL_TRACE_EVENT_ADD_WITH_ID(TRACE_EVENT_PHASE_NESTABLE_ASYNC_END, \
+                                    category_group, name, id,             \
+                                    TRACE_EVENT_FLAG_NONE)
++#undef TRACE_EVENT_NESTABLE_ASYNC_END0
++#define TRACE_EVENT_NESTABLE_ASYNC_END0(category_group, name, id)
+ // Records a single NESTABLE_ASYNC_END event called "name" immediately, with 1
+ // associated argument. If the category is not enabled, then this does nothing.
+ #define TRACE_EVENT_NESTABLE_ASYNC_END1(category_group, name, id, arg1_name, \
+@@ -813,15 +814,9 @@
+       TRACE_EVENT_PHASE_NESTABLE_ASYNC_INSTANT, category_group, name, id, \
+       TRACE_EVENT_API_CURRENT_THREAD_ID, timestamp, TRACE_EVENT_FLAG_NONE)
+ #define TRACE_EVENT_COPY_NESTABLE_ASYNC_BEGIN_WITH_TIMESTAMP0(          \
+-    category_group, name, id, timestamp)                                \
+-  INTERNAL_TRACE_EVENT_ADD_WITH_ID_TID_AND_TIMESTAMP(                   \
+-      TRACE_EVENT_PHASE_NESTABLE_ASYNC_BEGIN, category_group, name, id, \
+-      TRACE_EVENT_API_CURRENT_THREAD_ID, timestamp, TRACE_EVENT_FLAG_COPY)
++    category_group, name, id, timestamp)
+ #define TRACE_EVENT_COPY_NESTABLE_ASYNC_END_WITH_TIMESTAMP0(          \
+-    category_group, name, id, timestamp)                              \
+-  INTERNAL_TRACE_EVENT_ADD_WITH_ID_TID_AND_TIMESTAMP(                 \
+-      TRACE_EVENT_PHASE_NESTABLE_ASYNC_END, category_group, name, id, \
+-      TRACE_EVENT_API_CURRENT_THREAD_ID, timestamp, TRACE_EVENT_FLAG_COPY)
++    category_group, name, id, timestamp)                              
+ 
+ // Records a single FLOW_BEGIN event called "name" immediately, with 0, 1 or 2
+ // associated arguments. If the category is not enabled, then this
+@@ -933,8 +928,8 @@
+ 
+ // TRACE_EVENT_METADATA* events are information related to other
+ // injected events, not events in their own right.
+-#define TRACE_EVENT_METADATA1(category_group, name, arg1_name, arg1_val) \
+-  INTERNAL_TRACE_EVENT_METADATA_ADD(category_group, name, arg1_name, arg1_val)
++#define TRACE_EVENT_METADATA1(category_group, name, arg1_name, arg1_val) 
++//  INTERNAL_TRACE_EVENT_METADATA_ADD(category_group, name, arg1_name, arg1_val)
+ 
+ // Records a clock sync event.
+ #define TRACE_EVENT_CLOCK_SYNC_RECEIVER(sync_id)                               \
+diff -r -u --color up/node/src/util.cc nw/node/src/util.cc
+--- up/node/src/util.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/src/util.cc	2023-09-19 20:50:37.153732835 +0000
+@@ -610,11 +610,13 @@
+ 
+ Local<String> UnionBytes::ToStringChecked(Isolate* isolate) const {
+   if (is_one_byte()) {
+-    return String::NewExternalOneByte(isolate, one_byte_resource_)
+-        .ToLocalChecked();
++    return v8::String::NewFromOneByte(isolate, (const uint8_t *)one_byte_resource_->data(),
++				      v8::NewStringType::kNormal,
++				      one_byte_resource_->length()).ToLocalChecked();
+   } else {
+-    return String::NewExternalTwoByte(isolate, two_byte_resource_)
+-        .ToLocalChecked();
++    return v8::String::NewFromTwoByte(isolate, two_byte_resource_->data(),
++				      v8::NewStringType::kNormal,
++				      two_byte_resource_->length()).ToLocalChecked();
+   }
+ }
+ 
+diff -r -u --color up/node/tools/gyp/pylib/gyp/generator/ninja.py nw/node/tools/gyp/pylib/gyp/generator/ninja.py
+--- up/node/tools/gyp/pylib/gyp/generator/ninja.py	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/tools/gyp/pylib/gyp/generator/ninja.py	2023-09-19 20:50:37.697751823 +0000
+@@ -89,8 +89,12 @@
+         # cl.exe replaces literal # characters with = in preprocessor definitions for
+         # some reason. Octal-encode to work around that.
+         d = d.replace("#", "\\%03o" % ord("#"))
+-    return QuoteShellArgument(ninja_syntax.escape("-D" + d), flavor)
+-
++    ret = QuoteShellArgument(ninja_syntax.escape("-D" + d), flavor)
++    if flavor == "win" :
++        if re.match(r".*MODULESDIR.*", ret) :
++            ret = ret.replace("\\", "\\\\")
++            ret = ret.replace("\\\\\"", "\\\"")
++    return ret
+ 
+ def AddArch(output, arch):
+     """Adds an arch string to an output path."""
+diff -r -u --color up/node/tools/js2c.cc nw/node/tools/js2c.cc
+--- up/node/tools/js2c.cc	2023-08-09 13:21:04.000000000 +0000
++++ nw/node/tools/js2c.cc	2023-09-19 20:50:37.713752381 +0000
+@@ -340,7 +340,9 @@
+   return WriteFileSync(out, dest.c_str());
+ }
+ 
+-std::string GetFileId(const std::string& filename) {
++std::string GetFileId(const std::string& fn) {
++  std::string filename = fn;
++  std::replace(filename.begin(), filename.end(), '\\', '/');
+   size_t end = filename.size();
+   size_t start = 0;
+   std::string prefix;
+@@ -369,7 +371,7 @@
+   size_t length = result.size();
+ 
+   for (size_t i = 0; i < length; ++i) {
+-    if (result[i] == '.' || result[i] == '-' || result[i] == '/') {
++    if (result[i] == '.' || result[i] == '-' || result[i] == '/' || result[i] == '\\') {
+       result[i] = '_';
+     }
+   }
