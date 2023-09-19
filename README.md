@@ -1,4 +1,6 @@
-# nw-patches
+# NW.js Patches
+
+Understand how NW.js changes upstream behaviour.
 
 Versions:
 
