@@ -10,7 +10,7 @@ CHROMIUM_URI="https://github.com/chromium/chromium"
 CHROMIUM_VER="117.0.5938.63"
 
 NODE_URI="https://github.com/nodejs/node"
-NODE_VER="20.5.1"
+NODE_VER="20.7.0"
 
 V8_URI="https://github.com/v8/v8"
 V8_VER="11.7.439.16"
