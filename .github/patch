@@ -7,7 +7,7 @@ NW_VER=82
 UP_DIR="up"
 
 CHROMIUM_URI="https://github.com/chromium/chromium"
-CHROMIUM_VER="119.0.6045.105"
+CHROMIUM_VER="119.0.6045.160"
 
 NODE_URI="https://github.com/nodejs/node"
 NODE_VER="21.1.0"
