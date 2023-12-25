@@ -4,7 +4,7 @@ Understand how NW.js changes upstream behaviour.
 
 Versions:
 
-- NW: 0.82.x
-- Chromium: 119.0.6045.160
+- NW: 0.83.0
+- Chromium: 120.0.6099.129
 - Node: 21.1.0
-- V8: 11.9.169.6
+- V8: 12.0.267.10
