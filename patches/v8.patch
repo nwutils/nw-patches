@@ -1,7 +1,7 @@
 Only in nw/v8: .git
 diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
---- up/v8/BUILD.gn	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/BUILD.gn	2024-04-11 17:51:36.757696524 +0000
+--- up/v8/BUILD.gn	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/BUILD.gn	2024-04-28 03:11:20.264498192 +0000
 @@ -57,7 +57,7 @@
    v8_deprecation_warnings = true
  
@@ -18,9 +18,9 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
 -  v8_enable_sandbox = ""
 +  v8_enable_sandbox = false
  
-   # Expose the memory corruption API to JavaScript. Useful for testing the sandbox.
-   # WARNING This will expose builtins that (by design) cause memory corruption.
-@@ -364,7 +364,7 @@
+   # Enable the memory corruption API. Useful for testing the sandbox.
+   # The memory corruption API is only exposed to JavaScript if sandbox testing
+@@ -366,7 +366,7 @@
    v8_enable_map_packing = false
  
    # Allow for JS promise hooks (instead of just C++).
@@ -29,7 +29,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
  
    # Allow embedder data to be saved on continuations. Used to support
    # TaskAttribution and `scheduler.yield()`.
-@@ -385,7 +385,7 @@
+@@ -387,7 +387,7 @@
    # Enable legacy mode for ScriptOrModule's lifetime. By default it's a
    # temporary object, if enabled it will be kept alive by the parent Script.
    # This is only used by nodejs.
@@ -38,7 +38,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
  
    # Enables pointer compression for 8GB heaps.
    # Sets -DV8_COMPRESS_POINTERS_8GB.
-@@ -749,7 +749,7 @@
+@@ -753,7 +753,7 @@
  
  config("internal_config") {
    defines = []
@@ -47,7 +47,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
    # Only targets in this file and its subdirs can depend on this.
    visibility = [ "./*" ]
  
-@@ -762,7 +762,8 @@
+@@ -766,7 +766,8 @@
  
    if (is_component_build) {
      defines += [ "BUILDING_V8_SHARED_PRIVATE" ]
@@ -57,7 +57,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
      defines += [ "BUILDING_V8_SHARED" ]
    }
  
-@@ -771,6 +772,10 @@
+@@ -775,6 +776,10 @@
        libs = [ "atomic" ]
      }
    }
@@ -68,7 +68,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
  }
  
  # Should be applied to all targets that write trace events.
-@@ -787,14 +792,14 @@
+@@ -791,14 +796,14 @@
  # This config should be applied to code using the libplatform.
  config("libplatform_config") {
    include_dirs = [ "include" ]
@@ -85,7 +85,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
      defines = [ "USING_V8_BASE_SHARED" ]
    }
    libs = []
-@@ -836,7 +841,10 @@
+@@ -840,7 +845,10 @@
      defines += [
        "USING_V8_SHARED",
        "USING_V8_SHARED_PRIVATE",
@@ -96,7 +96,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
    }
  
    if (current_cpu == "riscv64" || current_cpu == "riscv32") {
-@@ -2802,6 +2810,8 @@
+@@ -2822,6 +2830,8 @@
    visibility = [
      ":*",
      "test/cctest:*",
@@ -105,7 +105,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
    ]
  
    allow_circular_includes_from = [ ":torque_generated_initializers" ]
-@@ -6236,7 +6246,8 @@
+@@ -6293,7 +6303,8 @@
    ]
  }
  
@@ -115,7 +115,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
    sources = [
      "src/base/abort-mode.cc",
      "src/base/abort-mode.h",
-@@ -6375,7 +6386,7 @@
+@@ -6431,7 +6442,7 @@
  
    defines = []
  
@@ -124,7 +124,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
      defines = [ "BUILDING_V8_BASE_SHARED" ]
    }
  
-@@ -6535,7 +6546,7 @@
+@@ -6591,7 +6602,7 @@
    }
  }
  
@@ -133,7 +133,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
    sources = [
      "//base/trace_event/common/trace_event_common.h",
      "include/libplatform/libplatform-export.h",
-@@ -6568,7 +6579,7 @@
+@@ -6624,7 +6635,7 @@
  
    configs = [ ":internal_config_base" ]
  
@@ -142,7 +142,7 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
      defines = [ "BUILDING_V8_PLATFORM_SHARED" ]
    }
  
-@@ -7010,6 +7021,25 @@
+@@ -7066,6 +7077,25 @@
  ###############################################################################
  # Executables
  #
@@ -169,8 +169,8 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
  if (current_toolchain == v8_generator_toolchain) {
    v8_executable("bytecode_builtins_list_generator") {
 diff -r -u --color up/v8/gni/v8.gni nw/v8/gni/v8.gni
---- up/v8/gni/v8.gni	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/gni/v8.gni	2024-04-11 17:51:36.757696524 +0000
+--- up/v8/gni/v8.gni	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/gni/v8.gni	2024-04-28 03:11:20.264498192 +0000
 @@ -179,7 +179,7 @@
  # If chromium is configured to use the perfetto client library, v8 should also
  # use perfetto for tracing.
@@ -180,7 +180,7 @@ diff -r -u --color up/v8/gni/v8.gni nw/v8/gni/v8.gni
  }
  
  # Includes profiles to optimize builtins if
-@@ -321,6 +321,15 @@
+@@ -324,6 +324,15 @@
    }
  }
  
@@ -198,8 +198,8 @@ diff -r -u --color up/v8/gni/v8.gni nw/v8/gni/v8.gni
      import("//build/config/ios/rules.gni")
 Only in nw/v8: gypfiles
 diff -r -u --color up/v8/include/libplatform/libplatform.h nw/v8/include/libplatform/libplatform.h
---- up/v8/include/libplatform/libplatform.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/libplatform/libplatform.h	2024-04-11 17:51:36.761696531 +0000
+--- up/v8/include/libplatform/libplatform.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/libplatform/libplatform.h	2024-04-28 03:11:20.268498187 +0000
 @@ -41,7 +41,7 @@
   * multiple task queues executed by threads different system-level priorities
   * (where available) to schedule tasks.
@@ -229,8 +229,8 @@ diff -r -u --color up/v8/include/libplatform/libplatform.h nw/v8/include/libplat
                                       double idle_time_in_seconds);
  
 diff -r -u --color up/v8/include/libplatform/v8-tracing.h nw/v8/include/libplatform/v8-tracing.h
---- up/v8/include/libplatform/v8-tracing.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/libplatform/v8-tracing.h	2024-04-11 17:51:36.761696531 +0000
+--- up/v8/include/libplatform/v8-tracing.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/libplatform/v8-tracing.h	2024-04-28 03:11:20.268498187 +0000
 @@ -34,7 +34,7 @@
  
  const int kTraceMaxNumArgs = 2;
@@ -250,8 +250,8 @@ diff -r -u --color up/v8/include/libplatform/v8-tracing.h nw/v8/include/libplatf
        char phase, const uint8_t* category_enabled_flag, const char* name,
        const char* scope, uint64_t id, uint64_t bind_id, int num_args,
 diff -r -u --color up/v8/include/v8-array-buffer.h nw/v8/include/v8-array-buffer.h
---- up/v8/include/v8-array-buffer.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-array-buffer.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-array-buffer.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-array-buffer.h	2024-04-28 03:11:20.268498187 +0000
 @@ -186,7 +186,8 @@
       * while kReservation is for larger allocations with the ability to set
       * access permissions.
@@ -281,8 +281,8 @@ diff -r -u --color up/v8/include/v8-array-buffer.h nw/v8/include/v8-array-buffer
     * Detaches this ArrayBuffer and all its views (typed arrays).
     * Detaching sets the byte length of the buffer and all typed arrays to zero,
 diff -r -u --color up/v8/include/v8-debug.h nw/v8/include/v8-debug.h
---- up/v8/include/v8-debug.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-debug.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-debug.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-debug.h	2024-04-28 03:11:20.272498183 +0000
 @@ -130,6 +130,8 @@
      kDetailed = kOverview | kIsEval | kIsConstructor | kScriptNameOrSourceURL
    };
@@ -293,8 +293,8 @@ diff -r -u --color up/v8/include/v8-debug.h nw/v8/include/v8-debug.h
     * Returns a StackFrame at a particular index.
     */
 diff -r -u --color up/v8/include/v8-initialization.h nw/v8/include/v8-initialization.h
---- up/v8/include/v8-initialization.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-initialization.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-initialization.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-initialization.h	2024-04-28 03:11:20.272498183 +0000
 @@ -151,6 +151,7 @@
     */
    static bool InitializeICUDefaultLocation(const char* exec_path,
@@ -304,8 +304,8 @@ diff -r -u --color up/v8/include/v8-initialization.h nw/v8/include/v8-initializa
    /**
     * Initialize the external startup data. The embedder only needs to
 diff -r -u --color up/v8/include/v8-isolate.h nw/v8/include/v8-isolate.h
---- up/v8/include/v8-isolate.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-isolate.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-isolate.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-isolate.h	2024-04-28 03:11:20.272498183 +0000
 @@ -209,6 +209,7 @@
   */
  class V8_EXPORT Isolate {
@@ -323,8 +323,8 @@ diff -r -u --color up/v8/include/v8-isolate.h nw/v8/include/v8-isolate.h
     * Stack-allocated class which sets the isolate for all operations
     * executed within a local scope.
 diff -r -u --color up/v8/include/v8-platform.h nw/v8/include/v8-platform.h
---- up/v8/include/v8-platform.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-platform.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-platform.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-platform.h	2024-04-28 03:11:20.272498183 +0000
 @@ -12,6 +12,37 @@
  
  #include <memory>
@@ -363,7 +363,7 @@ diff -r -u --color up/v8/include/v8-platform.h nw/v8/include/v8-platform.h
  
  #include "v8-source-location.h"  // NOLINT(build/include_directory)
  #include "v8config.h"  // NOLINT(build/include_directory)
-@@ -1313,6 +1344,7 @@
+@@ -1352,6 +1383,7 @@
        TaskPriority priority, std::unique_ptr<Task> task,
        double delay_in_seconds, const SourceLocation& location) = 0;
  };
@@ -372,8 +372,8 @@ diff -r -u --color up/v8/include/v8-platform.h nw/v8/include/v8-platform.h
  }  // namespace v8
  
 diff -r -u --color up/v8/include/v8-primitive-object.h nw/v8/include/v8-primitive-object.h
---- up/v8/include/v8-primitive-object.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-primitive-object.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-primitive-object.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-primitive-object.h	2024-04-28 03:11:20.272498183 +0000
 @@ -78,6 +78,8 @@
   */
  class V8_EXPORT StringObject : public Object {
@@ -384,8 +384,8 @@ diff -r -u --color up/v8/include/v8-primitive-object.h nw/v8/include/v8-primitiv
  
    Local<String> ValueOf() const;
 diff -r -u --color up/v8/include/v8-primitive.h nw/v8/include/v8-primitive.h
---- up/v8/include/v8-primitive.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-primitive.h	2024-04-11 17:51:36.765696538 +0000
+--- up/v8/include/v8-primitive.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-primitive.h	2024-04-28 03:11:20.272498183 +0000
 @@ -69,6 +69,9 @@
      return reinterpret_cast<PrimitiveArray*>(data);
    }
@@ -457,9 +457,9 @@ diff -r -u --color up/v8/include/v8-primitive.h nw/v8/include/v8-primitive.h
      ~Value();
      uint16_t* operator*() { return str_; }
 diff -r -u --color up/v8/include/v8-script.h nw/v8/include/v8-script.h
---- up/v8/include/v8-script.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-script.h	2024-04-11 17:51:36.765696538 +0000
-@@ -718,6 +718,7 @@
+--- up/v8/include/v8-script.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-script.h	2024-04-28 03:11:20.272498183 +0000
+@@ -702,6 +702,7 @@
        CompileOptions options = kNoCompileOptions,
        NoCacheReason no_cache_reason = kNoCacheNoReason);
  
@@ -467,7 +467,7 @@ diff -r -u --color up/v8/include/v8-script.h nw/v8/include/v8-script.h
    /**
     * Returns a task which streams script data into V8, or NULL if the script
     * cannot be streamed. The user is responsible for running the task on a
-@@ -915,6 +916,9 @@
+@@ -899,6 +900,9 @@
    return reinterpret_cast<Module*>(data);
  }
  
@@ -478,9 +478,9 @@ diff -r -u --color up/v8/include/v8-script.h nw/v8/include/v8-script.h
  
  #endif  // INCLUDE_V8_SCRIPT_H_
 diff -r -u --color up/v8/include/v8-value.h nw/v8/include/v8-value.h
---- up/v8/include/v8-value.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-value.h	2024-04-11 17:51:36.769696544 +0000
-@@ -421,6 +421,10 @@
+--- up/v8/include/v8-value.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-value.h	2024-04-28 03:11:20.276498178 +0000
+@@ -426,6 +426,10 @@
     */
    Local<Boolean> ToBoolean(Isolate* isolate) const;
  
@@ -491,7 +491,7 @@ diff -r -u --color up/v8/include/v8-value.h nw/v8/include/v8-value.h
    /**
     * Attempts to convert a string to an array index.
     * Returns an empty handle if the conversion fails.
-@@ -442,7 +446,14 @@
+@@ -447,7 +451,14 @@
    /** Returns the equivalent of `ToInt32()->Value()`. */
    V8_WARN_UNUSED_RESULT Maybe<int32_t> Int32Value(Local<Context> context) const;
  
@@ -507,8 +507,8 @@ diff -r -u --color up/v8/include/v8-value.h nw/v8/include/v8-value.h
                                             Local<Value> that) const;
    bool StrictEquals(Local<Value> that) const;
 diff -r -u --color up/v8/include/v8-wasm.h nw/v8/include/v8-wasm.h
---- up/v8/include/v8-wasm.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8-wasm.h	2024-04-11 17:51:36.769696544 +0000
+--- up/v8/include/v8-wasm.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8-wasm.h	2024-04-28 03:11:20.276498178 +0000
 @@ -121,6 +121,9 @@
    static void CheckCast(Value* obj);
  };
@@ -520,8 +520,8 @@ diff -r -u --color up/v8/include/v8-wasm.h nw/v8/include/v8-wasm.h
   * The V8 interface for WebAssembly streaming compilation. When streaming
   * compilation is initiated, V8 passes a {WasmStreaming} object to the embedder
 diff -r -u --color up/v8/include/v8config.h nw/v8/include/v8config.h
---- up/v8/include/v8config.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/include/v8config.h	2024-04-11 17:51:36.769696544 +0000
+--- up/v8/include/v8config.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/include/v8config.h	2024-04-28 03:11:20.276498178 +0000
 @@ -368,7 +368,7 @@
           && !defined(_WIN32)))                         /* not on windows */    \
       && !defined(COMPONENT_BUILD)                      /* no component build */\
@@ -532,8 +532,8 @@ diff -r -u --color up/v8/include/v8config.h nw/v8/include/v8config.h
  # define V8_HAS_ATTRIBUTE_VISIBILITY (__has_attribute(visibility))
  # define V8_HAS_ATTRIBUTE_WARN_UNUSED_RESULT \
 diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
---- up/v8/src/api/api.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/api/api.cc	2024-04-11 17:51:36.773696551 +0000
+--- up/v8/src/api/api.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/api/api.cc	2024-04-28 03:11:20.280498173 +0000
 @@ -179,6 +179,31 @@
  namespace v8 {
  
@@ -546,7 +546,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
 +i::Isolate* UnsafeIsolateFromHeapObject(i::Handle<i::HeapObject> obj) {
 +  // Use MemoryChunk directly instead of Isolate::FromWritableHeapObject to
 +  // temporarily allow isolate access from read-only space objects.
-+  i::MemoryChunk* chunk = i::MemoryChunk::FromHeapObject(*obj);
++  i::MemoryChunkMetadata* chunk = i::MemoryChunkMetadata::FromHeapObject(*obj);
 +  return chunk->heap()->isolate();
 +}
 +
@@ -556,8 +556,8 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
 +Local<Context> UnsafeContextFromHeapObject(i::Handle<i::Object> obj) {
 +  // Use MemoryChunk directly instead of Isolate::FromWritableHeapObject to
 +  // temporarily allow isolate access from read-only space objects.
-+  i::MemoryChunk* chunk =
-+      i::MemoryChunk::FromHeapObject(i::HeapObject::cast(*obj));
++  i::MemoryChunkMetadata* chunk =
++      i::MemoryChunkMetadata::FromHeapObject(i::HeapObject::cast(*obj));
 +  return reinterpret_cast<Isolate*>(chunk->heap()->isolate())
 +      ->GetCurrentContext();
 +}
@@ -578,7 +578,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  namespace {
  
  #ifdef V8_ENABLE_SANDBOX
-@@ -2265,6 +2295,12 @@
+@@ -2256,6 +2286,12 @@
    array->set(index, *Utils::OpenDirectHandle(*item));
  }
  
@@ -591,7 +591,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Local<Primitive> PrimitiveArray::Get(Isolate* v8_isolate, int index) {
    i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(v8_isolate);
    auto array = Utils::OpenDirectHandle(this);
-@@ -2315,6 +2351,12 @@
+@@ -2306,6 +2342,12 @@
        i::direct_handle(self->import_attributes(), i_isolate), i_isolate);
  }
  
@@ -604,7 +604,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Module::Status Module::GetStatus() const {
    auto self = Utils::OpenDirectHandle(this);
    switch (self->status()) {
-@@ -2707,6 +2749,21 @@
+@@ -2661,6 +2703,21 @@
    return ToApiHandle<Module>(i_isolate->factory()->NewSourceTextModule(shared));
  }
  
@@ -626,7 +626,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  // static
  V8_WARN_UNUSED_RESULT MaybeLocal<Function> ScriptCompiler::CompileFunction(
      Local<Context> context, Source* source, size_t arguments_count,
-@@ -3325,6 +3382,11 @@
+@@ -3279,6 +3336,11 @@
        i_isolate);
  }
  
@@ -638,7 +638,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  int StackTrace::GetFrameCount() const {
    return Utils::OpenDirectHandle(this)->length();
  }
-@@ -3354,8 +3416,8 @@
+@@ -3308,8 +3370,8 @@
    i::Isolate* i_isolate = self->GetIsolate();
    i::Handle<i::Script> script(self->script(), i_isolate);
    i::Script::PositionInfo info;
@@ -649,7 +649,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
    if (script->HasSourceURLComment()) {
      info.line -= script->line_offset();
      if (info.line == 0) {
-@@ -3736,6 +3798,25 @@
+@@ -3690,6 +3752,25 @@
  
  // --- D a t a ---
  
@@ -675,7 +675,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  bool Value::FullIsUndefined() const {
    bool result = i::IsUndefined(*Utils::OpenDirectHandle(this));
    DCHECK_EQ(result, QuickIsUndefined());
-@@ -4389,6 +4470,15 @@
+@@ -4359,6 +4440,15 @@
                    "Value is not a RegExp");
  }
  
@@ -691,7 +691,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Maybe<double> Value::NumberValue(Local<Context> context) const {
    auto obj = Utils::OpenHandle(this);
    if (i::IsNumber(*obj)) return Just(i::Object::Number(*obj));
-@@ -4400,6 +4490,13 @@
+@@ -4370,6 +4460,13 @@
    return Just(i::Object::Number(*num));
  }
  
@@ -705,7 +705,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Maybe<int64_t> Value::IntegerValue(Local<Context> context) const {
    auto obj = Utils::OpenHandle(this);
    if (i::IsNumber(*obj)) {
-@@ -4413,6 +4510,18 @@
+@@ -4383,6 +4480,18 @@
    return Just(NumberToInt64(*num));
  }
  
@@ -724,7 +724,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Maybe<int32_t> Value::Int32Value(Local<Context> context) const {
    auto obj = Utils::OpenHandle(this);
    if (i::IsNumber(*obj)) return Just(NumberToInt32(*obj));
-@@ -4425,6 +4534,12 @@
+@@ -4395,6 +4504,12 @@
                            : static_cast<int32_t>(i::Object::Number(*num)));
  }
  
@@ -737,7 +737,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Maybe<uint32_t> Value::Uint32Value(Local<Context> context) const {
    auto obj = Utils::OpenHandle(this);
    if (i::IsNumber(*obj)) return Just(NumberToUint32(*obj));
-@@ -4437,6 +4552,12 @@
+@@ -4407,6 +4522,12 @@
                            : static_cast<uint32_t>(i::Object::Number(*num)));
  }
  
@@ -750,7 +750,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  MaybeLocal<Uint32> Value::ToArrayIndex(Local<Context> context) const {
    auto self = Utils::OpenHandle(this);
    if (i::IsSmi(*self)) {
-@@ -4472,6 +4593,20 @@
+@@ -4442,6 +4563,20 @@
    return result;
  }
  
@@ -771,7 +771,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  bool Value::StrictEquals(Local<Value> that) const {
    auto self = Utils::OpenHandle(this);
    auto other = Utils::OpenHandle(*that);
-@@ -5822,6 +5957,11 @@
+@@ -5790,6 +5925,11 @@
    return helper.Check(*str);
  }
  
@@ -783,7 +783,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  int String::Utf8Length(Isolate* v8_isolate) const {
    auto str = Utils::OpenHandle(this);
    str = i::String::Flatten(reinterpret_cast<i::Isolate*>(v8_isolate), str);
-@@ -5974,6 +6114,7 @@
+@@ -5942,6 +6082,7 @@
  }
  }  // anonymous namespace
  
@@ -791,7 +791,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  int String::WriteUtf8(Isolate* v8_isolate, char* buffer, int capacity,
                        int* nchars_ref, int options) const {
    auto str = Utils::OpenHandle(this);
-@@ -5992,6 +6133,14 @@
+@@ -5960,6 +6101,14 @@
    }
  }
  
@@ -806,7 +806,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  template <typename CharType>
  static inline int WriteHelper(i::Isolate* i_isolate, const String* string,
                                CharType* buffer, int start, int length,
-@@ -6013,12 +6162,23 @@
+@@ -5981,12 +6130,23 @@
    return write_length;
  }
  
@@ -830,7 +830,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  int String::Write(Isolate* v8_isolate, uint16_t* buffer, int start, int length,
                    int options) const {
    return WriteHelper(reinterpret_cast<i::Isolate*>(v8_isolate), this, buffer,
-@@ -6535,6 +6695,10 @@
+@@ -6503,6 +6663,10 @@
    return i::InitializeICUDefaultLocation(exec_path, icu_data_file);
  }
  
@@ -841,7 +841,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  void v8::V8::InitializeExternalStartupData(const char* directory_path) {
    i::InitializeExternalStartupData(directory_path);
  }
-@@ -7590,6 +7754,12 @@
+@@ -7540,6 +7704,12 @@
    return Utils::ToLocal(result);
  }
  
@@ -854,7 +854,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  MaybeLocal<String> v8::String::NewExternalTwoByte(
      Isolate* v8_isolate, v8::String::ExternalStringResource* resource) {
    CHECK(resource && resource->data());
-@@ -7892,6 +8062,12 @@
+@@ -7842,6 +8012,12 @@
    return i::IsTrue(js_primitive_wrapper->value(), i_isolate);
  }
  
@@ -867,7 +867,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Local<v8::Value> v8::StringObject::New(Isolate* v8_isolate,
                                         Local<String> value) {
    auto string = Utils::OpenHandle(*value);
-@@ -9035,6 +9211,25 @@
+@@ -8985,6 +9161,25 @@
        static_cast<v8::BackingStore*>(backing_store.release()));
  }
  
@@ -893,7 +893,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Local<ArrayBuffer> v8::ArrayBufferView::Buffer() {
    auto obj = Utils::OpenDirectHandle(this);
    i::Isolate* i_isolate = obj->GetIsolate();
-@@ -9444,6 +9639,11 @@
+@@ -9433,6 +9628,11 @@
    i_isolate->ClearKeptObjects();
  }
  
@@ -905,7 +905,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  v8::Local<v8::Context> Isolate::GetCurrentContext() {
    i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(this);
    i::Tagged<i::Context> context = i_isolate->context();
-@@ -9648,6 +9848,13 @@
+@@ -9637,6 +9837,13 @@
  
  Isolate::CreateParams::~CreateParams() = default;
  
@@ -919,7 +919,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  // static
  // This is separate so that tests can provide a different |isolate|.
  void Isolate::Initialize(Isolate* v8_isolate,
-@@ -10677,6 +10884,9 @@
+@@ -10666,6 +10873,9 @@
    return microtask_queue->IsRunningMicrotasks();
  }
  
@@ -929,7 +929,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  String::Utf8Value::Utf8Value(v8::Isolate* v8_isolate, v8::Local<v8::Value> obj)
      : str_(nullptr), length_(0) {
    if (obj.IsEmpty()) return;
-@@ -10694,6 +10904,9 @@
+@@ -10683,6 +10893,9 @@
  
  String::Utf8Value::~Utf8Value() { i::DeleteArray(str_); }
  
@@ -939,7 +939,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  String::Value::Value(v8::Isolate* v8_isolate, v8::Local<v8::Value> obj)
      : str_(nullptr), length_(0) {
    if (obj.IsEmpty()) return;
-@@ -11500,6 +11713,29 @@
+@@ -11489,6 +11702,29 @@
  }
  #endif  // !V8_ENABLE_WEBASSEMBLY
  
@@ -970,9 +970,9 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  
  const size_t HandleScopeImplementer::kEnteredContextsOffset =
 diff -r -u --color up/v8/src/codegen/compiler.cc nw/v8/src/codegen/compiler.cc
---- up/v8/src/codegen/compiler.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/codegen/compiler.cc	2024-04-11 17:51:36.829696645 +0000
-@@ -3628,7 +3628,9 @@
+--- up/v8/src/codegen/compiler.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/codegen/compiler.cc	2024-04-28 03:11:20.336498111 +0000
+@@ -3627,7 +3627,9 @@
      maybe_script = lookup_result.script();
      maybe_result = lookup_result.toplevel_sfi();
      is_compiled_scope = lookup_result.is_compiled_scope();
@@ -984,8 +984,8 @@ diff -r -u --color up/v8/src/codegen/compiler.cc nw/v8/src/codegen/compiler.cc
      } else if (can_consume_code_cache) {
        compile_timer.set_consuming_code_cache();
 diff -r -u --color up/v8/src/debug/debug-scopes.cc nw/v8/src/debug/debug-scopes.cc
---- up/v8/src/debug/debug-scopes.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/debug/debug-scopes.cc	2024-04-11 17:51:36.917696793 +0000
+--- up/v8/src/debug/debug-scopes.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/debug/debug-scopes.cc	2024-04-28 03:11:20.428498008 +0000
 @@ -310,7 +310,10 @@
    info_ = std::make_unique<ParseInfo>(isolate_, flags, &compile_state,
                                        reusable_compile_state_.get());
@@ -999,9 +999,9 @@ diff -r -u --color up/v8/src/debug/debug-scopes.cc nw/v8/src/debug/debug-scopes.
            ? parsing::ParseProgram(info_.get(), script, maybe_outer_scope,
                                    isolate_, parsing::ReportStatisticsMode::kNo)
 diff -r -u --color up/v8/src/flags/flag-definitions.h nw/v8/src/flags/flag-definitions.h
---- up/v8/src/flags/flag-definitions.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/flags/flag-definitions.h	2024-04-11 17:51:36.941696833 +0000
-@@ -2261,7 +2261,7 @@
+--- up/v8/src/flags/flag-definitions.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/flags/flag-definitions.h	2024-04-28 03:11:20.456497977 +0000
+@@ -2310,7 +2310,7 @@
  DEFINE_IMPLICATION(log_maps, log_code)
  
  // parser.cc
@@ -1010,7 +1010,7 @@ diff -r -u --color up/v8/src/flags/flag-definitions.h nw/v8/src/flags/flag-defin
  DEFINE_BOOL(allow_natives_for_differential_fuzzing, false,
              "allow only natives explicitly allowlisted for differential "
              "fuzzers")
-@@ -2559,6 +2559,7 @@
+@@ -2630,6 +2630,7 @@
  DEFINE_BOOL(print_flag_values, false, "Print all flag values of V8")
  
  // Slow histograms are also enabled via --dump-counters in d8.
@@ -1019,8 +1019,8 @@ diff -r -u --color up/v8/src/flags/flag-definitions.h nw/v8/src/flags/flag-defin
              "Enable slow histograms with more overhead.")
  
 diff -r -u --color up/v8/src/heap/marking-visitor-inl.h nw/v8/src/heap/marking-visitor-inl.h
---- up/v8/src/heap/marking-visitor-inl.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/heap/marking-visitor-inl.h	2024-04-11 17:51:36.961696867 +0000
+--- up/v8/src/heap/marking-visitor-inl.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/heap/marking-visitor-inl.h	2024-04-28 03:11:20.476497954 +0000
 @@ -323,6 +323,13 @@
      return false;
    }
@@ -1036,8 +1036,8 @@ diff -r -u --color up/v8/src/heap/marking-visitor-inl.h nw/v8/src/heap/marking-v
  }
  
 diff -r -u --color up/v8/src/init/icu_util.cc nw/v8/src/init/icu_util.cc
---- up/v8/src/init/icu_util.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/init/icu_util.cc	2024-04-11 17:51:36.973696887 +0000
+--- up/v8/src/init/icu_util.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/init/icu_util.cc	2024-04-28 03:11:20.488497941 +0000
 @@ -36,6 +36,10 @@
  }  // namespace
  #endif
@@ -1050,8 +1050,8 @@ diff -r -u --color up/v8/src/init/icu_util.cc nw/v8/src/init/icu_util.cc
                                    const char* icu_data_file) {
  #if !defined(V8_INTL_SUPPORT)
 diff -r -u --color up/v8/src/init/icu_util.h nw/v8/src/init/icu_util.h
---- up/v8/src/init/icu_util.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/init/icu_util.h	2024-04-11 17:51:36.973696887 +0000
+--- up/v8/src/init/icu_util.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/init/icu_util.h	2024-04-28 03:11:20.488497941 +0000
 @@ -18,6 +18,8 @@
  bool InitializeICUDefaultLocation(const char* exec_path,
                                    const char* icu_data_file);
@@ -1062,8 +1062,8 @@ diff -r -u --color up/v8/src/init/icu_util.h nw/v8/src/init/icu_util.h
  }  // namespace v8
  
 diff -r -u --color up/v8/src/init/startup-data-util.cc nw/v8/src/init/startup-data-util.cc
---- up/v8/src/init/startup-data-util.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/init/startup-data-util.cc	2024-04-11 17:51:36.973696887 +0000
+--- up/v8/src/init/startup-data-util.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/init/startup-data-util.cc	2024-04-28 03:11:20.488497941 +0000
 @@ -77,10 +77,23 @@
  
  void InitializeExternalStartupData(const char* directory_path) {
@@ -1089,8 +1089,8 @@ diff -r -u --color up/v8/src/init/startup-data-util.cc nw/v8/src/init/startup-da
  }
  
 diff -r -u --color up/v8/src/init/v8.cc nw/v8/src/init/v8.cc
---- up/v8/src/init/v8.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/init/v8.cc	2024-04-11 17:51:36.973696887 +0000
+--- up/v8/src/init/v8.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/init/v8.cc	2024-04-28 03:11:20.488497941 +0000
 @@ -96,11 +96,20 @@
  #endif
  
@@ -1134,8 +1134,8 @@ diff -r -u --color up/v8/src/init/v8.cc nw/v8/src/init/v8.cc
    DCHECK(platform);
    return platform;
 diff -r -u --color up/v8/src/init/v8.h nw/v8/src/init/v8.h
---- up/v8/src/init/v8.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/init/v8.h	2024-04-11 17:51:36.973696887 +0000
+--- up/v8/src/init/v8.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/init/v8.h	2024-04-28 03:11:20.488497941 +0000
 @@ -42,6 +42,7 @@
    [[noreturn]] V8_EXPORT_PRIVATE static void FatalProcessOutOfMemory(
        Isolate* isolate, const char* location, const char* detail);
@@ -1145,8 +1145,8 @@ diff -r -u --color up/v8/src/init/v8.h nw/v8/src/init/v8.h
    V8_EXPORT_PRIVATE static void InitializePlatformForTesting(
        v8::Platform* platform);
 diff -r -u --color up/v8/src/inspector/v8-heap-profiler-agent-impl.cc nw/v8/src/inspector/v8-heap-profiler-agent-impl.cc
---- up/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2024-04-11 17:51:36.977696894 +0000
+--- up/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2024-04-28 03:11:20.492497937 +0000
 @@ -390,6 +390,15 @@
      progress.reset(new HeapSnapshotProgress(&m_frontend));
  
@@ -1175,8 +1175,8 @@ diff -r -u --color up/v8/src/inspector/v8-heap-profiler-agent-impl.cc nw/v8/src/
    HeapSnapshotOutputStream stream(&m_frontend);
    snapshot->Serialize(&stream);
 diff -r -u --color up/v8/src/inspector/v8-stack-trace-impl.cc nw/v8/src/inspector/v8-stack-trace-impl.cc
---- up/v8/src/inspector/v8-stack-trace-impl.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/inspector/v8-stack-trace-impl.cc	2024-04-11 17:51:36.977696894 +0000
+--- up/v8/src/inspector/v8-stack-trace-impl.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/inspector/v8-stack-trace-impl.cc	2024-04-28 03:11:20.492497937 +0000
 @@ -179,8 +179,8 @@
        m_lineNumber(lineNumber),
        m_columnNumber(columnNumber),
@@ -1189,8 +1189,8 @@ diff -r -u --color up/v8/src/inspector/v8-stack-trace-impl.cc nw/v8/src/inspecto
  
  const String16& StackFrame::functionName() const { return m_functionName; }
 diff -r -u --color up/v8/src/libplatform/tracing/trace-object.cc nw/v8/src/libplatform/tracing/trace-object.cc
---- up/v8/src/libplatform/tracing/trace-object.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/libplatform/tracing/trace-object.cc	2024-04-11 17:51:36.985696907 +0000
+--- up/v8/src/libplatform/tracing/trace-object.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/libplatform/tracing/trace-object.cc	2024-04-28 03:11:20.500497928 +0000
 @@ -99,7 +99,7 @@
    }
  }
@@ -1202,8 +1202,8 @@ diff -r -u --color up/v8/src/libplatform/tracing/trace-object.cc nw/v8/src/libpl
    duration_ = timestamp - ts_;
 Only in nw/v8/src: nwjc.cc
 diff -r -u --color up/v8/src/objects/backing-store.cc nw/v8/src/objects/backing-store.cc
---- up/v8/src/objects/backing-store.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/backing-store.cc	2024-04-11 17:51:36.997696927 +0000
+--- up/v8/src/objects/backing-store.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/backing-store.cc	2024-04-28 03:11:20.516497910 +0000
 @@ -144,6 +144,7 @@
        is_resizable_by_js_(resizable == ResizableFlag::kResizable),
        is_wasm_memory_(is_wasm_memory),
@@ -1247,8 +1247,8 @@ diff -r -u --color up/v8/src/objects/backing-store.cc nw/v8/src/objects/backing-
    TRACE_BS("BS:wrap   bs=%p mem=%p (length=%zu)\n", result,
             result->buffer_start(), result->byte_length());
 diff -r -u --color up/v8/src/objects/backing-store.h nw/v8/src/objects/backing-store.h
---- up/v8/src/objects/backing-store.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/backing-store.h	2024-04-11 17:51:36.997696927 +0000
+--- up/v8/src/objects/backing-store.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/backing-store.h	2024-04-28 03:11:20.516497910 +0000
 @@ -75,7 +75,7 @@
    static std::unique_ptr<BackingStore> WrapAllocation(
        void* allocation_base, size_t allocation_length,
@@ -1283,8 +1283,8 @@ diff -r -u --color up/v8/src/objects/backing-store.h nw/v8/src/objects/backing-s
    const bool has_guard_regions_ : 1;
    bool globally_registered_ : 1;
 diff -r -u --color up/v8/src/objects/js-array-buffer-inl.h nw/v8/src/objects/js-array-buffer-inl.h
---- up/v8/src/objects/js-array-buffer-inl.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/js-array-buffer-inl.h	2024-04-11 17:51:37.005696941 +0000
+--- up/v8/src/objects/js-array-buffer-inl.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/js-array-buffer-inl.h	2024-04-28 03:11:20.524497901 +0000
 @@ -174,6 +174,8 @@
                      JSArrayBuffer::IsSharedBit)
  BIT_FIELD_ACCESSORS(JSArrayBuffer, bit_field, is_resizable_by_js,
@@ -1295,8 +1295,8 @@ diff -r -u --color up/v8/src/objects/js-array-buffer-inl.h nw/v8/src/objects/js-
  bool JSArrayBuffer::IsEmpty() const {
    auto backing_store = GetBackingStore();
 diff -r -u --color up/v8/src/objects/js-array-buffer.h nw/v8/src/objects/js-array-buffer.h
---- up/v8/src/objects/js-array-buffer.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/js-array-buffer.h	2024-04-11 17:51:37.005696941 +0000
+--- up/v8/src/objects/js-array-buffer.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/js-array-buffer.h	2024-04-28 03:11:20.524497901 +0000
 @@ -71,6 +71,7 @@
  
    // [was_detached]: true => the buffer was previously detached.
@@ -1306,8 +1306,8 @@ diff -r -u --color up/v8/src/objects/js-array-buffer.h nw/v8/src/objects/js-arra
    // [is_shared]: true if this is a SharedArrayBuffer or a
    // GrowableSharedArrayBuffer.
 diff -r -u --color up/v8/src/objects/js-array-buffer.tq nw/v8/src/objects/js-array-buffer.tq
---- up/v8/src/objects/js-array-buffer.tq	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/js-array-buffer.tq	2024-04-11 17:51:37.005696941 +0000
+--- up/v8/src/objects/js-array-buffer.tq	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/js-array-buffer.tq	2024-04-28 03:11:20.524497901 +0000
 @@ -9,6 +9,7 @@
    is_asm_js_memory: bool: 1 bit;
    is_shared: bool: 1 bit;
@@ -1317,9 +1317,9 @@ diff -r -u --color up/v8/src/objects/js-array-buffer.tq nw/v8/src/objects/js-arr
  
  extern class JSArrayBuffer extends JSObjectWithEmbedderSlots {
 diff -r -u --color up/v8/src/objects/js-function.cc nw/v8/src/objects/js-function.cc
---- up/v8/src/objects/js-function.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/js-function.cc	2024-04-11 17:51:37.009696948 +0000
-@@ -1302,6 +1302,13 @@
+--- up/v8/src/objects/js-function.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/js-function.cc	2024-04-28 03:11:20.528497896 +0000
+@@ -1303,6 +1303,13 @@
      return NativeCodeFunctionSourceString(isolate, shared_info);
    }
  
@@ -1333,7 +1333,7 @@ diff -r -u --color up/v8/src/objects/js-function.cc nw/v8/src/objects/js-functio
    if (IsClassConstructor(shared_info->kind())) {
      // Check if we should print {function} as a class.
      Handle<Object> maybe_class_positions = JSReceiver::GetDataProperty(
-@@ -1318,11 +1325,6 @@
+@@ -1319,11 +1326,6 @@
      }
    }
  
@@ -1346,8 +1346,8 @@ diff -r -u --color up/v8/src/objects/js-function.cc nw/v8/src/objects/js-functio
    // information.
  #if V8_ENABLE_WEBASSEMBLY
 diff -r -u --color up/v8/src/objects/script.h nw/v8/src/objects/script.h
---- up/v8/src/objects/script.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/objects/script.h	2024-04-11 17:51:37.029696982 +0000
+--- up/v8/src/objects/script.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/objects/script.h	2024-04-28 03:11:20.544497879 +0000
 @@ -250,8 +250,10 @@
    friend FactoryBase<Factory>;
    friend FactoryBase<LocalFactory>;
@@ -1360,8 +1360,8 @@ diff -r -u --color up/v8/src/objects/script.h nw/v8/src/objects/script.h
    // Bit positions in the flags field.
    DEFINE_TORQUE_GENERATED_SCRIPT_FLAGS()
 diff -r -u --color up/v8/src/profiler/tracing-cpu-profiler.cc nw/v8/src/profiler/tracing-cpu-profiler.cc
---- up/v8/src/profiler/tracing-cpu-profiler.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/profiler/tracing-cpu-profiler.cc	2024-04-11 17:51:37.041697001 +0000
+--- up/v8/src/profiler/tracing-cpu-profiler.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/profiler/tracing-cpu-profiler.cc	2024-04-28 03:11:20.560497861 +0000
 @@ -28,6 +28,7 @@
  #if defined(V8_USE_PERFETTO)
    TrackEvent::RemoveSessionObserver(this);
@@ -1371,8 +1371,8 @@ diff -r -u --color up/v8/src/profiler/tracing-cpu-profiler.cc nw/v8/src/profiler
        this);
  #endif
 diff -r -u --color up/v8/src/snapshot/code-serializer.cc nw/v8/src/snapshot/code-serializer.cc
---- up/v8/src/snapshot/code-serializer.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/snapshot/code-serializer.cc	2024-04-11 17:51:37.057697028 +0000
+--- up/v8/src/snapshot/code-serializer.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/snapshot/code-serializer.cc	2024-04-28 03:11:20.576497843 +0000
 @@ -470,6 +470,7 @@
    if (!maybe_result.ToHandle(&result)) {
      // Deserializing may fail if the reservations cannot be fulfilled.
@@ -1395,8 +1395,8 @@ diff -r -u --color up/v8/src/snapshot/code-serializer.cc nw/v8/src/snapshot/code
      cached_data->Reject();
      return SerializedCodeData(nullptr, 0);
 diff -r -u --color up/v8/src/snapshot/deserializer.cc nw/v8/src/snapshot/deserializer.cc
---- up/v8/src/snapshot/deserializer.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/snapshot/deserializer.cc	2024-04-11 17:51:37.057697028 +0000
+--- up/v8/src/snapshot/deserializer.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/snapshot/deserializer.cc	2024-04-28 03:11:20.576497843 +0000
 @@ -265,7 +265,9 @@
  #ifdef DEBUG
    num_api_references_ = GetNumApiReferences(isolate);
@@ -1409,9 +1409,9 @@ diff -r -u --color up/v8/src/snapshot/deserializer.cc nw/v8/src/snapshot/deseria
  
  template <typename IsolateT>
 diff -r -u --color up/v8/src/snapshot/deserializer.h nw/v8/src/snapshot/deserializer.h
---- up/v8/src/snapshot/deserializer.h	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/snapshot/deserializer.h	2024-04-11 17:51:37.057697028 +0000
-@@ -112,6 +112,8 @@
+--- up/v8/src/snapshot/deserializer.h	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/snapshot/deserializer.h	2024-04-28 03:11:20.576497843 +0000
+@@ -113,6 +113,8 @@
  
    Handle<HeapObject> ReadObject();
  
@@ -1421,8 +1421,8 @@ diff -r -u --color up/v8/src/snapshot/deserializer.h nw/v8/src/snapshot/deserial
    // A circular queue of hot objects. This is added to in the same order as in
    // Serializer::HotObjectsList, but this stores the objects as a vector of
 diff -r -u --color up/v8/src/snapshot/object-deserializer.cc nw/v8/src/snapshot/object-deserializer.cc
---- up/v8/src/snapshot/object-deserializer.cc	2024-03-25 17:43:57.000000000 +0000
-+++ nw/v8/src/snapshot/object-deserializer.cc	2024-04-11 17:51:37.057697028 +0000
+--- up/v8/src/snapshot/object-deserializer.cc	2024-04-11 11:17:14.000000000 +0000
++++ nw/v8/src/snapshot/object-deserializer.cc	2024-04-28 03:11:20.576497843 +0000
 @@ -34,6 +34,8 @@
  
  MaybeHandle<HeapObject> ObjectDeserializer::Deserialize() {
