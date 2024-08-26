@@ -2,7 +2,7 @@ Only in nw/node: .git
 Only in up/node: .github
 diff -r -u --color up/node/common.gypi nw/node/common.gypi
 --- up/node/common.gypi	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/common.gypi	2024-07-31 19:07:37.541818590 +0000
++++ nw/node/common.gypi	2024-08-26 19:33:02.430596109 +0000
 @@ -6,22 +6,31 @@
      'visibility%': 'hidden',          # V8's visibility setting
      'target_arch%': 'ia32',           # set v8's target architecture
@@ -450,7 +450,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
 Only in nw/node: config.gypi
 diff -r -u --color up/node/deps/ada/ada.gyp nw/node/deps/ada/ada.gyp
 --- up/node/deps/ada/ada.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/ada/ada.gyp	2024-07-31 19:07:37.549818760 +0000
++++ nw/node/deps/ada/ada.gyp	2024-08-26 19:33:02.438596106 +0000
 @@ -2,6 +2,7 @@
    'variables': {
      'v8_enable_i18n_support%': 1,
@@ -461,7 +461,7 @@ diff -r -u --color up/node/deps/ada/ada.gyp nw/node/deps/ada/ada.gyp
      {
 diff -r -u --color up/node/deps/cares/cares.gyp nw/node/deps/cares/cares.gyp
 --- up/node/deps/cares/cares.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/cares/cares.gyp	2024-07-31 19:07:37.565819043 +0000
++++ nw/node/deps/cares/cares.gyp	2024-08-26 19:33:02.454596102 +0000
 @@ -117,6 +117,7 @@
        'src/lib/config-win32.h',
        'src/lib/windows_port.c',
@@ -480,7 +480,7 @@ diff -r -u --color up/node/deps/cares/cares.gyp nw/node/deps/cares/cares.gyp
            ],
 diff -r -u --color up/node/deps/cares/src/lib/ares_create_query.c nw/node/deps/cares/src/lib/ares_create_query.c
 --- up/node/deps/cares/src/lib/ares_create_query.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/cares/src/lib/ares_create_query.c	2024-07-31 19:07:37.585819397 +0000
++++ nw/node/deps/cares/src/lib/ares_create_query.c	2024-08-26 19:33:02.474596095 +0000
 @@ -25,6 +25,12 @@
   */
  
@@ -504,7 +504,7 @@ diff -r -u --color up/node/deps/cares/src/lib/ares_create_query.c nw/node/deps/c
 +#endif
 diff -r -u --color up/node/deps/cares/src/lib/ares_process.c nw/node/deps/cares/src/lib/ares_process.c
 --- up/node/deps/cares/src/lib/ares_process.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/cares/src/lib/ares_process.c	2024-07-31 19:07:37.593819539 +0000
++++ nw/node/deps/cares/src/lib/ares_process.c	2024-08-26 19:33:02.478596095 +0000
 @@ -440,7 +440,7 @@
          fromlen = sizeof(from.sa6);
        }
@@ -516,7 +516,7 @@ diff -r -u --color up/node/deps/cares/src/lib/ares_process.c nw/node/deps/cares/
      if (read_len == 0) {
 diff -r -u --color up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h
 --- up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2024-07-31 19:07:37.761822516 +0000
++++ nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2024-08-26 19:33:02.646596047 +0000
 @@ -36,6 +36,10 @@
  #  define __has_declspec_attribute(x) 0
  #endif
@@ -530,7 +530,7 @@ diff -r -u --color up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h nw/node/d
  #endif
 diff -r -u --color up/node/deps/nghttp2/nghttp2.gyp nw/node/deps/nghttp2/nghttp2.gyp
 --- up/node/deps/nghttp2/nghttp2.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/nghttp2/nghttp2.gyp	2024-07-31 19:07:37.765822587 +0000
++++ nw/node/deps/nghttp2/nghttp2.gyp	2024-08-26 19:33:02.650596046 +0000
 @@ -56,7 +56,7 @@
              },
            },
@@ -543,7 +543,7 @@ diff -r -u --color up/node/deps/nghttp2/nghttp2.gyp nw/node/deps/nghttp2/nghttp2
 Only in up/node/deps: npm
 diff -r -u --color up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c
 --- up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2024-07-31 19:07:38.437834492 +0000
++++ nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2024-08-26 19:33:03.314595857 +0000
 @@ -357,7 +357,7 @@
       * internally. So we need to check errno for ENOSYS
       */
@@ -555,7 +555,7 @@ diff -r -u --color up/node/deps/openssl/openssl/providers/implementations/rands/
      if (getentropy != NULL) {
 diff -r -u --color up/node/deps/openssl/openssl.gyp nw/node/deps/openssl/openssl.gyp
 --- up/node/deps/openssl/openssl.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/openssl/openssl.gyp	2024-07-31 19:07:38.213830523 +0000
++++ nw/node/deps/openssl/openssl.gyp	2024-08-26 19:33:03.090595920 +0000
 @@ -3,6 +3,10 @@
      'gas_version%': '0.0',
      'llvm_version%': '0.0',
@@ -622,7 +622,7 @@ diff -r -u --color up/node/deps/openssl/openssl.gyp nw/node/deps/openssl/openssl
  }
 diff -r -u --color up/node/deps/openssl/openssl_common.gypi nw/node/deps/openssl/openssl_common.gypi
 --- up/node/deps/openssl/openssl_common.gypi	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/openssl/openssl_common.gypi	2024-07-31 19:07:38.637838035 +0000
++++ nw/node/deps/openssl/openssl_common.gypi	2024-08-26 19:33:03.482595809 +0000
 @@ -12,6 +12,8 @@
      'config/',
    ],
@@ -643,7 +643,7 @@ diff -r -u --color up/node/deps/openssl/openssl_common.gypi nw/node/deps/openssl
            '-lws2_32.lib',
 diff -r -u --color up/node/deps/simdjson/simdjson.h nw/node/deps/simdjson/simdjson.h
 --- up/node/deps/simdjson/simdjson.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/simdjson/simdjson.h	2024-07-31 19:07:38.665838531 +0000
++++ nw/node/deps/simdjson/simdjson.h	2024-08-26 19:33:03.506595801 +0000
 @@ -6278,6 +6278,12 @@
    /** Prints one character **/
    simdjson_inline void one_char(char c);
@@ -659,7 +659,7 @@ diff -r -u --color up/node/deps/simdjson/simdjson.h nw/node/deps/simdjson/simdjs
    }
 diff -r -u --color up/node/deps/uv/include/uv/errno.h nw/node/deps/uv/include/uv/errno.h
 --- up/node/deps/uv/include/uv/errno.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/include/uv/errno.h	2024-07-31 19:07:38.693839028 +0000
++++ nw/node/deps/uv/include/uv/errno.h	2024-08-26 19:33:03.534595794 +0000
 @@ -460,7 +460,7 @@
   * if C++ is being used. Define it directly to avoid problems when integrating
   * libuv in a C++ project.
@@ -671,7 +671,7 @@ diff -r -u --color up/node/deps/uv/include/uv/errno.h nw/node/deps/uv/include/uv
  # define UV__ENODATA (-9919)
 diff -r -u --color up/node/deps/uv/include/uv.h nw/node/deps/uv/include/uv.h
 --- up/node/deps/uv/include/uv.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/include/uv.h	2024-07-31 19:07:38.693839028 +0000
++++ nw/node/deps/uv/include/uv.h	2024-08-26 19:33:03.534595794 +0000
 @@ -33,6 +33,8 @@
  
  #ifndef UV_EXTERN
@@ -720,7 +720,7 @@ diff -r -u --color up/node/deps/uv/include/uv.h nw/node/deps/uv/include/uv.h
  #endif
 diff -r -u --color up/node/deps/uv/src/unix/core.c nw/node/deps/uv/src/unix/core.c
 --- up/node/deps/uv/src/unix/core.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/unix/core.c	2024-07-31 19:07:38.693839028 +0000
++++ nw/node/deps/uv/src/unix/core.c	2024-08-26 19:33:03.538595793 +0000
 @@ -1876,9 +1876,11 @@
     * glibc it's... complicated... so for consistency try sched_getaffinity()
     * before falling back to sysconf(_SC_NPROCESSORS_ONLN).
@@ -735,7 +735,7 @@ diff -r -u --color up/node/deps/uv/src/unix/core.c nw/node/deps/uv/src/unix/core
    if (rc < 1)
 diff -r -u --color up/node/deps/uv/src/unix/fs.c nw/node/deps/uv/src/unix/fs.c
 --- up/node/deps/uv/src/unix/fs.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/unix/fs.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/unix/fs.c	2024-08-26 19:33:03.538595793 +0000
 @@ -25,6 +25,8 @@
   * return -1 with errno set. The dispatcher in uv__fs_work() takes care of
   * getting the errno to the right place (req->result or as the return value.)
@@ -771,7 +771,7 @@ diff -r -u --color up/node/deps/uv/src/unix/fs.c nw/node/deps/uv/src/unix/fs.c
 +
 diff -r -u --color up/node/deps/uv/src/unix/getaddrinfo.c nw/node/deps/uv/src/unix/getaddrinfo.c
 --- up/node/deps/uv/src/unix/getaddrinfo.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/unix/getaddrinfo.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/unix/getaddrinfo.c	2024-08-26 19:33:03.538595793 +0000
 @@ -87,7 +87,7 @@
    case EAI_SYSTEM: return UV__ERR(errno);
  #endif
@@ -783,7 +783,7 @@ diff -r -u --color up/node/deps/uv/src/unix/getaddrinfo.c nw/node/deps/uv/src/un
    return 0;  /* Pacify compiler. */
 diff -r -u --color up/node/deps/uv/src/unix/kqueue.c nw/node/deps/uv/src/unix/kqueue.c
 --- up/node/deps/uv/src/unix/kqueue.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/unix/kqueue.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/unix/kqueue.c	2024-08-26 19:33:03.538595793 +0000
 @@ -50,6 +50,8 @@
  
  static void uv__fs_event(uv_loop_t* loop, uv__io_t* w, unsigned int fflags);
@@ -899,7 +899,7 @@ diff -r -u --color up/node/deps/uv/src/unix/kqueue.c nw/node/deps/uv/src/unix/kq
  
 diff -r -u --color up/node/deps/uv/src/unix/loop.c nw/node/deps/uv/src/unix/loop.c
 --- up/node/deps/uv/src/unix/loop.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/unix/loop.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/unix/loop.c	2024-08-26 19:33:03.538595793 +0000
 @@ -74,6 +74,8 @@
    loop->backend_fd = -1;
    loop->emfile_fd = -1;
@@ -911,7 +911,7 @@ diff -r -u --color up/node/deps/uv/src/unix/loop.c nw/node/deps/uv/src/unix/loop
  
 diff -r -u --color up/node/deps/uv/src/unix/proctitle.c nw/node/deps/uv/src/unix/proctitle.c
 --- up/node/deps/uv/src/unix/proctitle.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/unix/proctitle.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/unix/proctitle.c	2024-08-26 19:33:03.542595791 +0000
 @@ -44,6 +44,14 @@
  
  
@@ -970,7 +970,7 @@ diff -r -u --color up/node/deps/uv/src/unix/proctitle.c nw/node/deps/uv/src/unix
  }
 diff -r -u --color up/node/deps/uv/src/uv-common.c nw/node/deps/uv/src/uv-common.c
 --- up/node/deps/uv/src/uv-common.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/uv-common.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/uv-common.c	2024-08-26 19:33:03.542595791 +0000
 @@ -816,19 +816,43 @@
  }
  
@@ -1053,7 +1053,7 @@ diff -r -u --color up/node/deps/uv/src/uv-common.c nw/node/deps/uv/src/uv-common
    (void) err;    /* Squelch compiler warnings. */
 diff -r -u --color up/node/deps/uv/src/uv-common.h nw/node/deps/uv/src/uv-common.h
 --- up/node/deps/uv/src/uv-common.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/uv-common.h	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/uv-common.h	2024-08-26 19:33:03.542595791 +0000
 @@ -335,6 +335,7 @@
  # define UV_REQ_INIT(req, typ)                                                \
    do {                                                                        \
@@ -1064,7 +1064,7 @@ diff -r -u --color up/node/deps/uv/src/uv-common.h nw/node/deps/uv/src/uv-common
    while (0)
 diff -r -u --color up/node/deps/uv/src/win/async.c nw/node/deps/uv/src/win/async.c
 --- up/node/deps/uv/src/win/async.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/win/async.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/win/async.c	2024-08-26 19:33:03.542595791 +0000
 @@ -82,6 +82,23 @@
    return 0;
  }
@@ -1091,7 +1091,7 @@ diff -r -u --color up/node/deps/uv/src/win/async.c nw/node/deps/uv/src/win/async
      uv_req_t* req) {
 diff -r -u --color up/node/deps/uv/src/win/core.c nw/node/deps/uv/src/win/core.c
 --- up/node/deps/uv/src/win/core.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/win/core.c	2024-07-31 19:07:38.697839098 +0000
++++ nw/node/deps/uv/src/win/core.c	2024-08-26 19:33:03.542595791 +0000
 @@ -193,7 +193,7 @@
     * FDs even though they return the proper error code in the release build.
     */
@@ -1103,7 +1103,7 @@ diff -r -u --color up/node/deps/uv/src/win/core.c nw/node/deps/uv/src/win/core.c
    /* Initialize tracking of all uv loops */
 diff -r -u --color up/node/deps/uv/src/win/process.c nw/node/deps/uv/src/win/process.c
 --- up/node/deps/uv/src/win/process.c	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/win/process.c	2024-07-31 19:07:38.701839169 +0000
++++ nw/node/deps/uv/src/win/process.c	2024-08-26 19:33:03.542595791 +0000
 @@ -1073,6 +1073,8 @@
      process_flags |= CREATE_SUSPENDED;
    }
@@ -1115,7 +1115,7 @@ diff -r -u --color up/node/deps/uv/src/win/process.c nw/node/deps/uv/src/win/pro
                       NULL,
 diff -r -u --color up/node/deps/uv/src/win/req-inl.h nw/node/deps/uv/src/win/req-inl.h
 --- up/node/deps/uv/src/win/req-inl.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/src/win/req-inl.h	2024-07-31 19:07:38.701839169 +0000
++++ nw/node/deps/uv/src/win/req-inl.h	2024-08-26 19:33:03.542595791 +0000
 @@ -88,7 +88,8 @@
  
  
@@ -1136,7 +1136,7 @@ diff -r -u --color up/node/deps/uv/src/win/req-inl.h nw/node/deps/uv/src/win/req
        case UV_READ:
 diff -r -u --color up/node/deps/uv/uv.gyp nw/node/deps/uv/uv.gyp
 --- up/node/deps/uv/uv.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/uv/uv.gyp	2024-07-31 19:07:38.717839453 +0000
++++ nw/node/deps/uv/uv.gyp	2024-08-26 19:33:03.558595786 +0000
 @@ -1,5 +1,6 @@
  {
    'variables': {
@@ -1198,7 +1198,7 @@ diff -r -u --color up/node/deps/uv/uv.gyp nw/node/deps/uv/uv.gyp
          ['OS=="zos"', {
 diff -r -u --color up/node/deps/zlib/zlib.gyp nw/node/deps/zlib/zlib.gyp
 --- up/node/deps/zlib/zlib.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/deps/zlib/zlib.gyp	2024-07-31 19:07:39.957861421 +0000
++++ nw/node/deps/zlib/zlib.gyp	2024-08-26 19:33:04.850595419 +0000
 @@ -36,6 +36,17 @@
                  }],
                ],
@@ -1252,10 +1252,31 @@ diff -r -u --color up/node/deps/zlib/zlib.gyp nw/node/deps/zlib/zlib.gyp
                  ['target_arch=="x64"', {
                    'defines': [ 'INFLATE_CHUNK_READ_64LE' ],
                  }],
+diff -r -u --color up/node/doc/api/addons.md nw/node/doc/api/addons.md
+--- up/node/doc/api/addons.md	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/doc/api/addons.md	2024-08-26 19:33:04.850595419 +0000
+@@ -923,7 +923,7 @@
+ void MyObject::PlusOne(const FunctionCallbackInfo<Value>& args) {
+   Isolate* isolate = args.GetIsolate();
+ 
+-  MyObject* obj = ObjectWrap::Unwrap<MyObject>(args.Holder());
++  MyObject* obj = ObjectWrap::Unwrap<MyObject>(args.This());
+   obj->value_ += 1;
+ 
+   args.GetReturnValue().Set(Number::New(isolate, obj->value_));
+@@ -1138,7 +1138,7 @@
+ void MyObject::PlusOne(const FunctionCallbackInfo<Value>& args) {
+   Isolate* isolate = args.GetIsolate();
+ 
+-  MyObject* obj = ObjectWrap::Unwrap<MyObject>(args.Holder());
++  MyObject* obj = ObjectWrap::Unwrap<MyObject>(args.This());
+   obj->value_ += 1;
+ 
+   args.GetReturnValue().Set(Number::New(isolate, obj->value_));
 Only in nw/node/lib: dummystream.js
 diff -r -u --color up/node/lib/internal/bootstrap/switches/is_main_thread.js nw/node/lib/internal/bootstrap/switches/is_main_thread.js
 --- up/node/lib/internal/bootstrap/switches/is_main_thread.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/bootstrap/switches/is_main_thread.js	2024-07-31 19:07:40.037862838 +0000
++++ nw/node/lib/internal/bootstrap/switches/is_main_thread.js	2024-08-26 19:33:04.918595400 +0000
 @@ -127,6 +127,18 @@
    }
  }
@@ -1299,7 +1320,7 @@ diff -r -u --color up/node/lib/internal/bootstrap/switches/is_main_thread.js nw/
    stderrDestroy = stderr._destroy;
 diff -r -u --color up/node/lib/internal/bootstrap/web/exposed-wildcard.js nw/node/lib/internal/bootstrap/web/exposed-wildcard.js
 --- up/node/lib/internal/bootstrap/web/exposed-wildcard.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/bootstrap/web/exposed-wildcard.js	2024-07-31 19:07:40.037862838 +0000
++++ nw/node/lib/internal/bootstrap/web/exposed-wildcard.js	2024-08-26 19:33:04.918595400 +0000
 @@ -6,6 +6,8 @@
   * See more details at https://webidl.spec.whatwg.org/#Exposed.
   */
@@ -1317,7 +1338,7 @@ diff -r -u --color up/node/lib/internal/bootstrap/web/exposed-wildcard.js nw/nod
 +} //not nwjs
 diff -r -u --color up/node/lib/internal/main/run_main_module.js nw/node/lib/internal/main/run_main_module.js
 --- up/node/lib/internal/main/run_main_module.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/main/run_main_module.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/main/run_main_module.js	2024-08-26 19:33:04.930595396 +0000
 @@ -10,6 +10,18 @@
  } = require('internal/process/pre_execution');
  const { getOptionValue } = require('internal/options');
@@ -1344,7 +1365,7 @@ diff -r -u --color up/node/lib/internal/main/run_main_module.js nw/node/lib/inte
 +}
 diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/internal/modules/cjs/loader.js
 --- up/node/lib/internal/modules/cjs/loader.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/modules/cjs/loader.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/modules/cjs/loader.js	2024-08-26 19:33:04.930595396 +0000
 @@ -193,6 +193,20 @@
   * Get a path's properties, using an in-memory cache to minimize lookups.
   * @param {string} filename Absolute path to the file
@@ -1464,7 +1485,7 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
      ArrayPrototypeUnshiftApply(paths, ArrayPrototypeFilter(
 diff -r -u --color up/node/lib/internal/modules/esm/loader.js nw/node/lib/internal/modules/esm/loader.js
 --- up/node/lib/internal/modules/esm/loader.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/modules/esm/loader.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/modules/esm/loader.js	2024-08-26 19:33:04.930595396 +0000
 @@ -679,6 +679,7 @@
   */
  function createModuleLoader() {
@@ -1483,7 +1504,7 @@ diff -r -u --color up/node/lib/internal/modules/esm/loader.js nw/node/lib/intern
  }
 diff -r -u --color up/node/lib/internal/modules/esm/utils.js nw/node/lib/internal/modules/esm/utils.js
 --- up/node/lib/internal/modules/esm/utils.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/modules/esm/utils.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/modules/esm/utils.js	2024-08-26 19:33:04.930595396 +0000
 @@ -79,8 +79,6 @@
    defaultConditions = ObjectFreeze([
      'node',
@@ -1506,7 +1527,7 @@ diff -r -u --color up/node/lib/internal/modules/esm/utils.js nw/node/lib/interna
  /**
 diff -r -u --color up/node/lib/internal/modules/helpers.js nw/node/lib/internal/modules/helpers.js
 --- up/node/lib/internal/modules/helpers.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/modules/helpers.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/modules/helpers.js	2024-08-26 19:33:04.930595396 +0000
 @@ -65,8 +65,6 @@
    cjsConditions = new SafeSet([
      'require',
@@ -1518,7 +1539,7 @@ diff -r -u --color up/node/lib/internal/modules/helpers.js nw/node/lib/internal/
  
 diff -r -u --color up/node/lib/internal/modules/run_main.js nw/node/lib/internal/modules/run_main.js
 --- up/node/lib/internal/modules/run_main.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/modules/run_main.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/modules/run_main.js	2024-08-26 19:33:04.930595396 +0000
 @@ -75,8 +75,9 @@
     * (or an empty list when none have been registered).
     */
@@ -1533,7 +1554,7 @@ diff -r -u --color up/node/lib/internal/modules/run_main.js nw/node/lib/internal
    if (!mainPath || StringPrototypeEndsWith(mainPath, '.cjs')) { return false; }
 diff -r -u --color up/node/lib/internal/process/execution.js nw/node/lib/internal/process/execution.js
 --- up/node/lib/internal/process/execution.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/process/execution.js	2024-07-31 19:07:40.045862980 +0000
++++ nw/node/lib/internal/process/execution.js	2024-08-26 19:33:04.930595396 +0000
 @@ -189,18 +189,8 @@
      if (exceptionHandlerState.captureFn !== null) {
        exceptionHandlerState.captureFn(er);
@@ -1557,7 +1578,7 @@ diff -r -u --color up/node/lib/internal/process/execution.js nw/node/lib/interna
      // If we handled an error, then make sure any ticks get processed
 diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/internal/process/pre_execution.js
 --- up/node/lib/internal/process/pre_execution.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/process/pre_execution.js	2024-07-31 19:07:40.049863050 +0000
++++ nw/node/lib/internal/process/pre_execution.js	2024-08-26 19:33:04.934595394 +0000
 @@ -100,11 +100,14 @@
  
    // Patch the process object and get the resolved main entry point.
@@ -1595,7 +1616,7 @@ diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/int
  
 diff -r -u --color up/node/lib/internal/source_map/source_map_cache.js nw/node/lib/internal/source_map/source_map_cache.js
 --- up/node/lib/internal/source_map/source_map_cache.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/source_map/source_map_cache.js	2024-07-31 19:07:40.049863050 +0000
++++ nw/node/lib/internal/source_map/source_map_cache.js	2024-08-26 19:33:04.958595388 +0000
 @@ -53,6 +53,8 @@
  }
  
@@ -1607,7 +1628,7 @@ diff -r -u --color up/node/lib/internal/source_map/source_map_cache.js nw/node/l
    setSourceMapsNative(val);
 diff -r -u --color up/node/lib/internal/worker/io.js nw/node/lib/internal/worker/io.js
 --- up/node/lib/internal/worker/io.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/internal/worker/io.js	2024-07-31 19:07:40.057863192 +0000
++++ nw/node/lib/internal/worker/io.js	2024-08-26 19:33:04.962595387 +0000
 @@ -208,7 +208,9 @@
    },
  });
@@ -1620,7 +1641,7 @@ diff -r -u --color up/node/lib/internal/worker/io.js nw/node/lib/internal/worker
    kCreateEvent,
 diff -r -u --color up/node/lib/url.js nw/node/lib/url.js
 --- up/node/lib/url.js	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/lib/url.js	2024-07-31 19:07:40.057863192 +0000
++++ nw/node/lib/url.js	2024-08-26 19:33:04.966595386 +0000
 @@ -30,6 +30,7 @@
  } = primordials;
  
@@ -1631,7 +1652,7 @@ diff -r -u --color up/node/lib/url.js nw/node/lib/url.js
  
 diff -r -u --color up/node/node.gyp nw/node/node.gyp
 --- up/node/node.gyp	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/node.gyp	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/node.gyp	2024-08-26 19:33:04.966595386 +0000
 @@ -1,18 +1,31 @@
  {
    'variables': {
@@ -2160,7 +2181,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
            'cflags!': [ '-O3' ],
 diff -r -u --color up/node/node.gypi nw/node/node.gypi
 --- up/node/node.gypi	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/node.gypi	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/node.gypi	2024-08-26 19:33:04.966595386 +0000
 @@ -67,12 +67,12 @@
        ],
        'conditions': [
@@ -2392,9 +2413,39 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
                    ],
                  }],
                  # openssl.def is based on zlib.def, zlib symbols
+diff -r -u --color up/node/src/README.md nw/node/src/README.md
+--- up/node/src/README.md	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/README.md	2024-08-26 19:33:04.970595385 +0000
+@@ -418,8 +418,6 @@
+ 
+ `args[n]` is a `Local<Value>` that represents the n-th argument passed to the
+ function. `args.This()` is the `this` value inside this function call.
+-`args.Holder()` is equivalent to `args.This()` in all use cases inside of
+-Node.js.
+ 
+ `args.GetReturnValue()` is a placeholder for the return value of the function,
+ and provides a `.Set()` method that can be called with a boolean, integer,
+@@ -829,7 +827,7 @@
+ `self->object()`, given a `BaseObject` named `self`.
+ 
+ Accessing a `BaseObject` from a `v8::Local<v8::Object>` (frequently that is
+-`args.This()` or `args.Holder()` in a [binding function][]) can be done using
++`args.This()` in a [binding function][]) can be done using
+ the `Unwrap<T>(obj)` function, where `T` is a subclass of `BaseObject`.
+ A helper for this is the `ASSIGN_OR_RETURN_UNWRAP` macro that returns from the
+ current function if unwrapping fails (typically that means that the `BaseObject`
+@@ -838,7 +836,7 @@
+ ```cpp
+ void Http2Session::Request(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   Environment* env = session->env();
+   Local<Context> context = env->context();
+   Isolate* isolate = env->isolate();
 diff -r -u --color up/node/src/aliased_buffer.h nw/node/src/aliased_buffer.h
 --- up/node/src/aliased_buffer.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/aliased_buffer.h	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/src/aliased_buffer.h	2024-08-26 19:33:04.970595385 +0000
 @@ -6,6 +6,7 @@
  #include <cinttypes>
  #include "memory_tracker.h"
@@ -2405,7 +2456,7 @@ diff -r -u --color up/node/src/aliased_buffer.h nw/node/src/aliased_buffer.h
  
 diff -r -u --color up/node/src/api/callback.cc nw/node/src/api/callback.cc
 --- up/node/src/api/callback.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/api/callback.cc	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/src/api/callback.cc	2024-08-26 19:33:04.970595385 +0000
 @@ -3,6 +3,10 @@
  #include "env-inl.h"
  #include "v8.h"
@@ -2447,7 +2498,7 @@ diff -r -u --color up/node/src/api/callback.cc nw/node/src/api/callback.cc
    MaybeLocal<Value> ret =
 diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
 --- up/node/src/api/environment.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/api/environment.cc	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/src/api/environment.cc	2024-08-26 19:33:04.970595385 +0000
 @@ -44,6 +44,8 @@
  using v8::String;
  using v8::Value;
@@ -2521,7 +2572,7 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
    if (InitializeContext(context).IsNothing()) {
 diff -r -u --color up/node/src/api/hooks.cc nw/node/src/api/hooks.cc
 --- up/node/src/api/hooks.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/api/hooks.cc	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/src/api/hooks.cc	2024-08-26 19:33:04.970595385 +0000
 @@ -21,6 +21,14 @@
    env->RunAtExitCallbacks();
  }
@@ -2539,7 +2590,7 @@ diff -r -u --color up/node/src/api/hooks.cc nw/node/src/api/hooks.cc
    env->AtExit(cb, arg);
 diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
 --- up/node/src/async_wrap.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/async_wrap.cc	2024-07-31 19:07:40.061863264 +0000
++++ nw/node/src/async_wrap.cc	2024-08-26 19:33:04.970595385 +0000
 @@ -108,6 +108,7 @@
  
  
@@ -2584,6 +2635,33 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
  }
  
  static void SetPromiseHooks(const FunctionCallbackInfo<Value>& args) {
+@@ -248,7 +257,7 @@
+ void AsyncWrap::GetAsyncId(const FunctionCallbackInfo<Value>& args) {
+   AsyncWrap* wrap;
+   args.GetReturnValue().Set(kInvalidAsyncId);
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   args.GetReturnValue().Set(wrap->get_async_id());
+ }
+ 
+@@ -290,7 +299,7 @@
+   CHECK(args[0]->IsObject());
+ 
+   AsyncWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   Local<Object> resource = args[0].As<Object>();
+   double execution_async_id =
+@@ -302,7 +311,7 @@
+ void AsyncWrap::GetProviderType(const FunctionCallbackInfo<Value>& args) {
+   AsyncWrap* wrap;
+   args.GetReturnValue().Set(AsyncWrap::PROVIDER_NONE);
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   args.GetReturnValue().Set(wrap->provider_type());
+ }
+ 
 @@ -539,6 +548,7 @@
  }
  
@@ -2619,45 +2697,1216 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
    EmitAsyncInit(env(), resource,
 diff -r -u --color up/node/src/base_object-inl.h nw/node/src/base_object-inl.h
 --- up/node/src/base_object-inl.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/base_object-inl.h	2024-07-31 19:07:40.061863264 +0000
-@@ -132,14 +132,14 @@
++++ nw/node/src/base_object-inl.h	2024-08-26 19:33:04.970595385 +0000
+@@ -132,19 +132,18 @@
  
  template <int Field>
  void BaseObject::InternalFieldGet(
 -    v8::Local<v8::String> property,
-+    v8::Local<v8::Name> property,
-     const v8::PropertyCallbackInfo<v8::Value>& info) {
-   info.GetReturnValue().Set(
-       info.This()->GetInternalField(Field).As<v8::Value>());
+-    const v8::PropertyCallbackInfo<v8::Value>& info) {
+-  info.GetReturnValue().Set(
+-      info.This()->GetInternalField(Field).As<v8::Value>());
++    const v8::FunctionCallbackInfo<v8::Value>& args) {
++  args.GetReturnValue().Set(
++      args.This()->GetInternalField(Field).As<v8::Value>());
  }
  
 -template <int Field, bool (v8::Value::* typecheck)() const>
 -void BaseObject::InternalFieldSet(v8::Local<v8::String> property,
+-                                  v8::Local<v8::Value> value,
+-                                  const v8::PropertyCallbackInfo<void>& info) {
 +template <int Field, bool (v8::Value::*typecheck)() const>
-+void BaseObject::InternalFieldSet(v8::Local<v8::Name> property,
-                                   v8::Local<v8::Value> value,
-                                   const v8::PropertyCallbackInfo<void>& info) {
++void BaseObject::InternalFieldSet(
++    const v8::FunctionCallbackInfo<v8::Value>& args) {
++  v8::Local<v8::Value> value = args[0];
    // This could be e.g. value->IsFunction().
+   CHECK(((*value)->*typecheck)());
+-  info.This()->SetInternalField(Field, value);
++  args.This()->SetInternalField(Field, value);
+ }
+ 
+ bool BaseObject::has_pointer_data() const {
 diff -r -u --color up/node/src/base_object.h nw/node/src/base_object.h
 --- up/node/src/base_object.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/base_object.h	2024-07-31 19:07:40.061863264 +0000
-@@ -111,10 +111,10 @@
++++ nw/node/src/base_object.h	2024-08-26 19:33:04.970595385 +0000
+@@ -111,12 +111,9 @@
  
    // Setter/Getter pair for internal fields that can be passed to SetAccessor.
    template <int Field>
 -  static void InternalFieldGet(v8::Local<v8::String> property,
-+  static void InternalFieldGet(v8::Local<v8::Name> property,
-                                const v8::PropertyCallbackInfo<v8::Value>& info);
+-                               const v8::PropertyCallbackInfo<v8::Value>& info);
++  static void InternalFieldGet(const v8::FunctionCallbackInfo<v8::Value>& args);
    template <int Field, bool (v8::Value::*typecheck)() const>
 -  static void InternalFieldSet(v8::Local<v8::String> property,
-+  static void InternalFieldSet(v8::Local<v8::Name> property,
-                                v8::Local<v8::Value> value,
-                                const v8::PropertyCallbackInfo<void>& info);
+-                               v8::Local<v8::Value> value,
+-                               const v8::PropertyCallbackInfo<void>& info);
++  static void InternalFieldSet(const v8::FunctionCallbackInfo<v8::Value>& args);
  
+   // This is a bit of a hack. See the override in async_wrap.cc for details.
+   virtual bool IsDoneInitializing() const;
+diff -r -u --color up/node/src/cares_wrap.cc nw/node/src/cares_wrap.cc
+--- up/node/src/cares_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/cares_wrap.cc	2024-08-26 19:33:04.970595385 +0000
+@@ -1404,7 +1404,7 @@
+ static void Query(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   ChannelWrap* channel;
+-  ASSIGN_OR_RETURN_UNWRAP(&channel, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&channel, args.This());
+ 
+   CHECK_EQ(false, args.IsConstructCall());
+   CHECK(args[0]->IsObject());
+@@ -1664,7 +1664,7 @@
+ void GetServers(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   ChannelWrap* channel;
+-  ASSIGN_OR_RETURN_UNWRAP(&channel, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&channel, args.This());
+ 
+   Local<Array> server_array = Array::New(env->isolate());
+ 
+@@ -1702,7 +1702,7 @@
+ void SetServers(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   ChannelWrap* channel;
+-  ASSIGN_OR_RETURN_UNWRAP(&channel, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&channel, args.This());
+ 
+   if (channel->active_query_count()) {
+     return args.GetReturnValue().Set(DNS_ESETSRVPENDING);
+@@ -1783,7 +1783,7 @@
+ void SetLocalAddress(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   ChannelWrap* channel;
+-  ASSIGN_OR_RETURN_UNWRAP(&channel, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&channel, args.This());
+ 
+   CHECK_EQ(args.Length(), 2);
+   CHECK(args[0]->IsString());
+@@ -1846,7 +1846,7 @@
+ 
+ void Cancel(const FunctionCallbackInfo<Value>& args) {
+   ChannelWrap* channel;
+-  ASSIGN_OR_RETURN_UNWRAP(&channel, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&channel, args.This());
+ 
+   TRACE_EVENT_INSTANT0(TRACING_CATEGORY_NODE2(dns, native),
+       "cancel", TRACE_EVENT_SCOPE_THREAD);
+diff -r -u --color up/node/src/crypto/crypto_cipher.cc nw/node/src/crypto/crypto_cipher.cc
+--- up/node/src/crypto/crypto_cipher.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_cipher.cc	2024-08-26 19:33:04.970595385 +0000
+@@ -438,7 +438,7 @@
+ 
+ void CipherBase::Init(const FunctionCallbackInfo<Value>& args) {
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+   Environment* env = Environment::GetCurrent(args);
+ 
+   CHECK_GE(args.Length(), 3);
+@@ -510,7 +510,7 @@
+ 
+ void CipherBase::InitIv(const FunctionCallbackInfo<Value>& args) {
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+   Environment* env = cipher->env();
+ 
+   CHECK_GE(args.Length(), 4);
+@@ -645,7 +645,7 @@
+ void CipherBase::GetAuthTag(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+ 
+   // Only callable after Final and if encrypting.
+   if (cipher->ctx_ ||
+@@ -661,7 +661,7 @@
+ 
+ void CipherBase::SetAuthTag(const FunctionCallbackInfo<Value>& args) {
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+   Environment* env = Environment::GetCurrent(args);
+ 
+   if (!cipher->ctx_ ||
+@@ -774,7 +774,7 @@
+ 
+ void CipherBase::SetAAD(const FunctionCallbackInfo<Value>& args) {
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+   Environment* env = Environment::GetCurrent(args);
+ 
+   CHECK_EQ(args.Length(), 2);
+@@ -887,7 +887,7 @@
+ 
+ void CipherBase::SetAutoPadding(const FunctionCallbackInfo<Value>& args) {
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+ 
+   bool b = cipher->SetAutoPadding(args.Length() < 1 || args[0]->IsTrue());
+   args.GetReturnValue().Set(b);  // Possibly report invalid state failure
+@@ -962,7 +962,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   CipherBase* cipher;
+-  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cipher, args.This());
+   if (cipher->ctx_ == nullptr)
+     return THROW_ERR_CRYPTO_INVALID_STATE(env);
+ 
+diff -r -u --color up/node/src/crypto/crypto_context.cc nw/node/src/crypto/crypto_context.cc
+--- up/node/src/crypto/crypto_context.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_context.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -422,7 +422,7 @@
+ 
+ void SecureContext::Init(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   Environment* env = sc->env();
+ 
+   CHECK_EQ(args.Length(), 3);
+@@ -595,7 +595,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_GE(args.Length(), 1);  // Private key argument is mandatory
+ 
+@@ -626,7 +626,7 @@
+ 
+ void SecureContext::SetSigalgs(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   Environment* env = sc->env();
+   ClearErrorOnReturn clear_error_on_return;
+ 
+@@ -644,7 +644,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_EQ(args.Length(), 2);
+ 
+@@ -707,7 +707,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_GE(args.Length(), 1);  // Certificate argument is mandatory
+ 
+@@ -734,7 +734,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_GE(args.Length(), 1);  // CA certificate argument is mandatory
+ 
+@@ -771,7 +771,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_GE(args.Length(), 1);  // CRL argument is mandatory
+ 
+@@ -790,7 +790,7 @@
+ 
+ void SecureContext::AddRootCerts(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   sc->SetRootCerts();
+ }
+ 
+@@ -798,7 +798,7 @@
+   // BoringSSL doesn't allow API config of TLS1.3 cipher suites.
+ #ifndef OPENSSL_IS_BORINGSSL
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   Environment* env = sc->env();
+   ClearErrorOnReturn clear_error_on_return;
+ 
+@@ -813,7 +813,7 @@
+ 
+ void SecureContext::SetCiphers(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   Environment* env = sc->env();
+   ClearErrorOnReturn clear_error_on_return;
+ 
+@@ -837,7 +837,7 @@
+ 
+ void SecureContext::SetECDHCurve(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   Environment* env = sc->env();
+ 
+   CHECK_GE(args.Length(), 1);  // ECDH curve name argument is mandatory
+@@ -899,7 +899,7 @@
+ 
+ void SecureContext::SetMinProto(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_EQ(args.Length(), 1);
+   CHECK(args[0]->IsInt32());
+@@ -911,7 +911,7 @@
+ 
+ void SecureContext::SetMaxProto(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_EQ(args.Length(), 1);
+   CHECK(args[0]->IsInt32());
+@@ -923,7 +923,7 @@
+ 
+ void SecureContext::GetMinProto(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_EQ(args.Length(), 0);
+ 
+@@ -934,7 +934,7 @@
+ 
+ void SecureContext::GetMaxProto(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_EQ(args.Length(), 0);
+ 
+@@ -946,7 +946,7 @@
+ void SecureContext::SetOptions(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_GE(args.Length(), 1);
+   CHECK(args[0]->IsNumber());
+@@ -960,7 +960,7 @@
+ void SecureContext::SetSessionIdContext(
+     const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   Environment* env = sc->env();
+ 
+   CHECK_GE(args.Length(), 1);
+@@ -992,7 +992,7 @@
+ 
+ void SecureContext::SetSessionTimeout(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   CHECK_GE(args.Length(), 1);
+   CHECK(args[0]->IsInt32());
+@@ -1003,7 +1003,7 @@
+ 
+ void SecureContext::Close(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   sc->Reset();
+ }
+ 
+@@ -1015,7 +1015,7 @@
+   bool ret = false;
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+   ClearErrorOnReturn clear_error_on_return;
+ 
+   if (args.Length() < 1) {
+@@ -1124,7 +1124,7 @@
+   CHECK(args[0]->IsString());
+ 
+   SecureContext* sc;
+-  ASSIGN_OR_RETURN_UNWRAP(&sc, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sc, args.This());
+ 
+   MarkPopErrorOnReturn mark_pop_error_on_return;
+ 
+@@ -1161,7 +1161,7 @@
+ 
+ void SecureContext::GetTicketKeys(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   Local<Object> buff;
+   if (!Buffer::New(wrap->env(), 48).ToLocal(&buff))
+@@ -1176,7 +1176,7 @@
+ 
+ void SecureContext::SetTicketKeys(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK_GE(args.Length(), 1);  // Ticket keys argument is mandatory
+   CHECK(args[0]->IsArrayBufferView());
+@@ -1196,7 +1196,7 @@
+ void SecureContext::EnableTicketKeyCallback(
+     const FunctionCallbackInfo<Value>& args) {
+   SecureContext* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   SSL_CTX_set_tlsext_ticket_key_cb(wrap->ctx_.get(), TicketKeyCallback);
+ }
+@@ -1350,7 +1350,7 @@
+ template <bool primary>
+ void SecureContext::GetCertificate(const FunctionCallbackInfo<Value>& args) {
+   SecureContext* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   Environment* env = wrap->env();
+   X509* cert;
+ 
+diff -r -u --color up/node/src/crypto/crypto_dh.cc nw/node/src/crypto/crypto_dh.cc
+--- up/node/src/crypto/crypto_dh.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_dh.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -292,7 +292,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   DiffieHellman* diffieHellman;
+-  ASSIGN_OR_RETURN_UNWRAP(&diffieHellman, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&diffieHellman, args.This());
+ 
+   if (!DH_generate_key(diffieHellman->dh_.get())) {
+     return ThrowCryptoError(env, ERR_get_error(), "Key generation failed");
+@@ -327,7 +327,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   DiffieHellman* dh;
+-  ASSIGN_OR_RETURN_UNWRAP(&dh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&dh, args.This());
+ 
+   const BIGNUM* num = get_field(dh->dh_.get());
+   if (num == nullptr)
+@@ -388,7 +388,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   DiffieHellman* diffieHellman;
+-  ASSIGN_OR_RETURN_UNWRAP(&diffieHellman, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&diffieHellman, args.This());
+ 
+   ClearErrorOnReturn clear_error_on_return;
+ 
+@@ -447,7 +447,7 @@
+                            int (*set_field)(DH*, BIGNUM*), const char* what) {
+   Environment* env = Environment::GetCurrent(args);
+   DiffieHellman* dh;
+-  ASSIGN_OR_RETURN_UNWRAP(&dh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&dh, args.This());
+   CHECK_EQ(args.Length(), 1);
+   ArrayBufferOrViewContents<unsigned char> buf(args[0]);
+   if (UNLIKELY(!buf.CheckSizeInt32()))
+@@ -473,7 +473,7 @@
+   HandleScope scope(args.GetIsolate());
+ 
+   DiffieHellman* diffieHellman;
+-  ASSIGN_OR_RETURN_UNWRAP(&diffieHellman, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&diffieHellman, args.This());
+ 
+   args.GetReturnValue().Set(diffieHellman->verifyError_);
+ }
+diff -r -u --color up/node/src/crypto/crypto_ec.cc nw/node/src/crypto/crypto_ec.cc
+--- up/node/src/crypto/crypto_ec.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_ec.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -155,7 +155,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   ECDH* ecdh;
+-  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.This());
+ 
+   if (!EC_KEY_generate_key(ecdh->key_.get()))
+     return THROW_ERR_CRYPTO_OPERATION_FAILED(env, "Failed to generate key");
+@@ -196,7 +196,7 @@
+   CHECK(IsAnyBufferSource(args[0]));
+ 
+   ECDH* ecdh;
+-  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.This());
+ 
+   MarkPopErrorOnReturn mark_pop_error_on_return;
+ 
+@@ -240,7 +240,7 @@
+   CHECK_EQ(args.Length(), 1);
+ 
+   ECDH* ecdh;
+-  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.This());
+ 
+   const EC_GROUP* group = EC_KEY_get0_group(ecdh->key_.get());
+   const EC_POINT* pub = EC_KEY_get0_public_key(ecdh->key_.get());
+@@ -263,7 +263,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   ECDH* ecdh;
+-  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.This());
+ 
+   const BIGNUM* b = EC_KEY_get0_private_key(ecdh->key_.get());
+   if (b == nullptr)
+@@ -289,7 +289,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   ECDH* ecdh;
+-  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.This());
+ 
+   ArrayBufferOrViewContents<unsigned char> priv_buffer(args[0]);
+   if (UNLIKELY(!priv_buffer.CheckSizeInt32()))
+@@ -345,7 +345,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   ECDH* ecdh;
+-  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ecdh, args.This());
+ 
+   CHECK(IsAnyBufferSource(args[0]));
+ 
+diff -r -u --color up/node/src/crypto/crypto_hash.cc nw/node/src/crypto/crypto_hash.cc
+--- up/node/src/crypto/crypto_hash.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_hash.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -378,7 +378,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   Hash* hash;
+-  ASSIGN_OR_RETURN_UNWRAP(&hash, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&hash, args.This());
+ 
+   enum encoding encoding = BUFFER;
+   if (args.Length() >= 1) {
+diff -r -u --color up/node/src/crypto/crypto_hmac.cc nw/node/src/crypto/crypto_hmac.cc
+--- up/node/src/crypto/crypto_hmac.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_hmac.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -85,7 +85,7 @@
+ 
+ void Hmac::HmacInit(const FunctionCallbackInfo<Value>& args) {
+   Hmac* hmac;
+-  ASSIGN_OR_RETURN_UNWRAP(&hmac, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&hmac, args.This());
+   Environment* env = hmac->env();
+ 
+   const node::Utf8Value hash_type(env->isolate(), args[0]);
+@@ -114,7 +114,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   Hmac* hmac;
+-  ASSIGN_OR_RETURN_UNWRAP(&hmac, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&hmac, args.This());
+ 
+   enum encoding encoding = BUFFER;
+   if (args.Length() >= 1) {
+diff -r -u --color up/node/src/crypto/crypto_keys.cc nw/node/src/crypto/crypto_keys.cc
+--- up/node/src/crypto/crypto_keys.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_keys.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -971,7 +971,7 @@
+ 
+ void KeyObjectHandle::Init(const FunctionCallbackInfo<Value>& args) {
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+   MarkPopErrorOnReturn mark_pop_error_on_return;
+ 
+   CHECK(args[0]->IsInt32());
+@@ -1015,7 +1015,7 @@
+ void KeyObjectHandle::InitJWK(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+   MarkPopErrorOnReturn mark_pop_error_on_return;
+ 
+   // The argument must be a JavaScript object that we will inspect
+@@ -1054,7 +1054,7 @@
+ void KeyObjectHandle::InitECRaw(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   CHECK(args[0]->IsString());
+   Utf8Value name(env->isolate(), args[0]);
+@@ -1092,7 +1092,7 @@
+ void KeyObjectHandle::InitEDRaw(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   CHECK(args[0]->IsString());
+   Utf8Value name(env->isolate(), args[0]);
+@@ -1134,7 +1134,7 @@
+ void KeyObjectHandle::Equals(const FunctionCallbackInfo<Value>& args) {
+   KeyObjectHandle* self_handle;
+   KeyObjectHandle* arg_handle;
+-  ASSIGN_OR_RETURN_UNWRAP(&self_handle, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&self_handle, args.This());
+   ASSIGN_OR_RETURN_UNWRAP(&arg_handle, args[0].As<Object>());
+   std::shared_ptr<KeyObjectData> key = self_handle->Data();
+   std::shared_ptr<KeyObjectData> key2 = arg_handle->Data();
+@@ -1182,7 +1182,7 @@
+ void KeyObjectHandle::GetKeyDetail(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   CHECK(args[0]->IsObject());
+ 
+@@ -1235,7 +1235,7 @@
+ void KeyObjectHandle::GetAsymmetricKeyType(
+     const FunctionCallbackInfo<Value>& args) {
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   args.GetReturnValue().Set(key->GetAsymmetricKeyType());
+ }
+@@ -1263,7 +1263,7 @@
+ 
+ void KeyObjectHandle::CheckEcKeyData(const FunctionCallbackInfo<Value>& args) {
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   args.GetReturnValue().Set(key->CheckEcKeyData());
+ }
+@@ -1271,14 +1271,14 @@
+ void KeyObjectHandle::GetSymmetricKeySize(
+     const FunctionCallbackInfo<Value>& args) {
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+   args.GetReturnValue().Set(
+       static_cast<uint32_t>(key->Data()->GetSymmetricKeySize()));
+ }
+ 
+ void KeyObjectHandle::Export(const FunctionCallbackInfo<Value>& args) {
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   KeyType type = key->Data()->GetKeyType();
+ 
+@@ -1328,7 +1328,7 @@
+     const v8::FunctionCallbackInfo<v8::Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   KeyObjectHandle* key;
+-  ASSIGN_OR_RETURN_UNWRAP(&key, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&key, args.This());
+ 
+   CHECK(args[0]->IsObject());
+   CHECK(args[1]->IsBoolean());
+diff -r -u --color up/node/src/crypto/crypto_sig.cc nw/node/src/crypto/crypto_sig.cc
+--- up/node/src/crypto/crypto_sig.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_sig.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -371,7 +371,7 @@
+ void Sign::SignInit(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Sign* sign;
+-  ASSIGN_OR_RETURN_UNWRAP(&sign, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sign, args.This());
+ 
+   const node::Utf8Value sign_type(args.GetIsolate(), args[0]);
+   crypto::CheckThrow(env, sign->Init(*sign_type));
+@@ -414,7 +414,7 @@
+ void Sign::SignFinal(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Sign* sign;
+-  ASSIGN_OR_RETURN_UNWRAP(&sign, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&sign, args.This());
+ 
+   ClearErrorOnReturn clear_error_on_return;
+ 
+@@ -492,7 +492,7 @@
+ void Verify::VerifyInit(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Verify* verify;
+-  ASSIGN_OR_RETURN_UNWRAP(&verify, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&verify, args.This());
+ 
+   const node::Utf8Value verify_type(args.GetIsolate(), args[0]);
+   crypto::CheckThrow(env, verify->Init(*verify_type));
+@@ -545,7 +545,7 @@
+   ClearErrorOnReturn clear_error_on_return;
+ 
+   Verify* verify;
+-  ASSIGN_OR_RETURN_UNWRAP(&verify, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&verify, args.This());
+ 
+   unsigned int offset = 0;
+   ManagedEVPPKey pkey =
+diff -r -u --color up/node/src/crypto/crypto_tls.cc nw/node/src/crypto/crypto_tls.cc
+--- up/node/src/crypto/crypto_tls.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_tls.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -506,7 +506,7 @@
+ 
+ void TLSWrap::Receive(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   ArrayBufferViewContents<char> buffer(args[0]);
+   const char* data = buffer.data();
+@@ -528,7 +528,7 @@
+ 
+ void TLSWrap::Start(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(!wrap->started_);
+   wrap->started_ = true;
+@@ -1155,7 +1155,7 @@
+ 
+ void TLSWrap::SetVerifyMode(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK_EQ(args.Length(), 2);
+   CHECK(args[0]->IsBoolean());
+@@ -1187,7 +1187,7 @@
+ 
+ void TLSWrap::EnableSessionCallbacks(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   CHECK_NOT_NULL(wrap->ssl_);
+   wrap->enable_session_callbacks();
+ 
+@@ -1203,7 +1203,7 @@
+ 
+ void TLSWrap::EnableKeylogCallback(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   CHECK(wrap->sc_);
+   wrap->sc_->SetKeylogCallback(KeylogCallback);
+ }
+@@ -1220,7 +1220,7 @@
+ 
+ void TLSWrap::EnableTrace(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+ #if HAVE_SSL_TRACE
+   if (wrap->ssl_) {
+@@ -1243,7 +1243,7 @@
+ 
+ void TLSWrap::DestroySSL(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   wrap->Destroy();
+   Debug(wrap, "DestroySSL() finished");
+ }
+@@ -1272,7 +1272,7 @@
+ 
+ void TLSWrap::EnableCertCb(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   wrap->WaitForCertCb(OnClientHelloParseEnd, wrap);
+ }
+ 
+@@ -1289,7 +1289,7 @@
+ 
+ void TLSWrap::EnableALPNCb(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   wrap->alpn_callback_enabled_ = true;
+ 
+   SSL* ssl = wrap->ssl_.get();
+@@ -1301,7 +1301,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK_NOT_NULL(wrap->ssl_);
+ 
+@@ -1317,7 +1317,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK_EQ(args.Length(), 1);
+   CHECK(args[0]->IsString());
+@@ -1382,7 +1382,7 @@
+ 
+ void TLSWrap::SetPskIdentityHint(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* p;
+-  ASSIGN_OR_RETURN_UNWRAP(&p, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&p, args.This());
+   CHECK_NOT_NULL(p->ssl_);
+ 
+   Environment* env = p->env();
+@@ -1399,7 +1399,7 @@
+ 
+ void TLSWrap::EnablePskCallback(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   CHECK_NOT_NULL(wrap->ssl_);
+ 
+   SSL_set_psk_server_callback(wrap->ssl_.get(), PskServerCallback);
+@@ -1533,7 +1533,7 @@
+ void TLSWrap::CertCbDone(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   CHECK(w->is_waiting_cert_cb() && w->cert_cb_running_);
+ 
+@@ -1578,7 +1578,7 @@
+ 
+ void TLSWrap::SetALPNProtocols(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+   if (args.Length() < 1 || !Buffer::HasInstance(args[0]))
+     return env->ThrowTypeError("Must give a Buffer as first argument");
+@@ -1597,7 +1597,7 @@
+ 
+ void TLSWrap::GetPeerCertificate(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+ 
+   bool abbreviated = args.Length() < 1 || !args[0]->IsTrue();
+@@ -1613,7 +1613,7 @@
+ 
+ void TLSWrap::GetPeerX509Certificate(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+ 
+   X509Certificate::GetPeerCertificateFlag flag = w->is_server()
+@@ -1627,7 +1627,7 @@
+ 
+ void TLSWrap::GetCertificate(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+ 
+   Local<Value> ret;
+@@ -1637,7 +1637,7 @@
+ 
+ void TLSWrap::GetX509Certificate(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+   Local<Value> ret;
+   if (X509Certificate::GetCert(env, w->ssl_).ToLocal(&ret))
+@@ -1648,7 +1648,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   // We cannot just pass nullptr to SSL_get_finished()
+   // because it would further be propagated to memcpy(),
+@@ -1679,7 +1679,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   // We cannot just pass nullptr to SSL_get_peer_finished()
+   // because it would further be propagated to memcpy(),
+@@ -1710,7 +1710,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   SSL_SESSION* sess = SSL_get_session(w->ssl_.get());
+   if (sess == nullptr)
+@@ -1739,7 +1739,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   if (args.Length() < 1)
+     return THROW_ERR_MISSING_ARGS(env, "Session argument is mandatory");
+@@ -1756,7 +1756,7 @@
+ 
+ void TLSWrap::IsSessionReused(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   bool yes = SSL_session_reused(w->ssl_.get());
+   args.GetReturnValue().Set(yes);
+ }
+@@ -1764,7 +1764,7 @@
+ void TLSWrap::VerifyError(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   // XXX(bnoordhuis) The UNABLE_TO_GET_ISSUER_CERT error when there is no
+   // peer certificate is questionable but it's compatible with what was
+@@ -1792,14 +1792,14 @@
+ void TLSWrap::GetCipher(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   args.GetReturnValue().Set(
+       GetCipherInfo(env, w->ssl_).FromMaybe(Local<Object>()));
+ }
+ 
+ void TLSWrap::LoadSession(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   // TODO(@sam-github) check arg length and types in js, and CHECK in c++
+   if (args.Length() >= 1 && Buffer::HasInstance(args[0])) {
+@@ -1816,7 +1816,7 @@
+ void TLSWrap::GetSharedSigalgs(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   SSL* ssl = w->ssl_.get();
+   int nsig = SSL_get_shared_sigalgs(ssl, 0, nullptr, nullptr, nullptr, nullptr,
+@@ -1898,7 +1898,7 @@
+ 
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   uint32_t olen = args[0].As<Uint32>()->Value();
+   Utf8Value label(env->isolate(), args[1]);
+@@ -1937,13 +1937,13 @@
+ 
+ void TLSWrap::EndParser(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   w->hello_parser_.End();
+ }
+ 
+ void TLSWrap::Renegotiate(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   ClearErrorOnReturn clear_error_on_return;
+   if (SSL_renegotiate(w->ssl_.get()) != 1)
+     return ThrowCryptoError(w->env(), ERR_get_error());
+@@ -1951,7 +1951,7 @@
+ 
+ void TLSWrap::GetTLSTicket(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+ 
+   SSL_SESSION* sess = SSL_get_session(w->ssl_.get());
+@@ -1971,14 +1971,14 @@
+ 
+ void TLSWrap::NewSessionDone(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   w->awaiting_new_session_ = false;
+   w->NewSessionDoneCb();
+ }
+ 
+ void TLSWrap::SetOCSPResponse(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = w->env();
+ 
+   if (args.Length() < 1)
+@@ -1991,14 +1991,14 @@
+ 
+ void TLSWrap::RequestOCSP(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   SSL_set_tlsext_status_type(w->ssl_.get(), TLSEXT_STATUSTYPE_ocsp);
+ }
+ 
+ void TLSWrap::GetEphemeralKeyInfo(const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   Environment* env = Environment::GetCurrent(args);
+ 
+   CHECK(w->ssl_);
+@@ -2017,7 +2017,7 @@
+ void TLSWrap::GetProtocol(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   args.GetReturnValue().Set(
+       OneByteString(env->isolate(), SSL_get_version(w->ssl_.get())));
+ }
+@@ -2025,7 +2025,7 @@
+ void TLSWrap::GetALPNNegotiatedProto(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   const unsigned char* alpn_proto;
+   unsigned int alpn_proto_len;
+@@ -2051,7 +2051,7 @@
+ void TLSWrap::WritesIssuedByPrevListenerDone(
+     const FunctionCallbackInfo<Value>& args) {
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+ 
+   Debug(w, "WritesIssuedByPrevListenerDone is called");
+   w->has_active_write_issued_by_prev_listener_ = false;
+@@ -2076,7 +2076,7 @@
+   CHECK(args.Length() >= 1 && args[0]->IsNumber());
+   Environment* env = Environment::GetCurrent(args);
+   TLSWrap* w;
+-  ASSIGN_OR_RETURN_UNWRAP(&w, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&w, args.This());
+   int rv = SSL_set_max_send_fragment(
+       w->ssl_.get(),
+       args[0]->Int32Value(env->context()).FromJust());
+diff -r -u --color up/node/src/crypto/crypto_util.h nw/node/src/crypto/crypto_util.h
+--- up/node/src/crypto/crypto_util.h	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_util.h	2024-08-26 19:33:04.974595383 +0000
+@@ -136,7 +136,7 @@
+             void (*callback)(T*, const v8::FunctionCallbackInfo<v8::Value>&,
+                              const char*, size_t)) {
+   T* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   if (args[0]->IsString()) {
+     StringBytes::InlineDecoder decoder;
+@@ -412,7 +412,7 @@
+     Environment* env = Environment::GetCurrent(args);
+ 
+     CryptoJob<CryptoJobTraits>* job;
+-    ASSIGN_OR_RETURN_UNWRAP(&job, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&job, args.This());
+     if (job->mode() == kCryptoJobAsync)
+       return job->ScheduleWork();
+ 
+diff -r -u --color up/node/src/crypto/crypto_x509.cc nw/node/src/crypto/crypto_x509.cc
+--- up/node/src/crypto/crypto_x509.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/crypto/crypto_x509.cc	2024-08-26 19:33:04.974595383 +0000
+@@ -56,7 +56,7 @@
+ void Fingerprint(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   Local<Value> ret;
+   if (GetFingerprintDigest(env, algo(), cert->get()).ToLocal(&ret))
+     args.GetReturnValue().Set(ret);
+@@ -208,7 +208,7 @@
+ static void ReturnPropertyThroughBIO(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   BIOPointer bio(BIO_new(BIO_s_mem()));
+   CHECK(bio);
+   Local<Value> ret;
+@@ -244,7 +244,7 @@
+ static void ReturnProperty(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   Local<Value> ret;
+   if (Property(env, cert->get()).ToLocal(&ret)) args.GetReturnValue().Set(ret);
+ }
+@@ -264,7 +264,7 @@
+ void X509Certificate::PublicKey(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   // TODO(tniessen): consider checking X509_get_pubkey() when the
+   // X509Certificate object is being created.
+@@ -283,7 +283,7 @@
+ void X509Certificate::Pem(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   BIOPointer bio(BIO_new(BIO_s_mem()));
+   CHECK(bio);
+   if (PEM_write_bio_X509(bio.get(), cert->get()))
+@@ -293,14 +293,14 @@
+ void X509Certificate::CheckCA(const FunctionCallbackInfo<Value>& args) {
+   X509Certificate* cert;
+   ClearErrorOnReturn clear_error_on_return;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   args.GetReturnValue().Set(X509_check_ca(cert->get()) == 1);
+ }
+ 
+ void X509Certificate::CheckHost(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   CHECK(args[0]->IsString());  // name
+   CHECK(args[1]->IsUint32());  // flags
+@@ -335,7 +335,7 @@
+ void X509Certificate::CheckEmail(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   CHECK(args[0]->IsString());  // name
+   CHECK(args[1]->IsUint32());  // flags
+@@ -362,7 +362,7 @@
+ void X509Certificate::CheckIP(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   CHECK(args[0]->IsString());  // IP
+   CHECK(args[1]->IsUint32());  // flags
+@@ -385,7 +385,7 @@
+ void X509Certificate::CheckIssued(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   CHECK(args[0]->IsObject());
+   CHECK(X509Certificate::HasInstance(env, args[0].As<Object>()));
+@@ -401,7 +401,7 @@
+ 
+ void X509Certificate::CheckPrivateKey(const FunctionCallbackInfo<Value>& args) {
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   CHECK(args[0]->IsObject());
+   KeyObjectHandle* key;
+@@ -418,7 +418,7 @@
+ 
+ void X509Certificate::Verify(const FunctionCallbackInfo<Value>& args) {
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+ 
+   CHECK(args[0]->IsObject());
+   KeyObjectHandle* key;
+@@ -436,7 +436,7 @@
+ void X509Certificate::ToLegacy(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   ClearErrorOnReturn clear_error_on_return;
+   Local<Value> ret;
+   if (X509ToObject(env, cert->get()).ToLocal(&ret))
+@@ -445,7 +445,7 @@
+ 
+ void X509Certificate::GetIssuerCert(const FunctionCallbackInfo<Value>& args) {
+   X509Certificate* cert;
+-  ASSIGN_OR_RETURN_UNWRAP(&cert, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&cert, args.This());
+   if (cert->issuer_cert_)
+     args.GetReturnValue().Set(cert->issuer_cert_->object());
+ }
 diff -r -u --color up/node/src/env-inl.h nw/node/src/env-inl.h
 --- up/node/src/env-inl.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/env-inl.h	2024-07-31 19:07:40.069863405 +0000
-@@ -226,13 +226,23 @@
++++ nw/node/src/env-inl.h	2024-08-26 19:33:04.978595383 +0000
+@@ -62,31 +62,6 @@
+   return event_loop_;
+ }
+ 
+-inline void IsolateData::SetCppgcReference(v8::Isolate* isolate,
+-                                           v8::Local<v8::Object> object,
+-                                           void* wrappable) {
+-  v8::CppHeap* heap = isolate->GetCppHeap();
+-  CHECK_NOT_NULL(heap);
+-  v8::WrapperDescriptor descriptor = heap->wrapper_descriptor();
+-  uint16_t required_size = std::max(descriptor.wrappable_instance_index,
+-                                    descriptor.wrappable_type_index);
+-  CHECK_GT(object->InternalFieldCount(), required_size);
+-
+-  uint16_t* id_ptr = nullptr;
+-  {
+-    Mutex::ScopedLock lock(isolate_data_mutex_);
+-    auto it =
+-        wrapper_data_map_.find(descriptor.embedder_id_for_garbage_collected);
+-    CHECK_NE(it, wrapper_data_map_.end());
+-    id_ptr = &(it->second->cppgc_id);
+-  }
+-
+-  object->SetAlignedPointerInInternalField(descriptor.wrappable_type_index,
+-                                           id_ptr);
+-  object->SetAlignedPointerInInternalField(descriptor.wrappable_instance_index,
+-                                           wrappable);
+-}
+-
+ inline uint16_t* IsolateData::embedder_id_for_cppgc() const {
+   return &(wrapper_data_->cppgc_id);
+ }
+@@ -226,13 +201,23 @@
  
  inline Environment* Environment::GetCurrent(
      const v8::FunctionCallbackInfo<v8::Value>& info) {
@@ -2685,9 +3934,20 @@ diff -r -u --color up/node/src/env-inl.h nw/node/src/env-inl.h
  inline v8::Isolate* Environment::isolate() const {
 diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
 --- up/node/src/env.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/env.cc	2024-07-31 19:07:40.069863405 +0000
-@@ -73,6 +73,8 @@
- using v8::WrapperDescriptor;
++++ nw/node/src/env.cc	2024-08-26 19:33:04.978595383 +0000
+@@ -23,6 +23,7 @@
+ #include "util-inl.h"
+ #include "v8-cppgc.h"
+ #include "v8-profiler.h"
++#include "v8-sandbox.h"  // v8::Object::Wrap(), v8::Object::Unwrap()
+ 
+ #include <algorithm>
+ #include <atomic>
+@@ -70,9 +71,10 @@
+ using v8::Uint32;
+ using v8::Undefined;
+ using v8::Value;
+-using v8::WrapperDescriptor;
  using worker::Worker;
  
 +extern bool node_is_nwjs;
@@ -2695,7 +3955,67 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  int const ContextEmbedderTag::kNodeContextTag = 0x6e6f64;
  void* const ContextEmbedderTag::kNodeContextTagPtr = const_cast<void*>(
      static_cast<const void*>(&ContextEmbedderTag::kNodeContextTag));
-@@ -819,6 +821,7 @@
+@@ -541,36 +543,17 @@
+   v8::CppHeap* cpp_heap = isolate->GetCppHeap();
+ 
+   uint16_t cppgc_id = kDefaultCppGCEmebdderID;
+-  if (cpp_heap != nullptr) {
+-    // The general convention of the wrappable layout for cppgc in the
+-    // ecosystem is:
+-    // [  0  ] -> embedder id
+-    // [  1  ] -> wrappable instance
+-    // If the Isolate includes a CppHeap attached by another embedder,
+-    // And if they also use the field 0 for the ID, we DCHECK that
+-    // the layout matches our layout, and record the embedder ID for cppgc
+-    // to avoid accidentally enabling cppgc on non-cppgc-managed wrappers .
+-    v8::WrapperDescriptor descriptor = cpp_heap->wrapper_descriptor();
+-    if (descriptor.wrappable_type_index == BaseObject::kEmbedderType) {
+-      cppgc_id = descriptor.embedder_id_for_garbage_collected;
+-      DCHECK_EQ(descriptor.wrappable_instance_index, BaseObject::kSlot);
+-    }
+-    // If the CppHeap uses the slot we use to put non-cppgc-traced BaseObject
+-    // for embedder ID, V8 could accidentally enable cppgc on them. So
+-    // safe guard against this.
+-    DCHECK_NE(descriptor.wrappable_type_index, BaseObject::kSlot);
+-  } else {
+-    cpp_heap_ = CppHeap::Create(
+-        platform,
+-        CppHeapCreateParams{
+-            {},
+-            WrapperDescriptor(
+-                BaseObject::kEmbedderType, BaseObject::kSlot, cppgc_id)});
+-    isolate->AttachCppHeap(cpp_heap_.get());
+-  }
++
+   // We do not care about overflow since we just want this to be different
+   // from the cppgc id.
+   uint16_t non_cppgc_id = cppgc_id + 1;
++  if (cpp_heap == nullptr) {
++    cpp_heap_ = CppHeap::Create(platform, v8::CppHeapCreateParams{{}});
++    // TODO(joyeecheung): pass it into v8::Isolate::CreateParams and let V8
++    // own it when we can keep the isolate registered/task runner discoverable
++    // during isolate disposal.
++    isolate->AttachCppHeap(cpp_heap_.get());
++  }
+ 
+   {
+     // GC could still be run after the IsolateData is destroyed, so we store
+@@ -602,11 +585,12 @@
+   }
+ }
+ 
+-// Public API
++// Deprecated API, embedders should use v8::Object::Wrap() directly instead.
+ void SetCppgcReference(Isolate* isolate,
+                        Local<Object> object,
+                        void* wrappable) {
+-  IsolateData::SetCppgcReference(isolate, object, wrappable);
++  v8::Object::Wrap<v8::CppHeapPointerTag::kDefaultTag>(
++      isolate, object, wrappable);
+ }
+ 
+ void IsolateData::MemoryInfo(MemoryTracker* tracker) const {
+@@ -819,6 +803,7 @@
          isolate_data->worker_context()->env()->builtin_loader());
    } else if (isolate_data->snapshot_data() != nullptr) {
      // ... otherwise, if a snapshot was provided, use its code cache.
@@ -2703,7 +4023,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
      size_t cache_size = isolate_data->snapshot_data()->code_cache.size();
      per_process::Debug(DebugCategory::CODE_CACHE,
                         "snapshot contains %zu code cache\n",
-@@ -827,6 +830,7 @@
+@@ -827,6 +812,7 @@
        builtin_loader()->RefreshCodeCache(
            isolate_data->snapshot_data()->code_cache);
      }
@@ -2711,7 +4031,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
    }
  
    // We are supposed to call builtin_loader_.SetEagerCompile() in
-@@ -873,11 +877,13 @@
+@@ -873,11 +859,13 @@
    inspector_agent_ = std::make_unique<inspector::Agent>(this);
  #endif
  
@@ -2725,7 +4045,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    destroy_async_id_list_.reserve(512);
  
-@@ -886,6 +892,7 @@
+@@ -886,6 +874,7 @@
        time_origin_,
        time_origin_timestamp_,
        MAYBE_FIELD_PTR(env_info, performance_state));
@@ -2733,7 +4053,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    if (*TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED(
            TRACING_CATEGORY_NODE1(environment)) != 0) {
-@@ -902,6 +909,7 @@
+@@ -902,6 +891,7 @@
                                        "args",
                                        std::move(traced_value));
    }
@@ -2741,7 +4061,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    if (options_->experimental_permission) {
      permission()->EnablePermissions();
-@@ -939,7 +947,7 @@
+@@ -939,7 +929,7 @@
  void Environment::InitializeMainContext(Local<Context> context,
                                          const EnvSerializeInfo* env_info) {
    principal_realm_ = std::make_unique<PrincipalRealm>(
@@ -2750,7 +4070,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
    if (env_info != nullptr) {
      DeserializeProperties(env_info);
    }
-@@ -1039,6 +1047,7 @@
+@@ -1039,6 +1029,7 @@
  void Environment::InitializeLibuv() {
    HandleScope handle_scope(isolate());
    Context::Scope context_scope(context());
@@ -2758,7 +4078,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    CHECK_EQ(0, uv_timer_init(event_loop(), timer_handle()));
    uv_unref(reinterpret_cast<uv_handle_t*>(timer_handle()));
-@@ -1501,7 +1510,7 @@
+@@ -1501,7 +1492,7 @@
  }
  
  void Environment::ToggleImmediateRef(bool ref) {
@@ -2769,8 +4089,19 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
      // Idle handle is needed only to stop the event loop from blocking in poll.
 diff -r -u --color up/node/src/env.h nw/node/src/env.h
 --- up/node/src/env.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/env.h	2024-07-31 19:07:40.069863405 +0000
-@@ -1060,6 +1060,7 @@
++++ nw/node/src/env.h	2024-08-26 19:33:04.978595383 +0000
+@@ -165,10 +165,6 @@
+   uint16_t* embedder_id_for_cppgc() const;
+   uint16_t* embedder_id_for_non_cppgc() const;
+ 
+-  static inline void SetCppgcReference(v8::Isolate* isolate,
+-                                       v8::Local<v8::Object> object,
+-                                       void* wrappable);
+-
+   inline uv_loop_t* event_loop() const;
+   inline MultiIsolatePlatform* platform() const;
+   inline const SnapshotData* snapshot_data() const;
+@@ -1060,6 +1056,7 @@
    void TrackContext(v8::Local<v8::Context> context);
    void UntrackContext(v8::Local<v8::Context> context);
  
@@ -2780,7 +4111,7 @@ diff -r -u --color up/node/src/env.h nw/node/src/env.h
    IsolateData* const isolate_data_;
 diff -r -u --color up/node/src/env_properties.h nw/node/src/env_properties.h
 --- up/node/src/env_properties.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/env_properties.h	2024-07-31 19:07:40.069863405 +0000
++++ nw/node/src/env_properties.h	2024-08-26 19:33:04.978595383 +0000
 @@ -389,6 +389,7 @@
    V(microtask_queue_ctor_template, v8::FunctionTemplate)                       \
    V(pipe_constructor_template, v8::FunctionTemplate)                           \
@@ -2789,9 +4120,47 @@ diff -r -u --color up/node/src/env_properties.h nw/node/src/env_properties.h
    V(sab_lifetimepartner_constructor_template, v8::FunctionTemplate)            \
    V(script_context_constructor_template, v8::FunctionTemplate)                 \
    V(secure_context_constructor_template, v8::FunctionTemplate)                 \
+diff -r -u --color up/node/src/handle_wrap.cc nw/node/src/handle_wrap.cc
+--- up/node/src/handle_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/handle_wrap.cc	2024-08-26 19:33:04.978595383 +0000
+@@ -39,7 +39,7 @@
+ 
+ void HandleWrap::Ref(const FunctionCallbackInfo<Value>& args) {
+   HandleWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   if (IsAlive(wrap))
+     uv_ref(wrap->GetHandle());
+@@ -48,7 +48,7 @@
+ 
+ void HandleWrap::Unref(const FunctionCallbackInfo<Value>& args) {
+   HandleWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   if (IsAlive(wrap))
+     uv_unref(wrap->GetHandle());
+@@ -57,14 +57,14 @@
+ 
+ void HandleWrap::HasRef(const FunctionCallbackInfo<Value>& args) {
+   HandleWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   args.GetReturnValue().Set(HasRef(wrap));
+ }
+ 
+ 
+ void HandleWrap::Close(const FunctionCallbackInfo<Value>& args) {
+   HandleWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   wrap->Close(args[0]);
+ }
 diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
 --- up/node/src/heap_utils.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/heap_utils.cc	2024-07-31 19:07:40.069863405 +0000
++++ nw/node/src/heap_utils.cc	2024-08-26 19:33:04.978595383 +0000
 @@ -346,9 +346,11 @@
  inline void TakeSnapshot(Environment* env,
                           v8::OutputStream* out,
@@ -2820,9 +4189,172 @@ diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
  }
  
  void TriggerHeapSnapshot(const FunctionCallbackInfo<Value>& args) {
+diff -r -u --color up/node/src/histogram.cc nw/node/src/histogram.cc
+--- up/node/src/histogram.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/histogram.cc	2024-08-26 19:33:04.978595383 +0000
+@@ -165,7 +165,7 @@
+ 
+ void HistogramBase::RecordDelta(const FunctionCallbackInfo<Value>& args) {
+   HistogramBase* histogram;
+-  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.This());
+   (*histogram)->RecordDelta();
+ }
+ 
+@@ -185,7 +185,7 @@
+   if (!lossless || value < 1)
+     return THROW_ERR_OUT_OF_RANGE(env, "value is out of range");
+   HistogramBase* histogram;
+-  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.This());
+   (*histogram)->Record(value);
+ }
+ 
+@@ -204,7 +204,7 @@
+ void HistogramBase::Add(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   HistogramBase* histogram;
+-  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.This());
+ 
+   CHECK(GetConstructorTemplate(env->isolate_data())->HasInstance(args[0]));
+   HistogramBase* other;
+@@ -432,7 +432,7 @@
+ 
+ void IntervalHistogram::Start(const FunctionCallbackInfo<Value>& args) {
+   IntervalHistogram* histogram;
+-  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.This());
+   histogram->OnStart(args[0]->IsTrue() ? StartFlags::RESET : StartFlags::NONE);
+ }
+ 
+@@ -444,7 +444,7 @@
+ 
+ void IntervalHistogram::Stop(const FunctionCallbackInfo<Value>& args) {
+   IntervalHistogram* histogram;
+-  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&histogram, args.This());
+   histogram->OnStop();
+ }
+ 
+@@ -455,67 +455,67 @@
+ }
+ 
+ void HistogramImpl::GetCount(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   double value = static_cast<double>((*histogram)->Count());
+   args.GetReturnValue().Set(value);
+ }
+ 
+ void HistogramImpl::GetCountBigInt(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   args.GetReturnValue().Set(
+       BigInt::NewFromUnsigned(env->isolate(), (*histogram)->Count()));
+ }
+ 
+ void HistogramImpl::GetMin(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   double value = static_cast<double>((*histogram)->Min());
+   args.GetReturnValue().Set(value);
+ }
+ 
+ void HistogramImpl::GetMinBigInt(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   args.GetReturnValue().Set(BigInt::New(env->isolate(), (*histogram)->Min()));
+ }
+ 
+ void HistogramImpl::GetMax(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   double value = static_cast<double>((*histogram)->Max());
+   args.GetReturnValue().Set(value);
+ }
+ 
+ void HistogramImpl::GetMaxBigInt(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   args.GetReturnValue().Set(BigInt::New(env->isolate(), (*histogram)->Max()));
+ }
+ 
+ void HistogramImpl::GetMean(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   args.GetReturnValue().Set((*histogram)->Mean());
+ }
+ 
+ void HistogramImpl::GetExceeds(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   double value = static_cast<double>((*histogram)->Exceeds());
+   args.GetReturnValue().Set(value);
+ }
+ 
+ void HistogramImpl::GetExceedsBigInt(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   args.GetReturnValue().Set(
+       BigInt::New(env->isolate(), (*histogram)->Exceeds()));
+ }
+ 
+ void HistogramImpl::GetStddev(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   args.GetReturnValue().Set((*histogram)->Stddev());
+ }
+ 
+ void HistogramImpl::GetPercentile(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   CHECK(args[0]->IsNumber());
+   double percentile = args[0].As<Number>()->Value();
+   double value = static_cast<double>((*histogram)->Percentile(percentile));
+@@ -525,7 +525,7 @@
+ void HistogramImpl::GetPercentileBigInt(
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   CHECK(args[0]->IsNumber());
+   double percentile = args[0].As<Number>()->Value();
+   int64_t value = (*histogram)->Percentile(percentile);
+@@ -534,7 +534,7 @@
+ 
+ void HistogramImpl::GetPercentiles(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   CHECK(args[0]->IsMap());
+   Local<Map> map = args[0].As<Map>();
+   (*histogram)->Percentiles([map, env](double key, int64_t value) {
+@@ -548,7 +548,7 @@
+ void HistogramImpl::GetPercentilesBigInt(
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   CHECK(args[0]->IsMap());
+   Local<Map> map = args[0].As<Map>();
+   (*histogram)->Percentiles([map, env](double key, int64_t value) {
+@@ -560,7 +560,7 @@
+ }
+ 
+ void HistogramImpl::DoReset(const FunctionCallbackInfo<Value>& args) {
+-  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.Holder());
++  HistogramImpl* histogram = HistogramImpl::FromJSObject(args.This());
+   (*histogram)->Reset();
+ }
+ 
 diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspector/node_inspector.gypi
 --- up/node/src/inspector/node_inspector.gypi	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/inspector/node_inspector.gypi	2024-07-31 19:07:40.069863405 +0000
++++ nw/node/src/inspector/node_inspector.gypi	2024-08-26 19:33:04.978595383 +0000
 @@ -86,7 +86,7 @@
        ],
        'action': [
@@ -2852,7 +4384,7 @@ diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspect
        ],
 diff -r -u --color up/node/src/inspector/tracing_agent.cc nw/node/src/inspector/tracing_agent.cc
 --- up/node/src/inspector/tracing_agent.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/inspector/tracing_agent.cc	2024-07-31 19:07:40.069863405 +0000
++++ nw/node/src/inspector/tracing_agent.cc	2024-08-26 19:33:04.978595383 +0000
 @@ -88,7 +88,7 @@
    void AppendTraceEvent(
        v8::platform::tracing::TraceObject* trace_event) override {
@@ -2880,7 +4412,7 @@ diff -r -u --color up/node/src/inspector/tracing_agent.cc nw/node/src/inspector/
  
 diff -r -u --color up/node/src/inspector_agent.cc nw/node/src/inspector_agent.cc
 --- up/node/src/inspector_agent.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/inspector_agent.cc	2024-07-31 19:07:40.069863405 +0000
++++ nw/node/src/inspector_agent.cc	2024-08-26 19:33:04.978595383 +0000
 @@ -816,6 +816,9 @@
  std::unique_ptr<InspectorSession> Agent::Connect(
      std::unique_ptr<InspectorSessionDelegate> delegate,
@@ -2902,7 +4434,7 @@ diff -r -u --color up/node/src/inspector_agent.cc nw/node/src/inspector_agent.cc
    return std::unique_ptr<InspectorSession>(
 diff -r -u --color up/node/src/inspector_js_api.cc nw/node/src/inspector_js_api.cc
 --- up/node/src/inspector_js_api.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/inspector_js_api.cc	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/inspector_js_api.cc	2024-08-26 19:33:04.978595383 +0000
 @@ -92,6 +92,7 @@
                         Local<Function> callback)
        : BaseObject(env, wrap), callback_(env->isolate(), callback) {
@@ -2911,9 +4443,110 @@ diff -r -u --color up/node/src/inspector_js_api.cc nw/node/src/inspector_js_api.
      session_ = ConnectionType::Connect(
          inspector, std::make_unique<JSBindingsSessionDelegate>(env, this));
    }
+@@ -131,14 +132,14 @@
+ 
+   static void Disconnect(const FunctionCallbackInfo<Value>& info) {
+     JSBindingsConnection* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, info.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, info.This());
+     session->Disconnect();
+   }
+ 
+   static void Dispatch(const FunctionCallbackInfo<Value>& info) {
+     Environment* env = Environment::GetCurrent(info);
+     JSBindingsConnection* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, info.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, info.This());
+     CHECK(info[0]->IsString());
+ 
+     if (session->session_) {
+@@ -204,11 +205,8 @@
+     CHECK(inspector_method->IsFunction());
+     if (!env->is_in_inspector_console_call()) {
+       env->set_is_in_inspector_console_call(true);
+-      MaybeLocal<Value> ret =
+-          inspector_method.As<Function>()->Call(context,
+-                                                info.Holder(),
+-                                                call_args.length(),
+-                                                call_args.out());
++      MaybeLocal<Value> ret = inspector_method.As<Function>()->Call(
++          context, info.This(), call_args.length(), call_args.out());
+       env->set_is_in_inspector_console_call(false);
+       if (ret.IsEmpty())
+         return;
+@@ -217,10 +215,8 @@
+ 
+   Local<Value> node_method = info[1];
+   CHECK(node_method->IsFunction());
+-  USE(node_method.As<Function>()->Call(context,
+-                                   info.Holder(),
+-                                   call_args.length(),
+-                                   call_args.out()));
++  USE(node_method.As<Function>()->Call(
++      context, info.This(), call_args.length(), call_args.out()));
+ }
+ 
+ static void* GetAsyncTask(int64_t asyncId) {
+diff -r -u --color up/node/src/js_stream.cc nw/node/src/js_stream.cc
+--- up/node/src/js_stream.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/js_stream.cc	2024-08-26 19:33:04.982595381 +0000
+@@ -164,7 +164,7 @@
+ 
+ void JSStream::ReadBuffer(const FunctionCallbackInfo<Value>& args) {
+   JSStream* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   ArrayBufferViewContents<char> buffer(args[0]);
+   const char* data = buffer.data();
+@@ -194,7 +194,7 @@
+ 
+ void JSStream::EmitEOF(const FunctionCallbackInfo<Value>& args) {
+   JSStream* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   wrap->EmitRead(UV_EOF);
+ }
+diff -r -u --color up/node/src/js_udp_wrap.cc nw/node/src/js_udp_wrap.cc
+--- up/node/src/js_udp_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/js_udp_wrap.cc	2024-08-26 19:33:04.982595381 +0000
+@@ -137,12 +137,12 @@
+ void JSUDPWrap::New(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   CHECK(args.IsConstructCall());
+-  new JSUDPWrap(env, args.Holder());
++  new JSUDPWrap(env, args.This());
+ }
+ 
+ void JSUDPWrap::EmitReceived(const FunctionCallbackInfo<Value>& args) {
+   JSUDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   Environment* env = wrap->env();
+ 
+   ArrayBufferViewContents<char> buffer(args[0]);
+@@ -176,7 +176,7 @@
+ 
+ void JSUDPWrap::OnSendDone(const FunctionCallbackInfo<Value>& args) {
+   JSUDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(args[0]->IsObject());
+   CHECK(args[1]->IsInt32());
+@@ -189,7 +189,7 @@
+ 
+ void JSUDPWrap::OnAfterBind(const FunctionCallbackInfo<Value>& args) {
+   JSUDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   wrap->listener()->OnAfterBind();
+ }
 diff -r -u --color up/node/src/large_pages/node_large_page.cc nw/node/src/large_pages/node_large_page.cc
 --- up/node/src/large_pages/node_large_page.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/large_pages/node_large_page.cc	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/large_pages/node_large_page.cc	2024-08-26 19:33:04.982595381 +0000
 @@ -99,8 +99,8 @@
  // This symbol must be declared weak because this file becomes part of all
  // Node.js targets (like node_mksnapshot, node_mkcodecache, and cctest) and
@@ -2927,7 +4560,7 @@ diff -r -u --color up/node/src/large_pages/node_large_page.cc nw/node/src/large_
  
 diff -r -u --color up/node/src/module_wrap.cc nw/node/src/module_wrap.cc
 --- up/node/src/module_wrap.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/module_wrap.cc	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/module_wrap.cc	2024-08-26 19:33:04.982595381 +0000
 @@ -339,7 +339,7 @@
      bool* cache_rejected) {
    Isolate* isolate = realm->isolate();
@@ -2947,7 +4580,7 @@ diff -r -u --color up/node/src/module_wrap.cc nw/node/src/module_wrap.cc
    bool received_signal = false;
 diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
 --- up/node/src/node.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node.cc	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/node.cc	2024-08-26 19:33:04.982595381 +0000
 @@ -46,12 +46,18 @@
  #include "node_v8_platform-inl.h"
  #include "node_version.h"
@@ -3730,7 +5363,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
 +}
 diff -r -u --color up/node/src/node.h nw/node/src/node.h
 --- up/node/src/node.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node.h	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/node.h	2024-08-26 19:33:04.982595381 +0000
 @@ -269,6 +269,8 @@
    // Initialize the process for predictable snapshot generation.
    kGeneratePredictableSnapshot = 1 << 14,
@@ -3773,9 +5406,42 @@ diff -r -u --color up/node/src/node.h nw/node/src/node.h
    }
  
  // Usage: `NODE_MODULE(NODE_GYP_MODULE_NAME, InitializerFunction)`
+@@ -1548,24 +1560,14 @@
+                            bool reset_handler = false);
+ #endif  // _WIN32
+ 
+-// Configure the layout of the JavaScript object with a cppgc::GarbageCollected
+-// instance so that when the JavaScript object is reachable, the garbage
+-// collected instance would have its Trace() method invoked per the cppgc
+-// contract. To make it work, the process must have called
+-// cppgc::InitializeProcess() before, which is usually the case for addons
+-// loaded by the stand-alone Node.js executable. Embedders of Node.js can use
+-// either need to call it themselves or make sure that
+-// ProcessInitializationFlags::kNoInitializeCppgc is *not* set for cppgc to
+-// work.
+-// If the CppHeap is owned by Node.js, which is usually the case for addon,
+-// the object must be created with at least two internal fields available,
+-// and the first two internal fields would be configured by Node.js.
+-// This may be superseded by a V8 API in the future, see
+-// https://bugs.chromium.org/p/v8/issues/detail?id=13960. Until then this
+-// serves as a helper for Node.js isolates.
+-NODE_EXTERN void SetCppgcReference(v8::Isolate* isolate,
+-                                   v8::Local<v8::Object> object,
+-                                   void* wrappable);
++// This is kept as a compatibility layer for addons to wrap cppgc-managed
++// objects on Node.js versions without v8::Object::Wrap(). Addons created to
++// work with only Node.js versions with v8::Object::Wrap() should use that
++// instead.
++NODE_DEPRECATED("Use v8::Object::Wrap()",
++                NODE_EXTERN void SetCppgcReference(v8::Isolate* isolate,
++                                                   v8::Local<v8::Object> object,
++                                                   void* wrappable));
+ 
+ }  // namespace node
+ 
 diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
 --- up/node/src/node_binding.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_binding.cc	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/node_binding.cc	2024-08-26 19:33:04.982595381 +0000
 @@ -1,3 +1,4 @@
 +#include "uv.h"
  #include "node_binding.h"
@@ -3866,7 +5532,7 @@ diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
      realm->internal_bindings.insert(mod);
 diff -r -u --color up/node/src/node_binding.h nw/node/src/node_binding.h
 --- up/node/src/node_binding.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_binding.h	2024-07-31 19:07:40.073863476 +0000
++++ nw/node/src/node_binding.h	2024-08-26 19:33:04.982595381 +0000
 @@ -102,6 +102,22 @@
  // Globals per process
  // This is set by node::Init() which is used by embedders
@@ -3890,9 +5556,39 @@ diff -r -u --color up/node/src/node_binding.h nw/node/src/node_binding.h
  
  namespace binding {
  
+diff -r -u --color up/node/src/node_blob.cc nw/node/src/node_blob.cc
+--- up/node/src/node_blob.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_blob.cc	2024-08-26 19:33:04.982595381 +0000
+@@ -247,7 +247,7 @@
+ void Blob::GetReader(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Blob* blob;
+-  ASSIGN_OR_RETURN_UNWRAP(&blob, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&blob, args.This());
+ 
+   BaseObjectPtr<Blob::Reader> reader =
+       Blob::Reader::Create(env, BaseObjectPtr<Blob>(blob));
+@@ -257,7 +257,7 @@
+ void Blob::ToSlice(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Blob* blob;
+-  ASSIGN_OR_RETURN_UNWRAP(&blob, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&blob, args.This());
+   CHECK(args[0]->IsUint32());
+   CHECK(args[1]->IsUint32());
+   size_t start = args[0].As<Uint32>()->Value();
+@@ -326,7 +326,7 @@
+ void Blob::Reader::Pull(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Blob::Reader* reader;
+-  ASSIGN_OR_RETURN_UNWRAP(&reader, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&reader, args.This());
+ 
+   CHECK(args[0]->IsFunction());
+   Local<Function> fn = args[0].As<Function>();
 diff -r -u --color up/node/src/node_buffer.cc nw/node/src/node_buffer.cc
 --- up/node/src/node_buffer.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_buffer.cc	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_buffer.cc	2024-08-26 19:33:04.982595381 +0000
 @@ -123,7 +123,7 @@
        ArrayBuffer::NewBackingStore(data, length, [](void*, size_t, void* arg) {
          static_cast<CallbackInfo*>(arg)->OnBackingStoreFree();
@@ -3913,7 +5609,7 @@ diff -r -u --color up/node/src/node_buffer.cc nw/node/src/node_buffer.cc
    ab->SetPrivate(
 diff -r -u --color up/node/src/node_builtins.cc nw/node/src/node_builtins.cc
 --- up/node/src/node_builtins.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_builtins.cc	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_builtins.cc	2024-08-26 19:33:04.986595380 +0000
 @@ -11,7 +11,6 @@
  namespace builtins {
  
@@ -3990,7 +5686,7 @@ diff -r -u --color up/node/src/node_builtins.cc nw/node/src/node_builtins.cc
    SetMethod(isolate, target, "getCacheUsage", BuiltinLoader::GetCacheUsage);
 diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
 --- up/node/src/node_contextify.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_contextify.cc	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_contextify.cc	2024-08-26 19:33:04.986595380 +0000
 @@ -36,6 +36,7 @@
  #include "util-inl.h"
  
@@ -4046,14 +5742,44 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
    ScriptCompiler::Source script_source(content, script_origin);
  
    return ScriptCompiler::CompileFunction(context,
-@@ -1116,7 +1125,6 @@
+@@ -1027,7 +1036,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   ContextifyScript* wrapped_script;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.This());
+   Local<UnboundScript> unbound_script =
+       PersistentToLocal::Default(env->isolate(), wrapped_script->script_);
+   std::unique_ptr<ScriptCompiler::CachedData> cached_data(
+@@ -1047,7 +1056,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   ContextifyScript* wrapped_script;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.This());
+ 
+   CHECK_EQ(args.Length(), 5);
+   CHECK(args[0]->IsObject() || args[0]->IsNull());
+@@ -1108,7 +1117,7 @@
+ 
+   if (!env->can_call_into_js())
+     return false;
+-  if (!ContextifyScript::InstanceOf(env, args.Holder())) {
++  if (!ContextifyScript::InstanceOf(env, args.This())) {
+     THROW_ERR_INVALID_THIS(
+         env,
+         "Script methods can only be called on script instances.");
+@@ -1116,9 +1125,8 @@
    }
  
    TryCatchScope try_catch(env);
 -  Isolate::SafeForTerminationScope safe_for_termination(env->isolate());
    ContextifyScript* wrapped_script;
-   ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.Holder(), false);
+-  ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.Holder(), false);
++  ASSIGN_OR_RETURN_UNWRAP(&wrapped_script, args.This(), false);
    Local<UnboundScript> unbound_script =
+       PersistentToLocal::Default(env->isolate(), wrapped_script->script_);
+   Local<Script> script = unbound_script->BindToCurrentContext();
 @@ -1270,7 +1278,7 @@
    Local<PrimitiveArray> host_defined_options =
        loader::ModuleWrap::GetHostDefinedOptions(isolate, id_symbol);
@@ -4072,9 +5798,30 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
                        filename,
                        0,               // line offset
                        0,               // column offset
+diff -r -u --color up/node/src/node_dir.cc nw/node/src/node_dir.cc
+--- up/node/src/node_dir.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_dir.cc	2024-08-26 19:33:04.986595380 +0000
+@@ -187,7 +187,7 @@
+   CHECK_GE(argc, 1);
+ 
+   DirHandle* dir;
+-  ASSIGN_OR_RETURN_UNWRAP(&dir, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&dir, args.This());
+ 
+   dir->closing_ = false;
+   dir->closed_ = true;
+@@ -288,7 +288,7 @@
+   const enum encoding encoding = ParseEncoding(isolate, args[0], UTF8);
+ 
+   DirHandle* dir;
+-  ASSIGN_OR_RETURN_UNWRAP(&dir, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&dir, args.This());
+ 
+   CHECK(args[1]->IsNumber());
+   uint64_t buffer_size = static_cast<uint64_t>(args[1].As<Number>()->Value());
 diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
 --- up/node/src/node_errors.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_errors.cc	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_errors.cc	2024-08-26 19:33:04.986595380 +0000
 @@ -36,6 +36,8 @@
  using v8::Undefined;
  using v8::Value;
@@ -4141,7 +5888,7 @@ diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
  void TriggerUncaughtException(Isolate* isolate, const v8::TryCatch& try_catch) {
 diff -r -u --color up/node/src/node_external_reference.h nw/node/src/node_external_reference.h
 --- up/node/src/node_external_reference.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_external_reference.h	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_external_reference.h	2024-08-26 19:33:04.986595380 +0000
 @@ -63,8 +63,6 @@
    V(CFunctionWithBool)                                                         \
    V(const v8::CFunctionInfo*)                                                  \
@@ -4153,7 +5900,25 @@ diff -r -u --color up/node/src/node_external_reference.h nw/node/src/node_extern
    V(v8::NamedPropertyGetterCallback)                                           \
 diff -r -u --color up/node/src/node_file.cc nw/node/src/node_file.cc
 --- up/node/src/node_file.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_file.cc	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_file.cc	2024-08-26 19:33:04.986595380 +0000
+@@ -502,7 +502,7 @@
+ 
+ void FileHandle::Close(const FunctionCallbackInfo<Value>& args) {
+   FileHandle* fd;
+-  ASSIGN_OR_RETURN_UNWRAP(&fd, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&fd, args.This());
+   Local<Promise> ret;
+   if (!fd->ClosePromise().ToLocal(&ret)) return;
+   args.GetReturnValue().Set(ret);
+@@ -511,7 +511,7 @@
+ 
+ void FileHandle::ReleaseFD(const FunctionCallbackInfo<Value>& args) {
+   FileHandle* fd;
+-  ASSIGN_OR_RETURN_UNWRAP(&fd, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&fd, args.This());
+   fd->Release();
+ }
+ 
 @@ -977,9 +977,9 @@
      THROW_IF_INSUFFICIENT_PERMISSIONS(
          env, permission::PermissionScope::kFileSystemRead, path.ToStringView());
@@ -4168,7 +5933,7 @@ diff -r -u --color up/node/src/node_file.cc nw/node/src/node_file.cc
  
 diff -r -u --color up/node/src/node_http2.cc nw/node/src/node_http2.cc
 --- up/node/src/node_http2.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_http2.cc	2024-07-31 19:07:40.077863547 +0000
++++ nw/node/src/node_http2.cc	2024-08-26 19:33:04.986595380 +0000
 @@ -730,6 +730,7 @@
  
  void Http2Stream::EmitStatistics() {
@@ -4197,9 +5962,362 @@ diff -r -u --color up/node/src/node_http2.cc nw/node/src/node_http2.cc
  }
  
  // Closes the session and frees the associated resources
+@@ -2107,7 +2111,7 @@
+ // https://github.com/nodejs/node/issues/35475
+ void Http2Session::Receive(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   CHECK(args[0]->IsObject());
+ 
+   ArrayBufferViewContents<char> buffer(args[0]);
+@@ -2700,7 +2704,7 @@
+ void Http2Session::SetNextStreamID(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   int32_t id = args[0]->Int32Value(env->context()).ToChecked();
+   if (nghttp2_session_set_next_stream_id(session->session(), id) < 0) {
+     Debug(session, "failed to set next stream id to %d", id);
+@@ -2717,7 +2721,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+ 
+   int32_t window_size = args[0]->Int32Value(env->context()).ToChecked();
+ 
+@@ -2735,7 +2739,7 @@
+ template <get_setting fn, bool local>
+ void Http2Session::RefreshSettings(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   Http2Settings::Update(session, fn, local);
+   Debug(session, "settings refreshed for session");
+ }
+@@ -2745,7 +2749,7 @@
+ // TypedArray so those can be read in JS land.
+ void Http2Session::RefreshState(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   Debug(session, "refreshing state");
+ 
+   AliasedFloat64Array& buffer = session->http2_state()->session_state_buffer;
+@@ -2789,7 +2793,7 @@
+ // Binds the Http2Session with a StreamBase used for i/o
+ void Http2Session::Consume(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   CHECK(args[0]->IsObject());
+   session->Consume(args[0].As<Object>());
+ }
+@@ -2797,7 +2801,7 @@
+ // Destroys the Http2Session instance and renders it unusable
+ void Http2Session::Destroy(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   Debug(session, "destroying session");
+   Environment* env = Environment::GetCurrent(args);
+   Local<Context> context = env->context();
+@@ -2810,7 +2814,7 @@
+ // or the Http2Stream object.
+ void Http2Session::Request(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   Environment* env = session->env();
+ 
+   Local<Array> headers = args[0].As<Array>();
+@@ -2861,7 +2865,7 @@
+   Environment* env = Environment::GetCurrent(args);
+   Local<Context> context = env->context();
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+ 
+   uint32_t code = args[0]->Uint32Value(context).ToChecked();
+   int32_t lastStreamID = args[1]->Int32Value(context).ToChecked();
+@@ -2881,7 +2885,7 @@
+   Isolate* isolate = env->isolate();
+   HandleScope scope(isolate);
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+ 
+   uint32_t length = session->chunks_sent_since_last_write_;
+ 
+@@ -2899,7 +2903,7 @@
+   Environment* env = Environment::GetCurrent(args);
+   Local<Context> context = env->context();
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+   uint32_t code = args[0]->Uint32Value(context).ToChecked();
+   Debug(stream, "sending rst_stream with code %d", code);
+   stream->SubmitRstStream(code);
+@@ -2910,7 +2914,7 @@
+ void Http2Stream::Respond(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+ 
+   Local<Array> headers = args[0].As<Array>();
+   int32_t options = args[1]->Int32Value(env->context()).ToChecked();
+@@ -2927,7 +2931,7 @@
+ void Http2Stream::Info(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+ 
+   Local<Array> headers = args[0].As<Array>();
+ 
+@@ -2938,7 +2942,7 @@
+ void Http2Stream::Trailers(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+ 
+   Local<Array> headers = args[0].As<Array>();
+ 
+@@ -2949,14 +2953,14 @@
+ // Grab the numeric id of the Http2Stream
+ void Http2Stream::GetID(const FunctionCallbackInfo<Value>& args) {
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+   args.GetReturnValue().Set(stream->id());
+ }
+ 
+ // Destroy the Http2Stream, rendering it no longer usable
+ void Http2Stream::Destroy(const FunctionCallbackInfo<Value>& args) {
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+   Debug(stream, "destroying stream");
+   stream->Destroy();
+ }
+@@ -2965,7 +2969,7 @@
+ void Http2Stream::PushPromise(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Stream* parent;
+-  ASSIGN_OR_RETURN_UNWRAP(&parent, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&parent, args.This());
+ 
+   Local<Array> headers = args[0].As<Array>();
+   int32_t options = args[1]->Int32Value(env->context()).ToChecked();
+@@ -2991,7 +2995,7 @@
+ void Http2Stream::Priority(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+ 
+   CHECK_EQ(stream->SubmitPriority(
+       Http2Priority(env, args[0], args[1], args[2]),
+@@ -3004,7 +3008,7 @@
+ // TypedArray so that the state can be read by JS.
+ void Http2Stream::RefreshState(const FunctionCallbackInfo<Value>& args) {
+   Http2Stream* stream;
+-  ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+ 
+   Debug(stream, "refreshing state");
+ 
+@@ -3061,7 +3065,7 @@
+ void Http2Session::AltSvc(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+ 
+   int32_t id = args[0]->Int32Value(env->context()).ToChecked();
+ 
+@@ -3092,7 +3096,7 @@
+   Environment* env = Environment::GetCurrent(args);
+   Local<Context> context = env->context();
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+ 
+   Local<String> origin_string = args[0].As<String>();
+   size_t count = args[1]->Int32Value(context).ToChecked();
+@@ -3103,7 +3107,7 @@
+ // Submits a PING frame to be sent to the connected peer.
+ void Http2Session::Ping(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+ 
+   // A PING frame may have exactly 8 bytes of payload data. If not provided,
+   // then the current hrtime will be used as the payload.
+@@ -3121,7 +3125,7 @@
+ // Submits a SETTINGS frame for the Http2Session
+ void Http2Session::Settings(const FunctionCallbackInfo<Value>& args) {
+   Http2Session* session;
+-  ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+   CHECK(args[0]->IsFunction());
+   args.GetReturnValue().Set(session->AddSettings(args[0].As<Function>()));
+ }
+diff -r -u --color up/node/src/node_http_parser.cc nw/node/src/node_http_parser.cc
+--- up/node/src/node_http_parser.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_http_parser.cc	2024-08-26 19:33:04.986595380 +0000
+@@ -563,7 +563,7 @@
+ 
+   static void Close(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     delete parser;
+   }
+@@ -571,7 +571,7 @@
+ 
+   static void Free(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     // Since the Parser destructor isn't going to run the destroy() callbacks
+     // it needs to be triggered manually.
+@@ -581,7 +581,7 @@
+ 
+   static void Remove(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     if (parser->connectionsList_ != nullptr) {
+       parser->connectionsList_->Pop(parser);
+@@ -605,7 +605,7 @@
+   // var bytesParsed = parser->execute(buffer);
+   static void Execute(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     ArrayBufferViewContents<char> buffer(args[0]);
+ 
+@@ -618,7 +618,7 @@
+ 
+   static void Finish(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     Local<Value> ret = parser->Execute(nullptr, 0);
+ 
+@@ -661,7 +661,7 @@
+ 
+     CHECK(type == HTTP_REQUEST || type == HTTP_RESPONSE);
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+     // Should always be called from the same context.
+     CHECK_EQ(env, parser->env());
+ 
+@@ -695,7 +695,7 @@
+   static void Pause(const FunctionCallbackInfo<Value>& args) {
+     Environment* env = Environment::GetCurrent(args);
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+     // Should always be called from the same context.
+     CHECK_EQ(env, parser->env());
+ 
+@@ -709,7 +709,7 @@
+ 
+   static void Consume(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+     CHECK(args[0]->IsObject());
+     StreamBase* stream = StreamBase::FromObject(args[0].As<Object>());
+     CHECK_NOT_NULL(stream);
+@@ -719,7 +719,7 @@
+ 
+   static void Unconsume(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     // Already unconsumed
+     if (parser->stream_ == nullptr)
+@@ -731,7 +731,7 @@
+ 
+   static void GetCurrentBuffer(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     Local<Object> ret = Buffer::Copy(
+         parser->env(),
+@@ -743,7 +743,7 @@
+ 
+   static void Duration(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     if (parser->last_message_start_ == 0) {
+       args.GetReturnValue().Set(0);
+@@ -756,7 +756,7 @@
+ 
+   static void HeadersCompleted(const FunctionCallbackInfo<Value>& args) {
+     Parser* parser;
+-    ASSIGN_OR_RETURN_UNWRAP(&parser, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&parser, args.This());
+ 
+     args.GetReturnValue().Set(parser->headers_completed_);
+   }
+@@ -1087,7 +1087,7 @@
+ 
+   ConnectionsList* list;
+ 
+-  ASSIGN_OR_RETURN_UNWRAP(&list, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&list, args.This());
+ 
+   std::vector<Local<Value>> result;
+   result.reserve(list->all_connections_.size());
+@@ -1104,7 +1104,7 @@
+ 
+   ConnectionsList* list;
+ 
+-  ASSIGN_OR_RETURN_UNWRAP(&list, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&list, args.This());
+ 
+   std::vector<Local<Value>> result;
+   result.reserve(list->all_connections_.size());
+@@ -1123,7 +1123,7 @@
+ 
+   ConnectionsList* list;
+ 
+-  ASSIGN_OR_RETURN_UNWRAP(&list, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&list, args.This());
+ 
+   std::vector<Local<Value>> result;
+   result.reserve(list->active_connections_.size());
+@@ -1140,7 +1140,7 @@
+ 
+   ConnectionsList* list;
+ 
+-  ASSIGN_OR_RETURN_UNWRAP(&list, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&list, args.This());
+   CHECK(args[0]->IsNumber());
+   CHECK(args[1]->IsNumber());
+   uint64_t headers_timeout =
 diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
 --- up/node/src/node_internals.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_internals.h	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_internals.h	2024-08-26 19:33:04.990595379 +0000
 @@ -55,6 +55,8 @@
  // Forward declaration
  class Environment;
@@ -4209,7 +6327,19 @@ diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
  // Convert a struct sockaddr to a { address: '1.2.3.4', port: 1234 } JS object.
  // Sets address and port properties on the info object and returns it.
  // If |info| is omitted, a new object is returned.
-@@ -124,6 +126,7 @@
+@@ -66,9 +68,8 @@
+ template <typename T, int (*F)(const typename T::HandleType*, sockaddr*, int*)>
+ void GetSockOrPeerName(const v8::FunctionCallbackInfo<v8::Value>& args) {
+   T* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   CHECK(args[0]->IsObject());
+   sockaddr_storage storage;
+   int addrlen = sizeof(storage);
+@@ -124,6 +125,7 @@
    void* AllocateUninitialized(size_t size) override;
    void Free(void* data, size_t size) override;
    void* Reallocate(void* data, size_t old_size, size_t size) override;
@@ -4219,7 +6349,7 @@ diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
    }
 diff -r -u --color up/node/src/node_main_instance.cc nw/node/src/node_main_instance.cc
 --- up/node/src/node_main_instance.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_main_instance.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_main_instance.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -30,6 +30,8 @@
  using v8::Local;
  using v8::Locker;
@@ -4240,7 +6370,7 @@ diff -r -u --color up/node/src/node_main_instance.cc nw/node/src/node_main_insta
    isolate_ =
 diff -r -u --color up/node/src/node_messaging.cc nw/node/src/node_messaging.cc
 --- up/node/src/node_messaging.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_messaging.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_messaging.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -301,6 +301,14 @@
    SerializerDelegate(Environment* env, Local<Context> context, Message* m)
        : env_(env), context_(context), msg_(m) {}
@@ -4258,7 +6388,7 @@ diff -r -u --color up/node/src/node_messaging.cc nw/node/src/node_messaging.cc
    }
 diff -r -u --color up/node/src/node_metadata.cc nw/node/src/node_metadata.cc
 --- up/node/src/node_metadata.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_metadata.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_metadata.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -29,7 +29,8 @@
  #endif
  #endif  // HAVE_OPENSSL
@@ -4280,7 +6410,7 @@ diff -r -u --color up/node/src/node_metadata.cc nw/node/src/node_metadata.cc
  #endif
 diff -r -u --color up/node/src/node_options.cc nw/node/src/node_options.cc
 --- up/node/src/node_options.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_options.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_options.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -1057,8 +1057,8 @@
              &PerProcessOptions::trace_sigint,
              kAllowedInEnvvar);
@@ -4302,7 +6432,7 @@ diff -r -u --color up/node/src/node_options.cc nw/node/src/node_options.cc
  inline std::string RemoveBrackets(const std::string& host) {
 diff -r -u --color up/node/src/node_perf.cc nw/node/src/node_perf.cc
 --- up/node/src/node_perf.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_perf.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_perf.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -121,10 +121,12 @@
  
  void PerformanceState::Mark(PerformanceMilestone milestone, uint64_t ts) {
@@ -4334,7 +6464,7 @@ diff -r -u --color up/node/src/node_perf.cc nw/node/src/node_perf.cc
  static void RemoveGarbageCollectionTracking(
 diff -r -u --color up/node/src/node_platform.cc nw/node/src/node_platform.cc
 --- up/node/src/node_platform.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_platform.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_platform.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -245,11 +245,13 @@
    platform_data->FlushForegroundTasksInternal();
  }
@@ -4399,7 +6529,7 @@ diff -r -u --color up/node/src/node_platform.cc nw/node/src/node_platform.cc
    worker_thread_task_runner_ =
 diff -r -u --color up/node/src/node_platform.h nw/node/src/node_platform.h
 --- up/node/src/node_platform.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_platform.h	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_platform.h	2024-08-26 19:33:04.990595379 +0000
 @@ -3,10 +3,10 @@
  
  #if defined(NODE_WANT_INTERNALS) && NODE_WANT_INTERNALS
@@ -4508,7 +6638,7 @@ diff -r -u --color up/node/src/node_platform.h nw/node/src/node_platform.h
    v8::TracingController* tracing_controller_;
 diff -r -u --color up/node/src/node_process.h nw/node/src/node_process.h
 --- up/node/src/node_process.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_process.h	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_process.h	2024-08-26 19:33:04.990595379 +0000
 @@ -44,7 +44,7 @@
                                                const char* warning,
                                                const char* deprecation_code);
@@ -4518,10 +6648,35 @@ diff -r -u --color up/node/src/node_process.h nw/node/src/node_process.h
  void PatchProcessObject(const v8::FunctionCallbackInfo<v8::Value>& args);
  
  namespace process {
+diff -r -u --color up/node/src/node_process_methods.cc nw/node/src/node_process_methods.cc
+--- up/node/src/node_process_methods.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_process_methods.cc	2024-08-26 19:33:04.990595379 +0000
+@@ -584,11 +584,11 @@
+ }
+ 
+ void BindingData::SlowBigInt(const FunctionCallbackInfo<Value>& args) {
+-  BigIntImpl(FromJSObject<BindingData>(args.Holder()));
++  BigIntImpl(FromJSObject<BindingData>(args.This()));
+ }
+ 
+ void BindingData::SlowNumber(const v8::FunctionCallbackInfo<v8::Value>& args) {
+-  NumberImpl(FromJSObject<BindingData>(args.Holder()));
++  NumberImpl(FromJSObject<BindingData>(args.This()));
+ }
+ 
+ bool BindingData::PrepareForSerialization(Local<Context> context,
 diff -r -u --color up/node/src/node_process_object.cc nw/node/src/node_process_object.cc
 --- up/node/src/node_process_object.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_process_object.cc	2024-07-31 19:07:40.081863618 +0000
-@@ -78,7 +78,7 @@
++++ nw/node/src/node_process_object.cc	2024-08-26 19:33:04.990595379 +0000
+@@ -13,7 +13,6 @@
+ 
+ namespace node {
+ using v8::Context;
+-using v8::DEFAULT;
+ using v8::EscapableHandleScope;
+ using v8::Function;
+ using v8::FunctionCallbackInfo;
+@@ -78,7 +77,7 @@
    info.GetReturnValue().Set(uv_os_getppid());
  }
  
@@ -4530,7 +6685,7 @@ diff -r -u --color up/node/src/node_process_object.cc nw/node/src/node_process_o
    Isolate* isolate = realm->isolate();
    EscapableHandleScope scope(isolate);
    Local<Context> context = realm->context();
-@@ -93,6 +93,8 @@
+@@ -93,6 +92,8 @@
    }
  
    // process[exit_info_private_symbol]
@@ -4539,9 +6694,63 @@ diff -r -u --color up/node/src/node_process_object.cc nw/node/src/node_process_o
    if (process
            ->SetPrivate(context,
                         realm->env()->exit_info_private_symbol(),
+@@ -183,13 +184,12 @@
+ 
+   // process.title
+   CHECK(process
+-            ->SetAccessor(
++            ->SetNativeDataProperty(
+                 context,
+                 FIXED_ONE_BYTE_STRING(isolate, "title"),
+                 ProcessTitleGetter,
+                 env->owns_process_state() ? ProcessTitleSetter : nullptr,
+                 Local<Value>(),
+-                DEFAULT,
+                 None,
+                 SideEffectType::kHasNoSideEffect)
+             .FromJust());
+@@ -208,9 +208,15 @@
+   READONLY_PROPERTY(process, "pid",
+                     Integer::New(isolate, uv_os_getpid()));
+ 
+-  CHECK(process->SetAccessor(context,
+-                             FIXED_ONE_BYTE_STRING(isolate, "ppid"),
+-                             GetParentProcessId).FromJust());
++  CHECK(process
++            ->SetNativeDataProperty(context,
++                                    FIXED_ONE_BYTE_STRING(isolate, "ppid"),
++                                    GetParentProcessId,
++                                    nullptr,
++                                    Local<Value>(),
++                                    None,
++                                    SideEffectType::kHasNoSideEffect)
++            .FromJust());
+ 
+   // --security-revert flags
+ #define V(code, _, __)                                                        \
+@@ -235,11 +241,14 @@
+ 
+   // process.debugPort
+   CHECK(process
+-            ->SetAccessor(context,
+-                          FIXED_ONE_BYTE_STRING(isolate, "debugPort"),
+-                          DebugPortGetter,
+-                          env->owns_process_state() ? DebugPortSetter : nullptr,
+-                          Local<Value>())
++            ->SetNativeDataProperty(
++                context,
++                FIXED_ONE_BYTE_STRING(isolate, "debugPort"),
++                DebugPortGetter,
++                env->owns_process_state() ? DebugPortSetter : nullptr,
++                Local<Value>(),
++                None,
++                SideEffectType::kHasNoSideEffect)
+             .FromJust());
+ }
+ 
 diff -r -u --color up/node/src/node_realm.cc nw/node/src/node_realm.cc
 --- up/node/src/node_realm.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_realm.cc	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_realm.cc	2024-08-26 19:33:04.990595379 +0000
 @@ -18,8 +18,8 @@
  using v8::String;
  using v8::Value;
@@ -4575,7 +6784,7 @@ diff -r -u --color up/node/src/node_realm.cc nw/node/src/node_realm.cc
    // env drained the deserialize requests.
 diff -r -u --color up/node/src/node_realm.h nw/node/src/node_realm.h
 --- up/node/src/node_realm.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_realm.h	2024-07-31 19:07:40.081863618 +0000
++++ nw/node/src/node_realm.h	2024-08-26 19:33:04.990595379 +0000
 @@ -55,7 +55,7 @@
    template <typename T>
    static inline Realm* GetCurrent(const v8::PropertyCallbackInfo<T>& info);
@@ -4602,18 +6811,260 @@ diff -r -u --color up/node/src/node_realm.h nw/node/src/node_realm.h
    ~PrincipalRealm();
  
    SET_MEMORY_INFO_NAME(PrincipalRealm)
+diff -r -u --color up/node/src/node_serdes.cc nw/node/src/node_serdes.cc
+--- up/node/src/node_serdes.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_serdes.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -180,13 +180,13 @@
+ 
+ void SerializerContext::WriteHeader(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+   ctx->serializer_.WriteHeader();
+ }
+ 
+ void SerializerContext::WriteValue(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+   Maybe<bool> ret =
+       ctx->serializer_.WriteValue(ctx->env()->context(), args[0]);
+ 
+@@ -196,7 +196,7 @@
+ void SerializerContext::SetTreatArrayBufferViewsAsHostObjects(
+     const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   bool value = args[0]->BooleanValue(ctx->env()->isolate());
+   ctx->serializer_.SetTreatArrayBufferViewsAsHostObjects(value);
+@@ -204,7 +204,7 @@
+ 
+ void SerializerContext::ReleaseBuffer(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   // Note: Both ValueSerializer and this Buffer::New() variant use malloc()
+   // as the underlying allocator.
+@@ -221,7 +221,7 @@
+ void SerializerContext::TransferArrayBuffer(
+     const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<uint32_t> id = args[0]->Uint32Value(ctx->env()->context());
+   if (id.IsNothing()) return;
+@@ -237,7 +237,7 @@
+ 
+ void SerializerContext::WriteUint32(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<uint32_t> value = args[0]->Uint32Value(ctx->env()->context());
+   if (value.IsNothing()) return;
+@@ -247,7 +247,7 @@
+ 
+ void SerializerContext::WriteUint64(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<uint32_t> arg0 = args[0]->Uint32Value(ctx->env()->context());
+   Maybe<uint32_t> arg1 = args[1]->Uint32Value(ctx->env()->context());
+@@ -261,7 +261,7 @@
+ 
+ void SerializerContext::WriteDouble(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<double> value = args[0]->NumberValue(ctx->env()->context());
+   if (value.IsNothing()) return;
+@@ -271,7 +271,7 @@
+ 
+ void SerializerContext::WriteRawBytes(const FunctionCallbackInfo<Value>& args) {
+   SerializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   if (!args[0]->IsArrayBufferView()) {
+     return node::THROW_ERR_INVALID_ARG_TYPE(
+@@ -339,7 +339,7 @@
+ 
+ void DeserializerContext::ReadHeader(const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<bool> ret = ctx->deserializer_.ReadHeader(ctx->env()->context());
+ 
+@@ -348,7 +348,7 @@
+ 
+ void DeserializerContext::ReadValue(const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   MaybeLocal<Value> ret = ctx->deserializer_.ReadValue(ctx->env()->context());
+ 
+@@ -358,7 +358,7 @@
+ void DeserializerContext::TransferArrayBuffer(
+     const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<uint32_t> id = args[0]->Uint32Value(ctx->env()->context());
+   if (id.IsNothing()) return;
+@@ -382,14 +382,14 @@
+ void DeserializerContext::GetWireFormatVersion(
+     const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   args.GetReturnValue().Set(ctx->deserializer_.GetWireFormatVersion());
+ }
+ 
+ void DeserializerContext::ReadUint32(const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   uint32_t value;
+   bool ok = ctx->deserializer_.ReadUint32(&value);
+@@ -399,7 +399,7 @@
+ 
+ void DeserializerContext::ReadUint64(const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   uint64_t value;
+   bool ok = ctx->deserializer_.ReadUint64(&value);
+@@ -419,7 +419,7 @@
+ 
+ void DeserializerContext::ReadDouble(const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   double value;
+   bool ok = ctx->deserializer_.ReadDouble(&value);
+@@ -430,7 +430,7 @@
+ void DeserializerContext::ReadRawBytes(
+     const FunctionCallbackInfo<Value>& args) {
+   DeserializerContext* ctx;
+-  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+   Maybe<int64_t> length_arg = args[0]->IntegerValue(ctx->env()->context());
+   if (length_arg.IsNothing()) return;
+diff -r -u --color up/node/src/node_sockaddr.cc nw/node/src/node_sockaddr.cc
+--- up/node/src/node_sockaddr.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_sockaddr.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -594,7 +594,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SocketAddressBlockListWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(SocketAddressBase::HasInstance(env, args[0]));
+   SocketAddressBase* addr;
+@@ -609,7 +609,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SocketAddressBlockListWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(SocketAddressBase::HasInstance(env, args[0]));
+   CHECK(SocketAddressBase::HasInstance(env, args[1]));
+@@ -634,7 +634,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SocketAddressBlockListWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(SocketAddressBase::HasInstance(env, args[0]));
+   CHECK(args[1]->IsInt32());
+@@ -660,7 +660,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SocketAddressBlockListWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(SocketAddressBase::HasInstance(env, args[0]));
+   SocketAddressBase* addr;
+@@ -673,7 +673,7 @@
+     const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SocketAddressBlockListWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   Local<Array> rules;
+   if (wrap->blocklist_->ListRules(env).ToLocal(&rules))
+     args.GetReturnValue().Set(rules);
+@@ -814,7 +814,7 @@
+   Local<Object> detail = args[0].As<Object>();
+ 
+   SocketAddressBase* base;
+-  ASSIGN_OR_RETURN_UNWRAP(&base, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&base, args.This());
+ 
+   Local<Value> address;
+   if (!ToV8Value(env->context(), base->address_->address()).ToLocal(&address))
+@@ -840,14 +840,14 @@
+ 
+ void SocketAddressBase::GetFlowLabel(const FunctionCallbackInfo<Value>& args) {
+   SocketAddressBase* base;
+-  ASSIGN_OR_RETURN_UNWRAP(&base, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&base, args.This());
+   args.GetReturnValue().Set(base->address_->flow_label());
+ }
+ 
+ void SocketAddressBase::LegacyDetail(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   SocketAddressBase* base;
+-  ASSIGN_OR_RETURN_UNWRAP(&base, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&base, args.This());
+   Local<Object> address;
+   if (!base->address_->ToJS(env).ToLocal(&address)) return;
+   args.GetReturnValue().Set(address);
+diff -r -u --color up/node/src/node_stat_watcher.cc nw/node/src/node_stat_watcher.cc
+--- up/node/src/node_stat_watcher.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_stat_watcher.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -107,7 +107,7 @@
+   CHECK_EQ(args.Length(), 2);
+ 
+   StatWatcher* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   CHECK(!uv_is_active(wrap->GetHandle()));
+ 
+   node::Utf8Value path(args.GetIsolate(), args[0]);
 diff -r -u --color up/node/src/node_trace_events.cc nw/node/src/node_trace_events.cc
 --- up/node/src/node_trace_events.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_trace_events.cc	2024-07-31 19:07:40.085863689 +0000
-@@ -76,6 +76,7 @@
++++ nw/node/src/node_trace_events.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -76,8 +76,9 @@
  }
  
  void NodeCategorySet::Enable(const FunctionCallbackInfo<Value>& args) {
 +#if 0
    NodeCategorySet* category_set;
-   ASSIGN_OR_RETURN_UNWRAP(&category_set, args.Holder());
+-  ASSIGN_OR_RETURN_UNWRAP(&category_set, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&category_set, args.This());
    CHECK_NOT_NULL(category_set);
-@@ -87,9 +88,14 @@
+   const auto& categories = category_set->GetCategories();
+   if (!category_set->enabled_ && !categories.empty()) {
+@@ -87,20 +88,27 @@
      GetTracingAgentWriter()->Enable(categories);
      category_set->enabled_ = true;
    }
@@ -4626,9 +7077,11 @@ diff -r -u --color up/node/src/node_trace_events.cc nw/node/src/node_trace_event
  void NodeCategorySet::Disable(const FunctionCallbackInfo<Value>& args) {
 +#if 0
    NodeCategorySet* category_set;
-   ASSIGN_OR_RETURN_UNWRAP(&category_set, args.Holder());
+-  ASSIGN_OR_RETURN_UNWRAP(&category_set, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&category_set, args.This());
    CHECK_NOT_NULL(category_set);
-@@ -98,9 +104,11 @@
+   const auto& categories = category_set->GetCategories();
+   if (category_set->enabled_ && !categories.empty()) {
      GetTracingAgentWriter()->Disable(categories);
      category_set->enabled_ = false;
    }
@@ -4658,7 +7111,7 @@ diff -r -u --color up/node/src/node_trace_events.cc nw/node/src/node_trace_event
  void NodeCategorySet::RegisterExternalReferences(
 diff -r -u --color up/node/src/node_types.cc nw/node/src/node_types.cc
 --- up/node/src/node_types.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_types.cc	2024-07-31 19:07:40.085863689 +0000
++++ nw/node/src/node_types.cc	2024-08-26 19:33:04.994595378 +0000
 @@ -38,7 +38,6 @@
    V(Proxy)                                                                    \
    V(ModuleNamespaceObject)                                                    \
@@ -4667,9 +7120,30 @@ diff -r -u --color up/node/src/node_types.cc nw/node/src/node_types.cc
  #define V(type) \
    static void Is##type(const FunctionCallbackInfo<Value>& args) {             \
      args.GetReturnValue().Set(args[0]->Is##type());                           \
+diff -r -u --color up/node/src/node_v8.cc nw/node/src/node_v8.cc
+--- up/node/src/node_v8.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_v8.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -369,7 +369,7 @@
+ void GCProfiler::Start(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   GCProfiler* profiler;
+-  ASSIGN_OR_RETURN_UNWRAP(&profiler, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&profiler, args.This());
+   if (profiler->state != GCProfiler::GCProfilerState::kInitialized) {
+     return;
+   }
+@@ -394,7 +394,7 @@
+ void GCProfiler::Stop(const FunctionCallbackInfo<v8::Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   GCProfiler* profiler;
+-  ASSIGN_OR_RETURN_UNWRAP(&profiler, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&profiler, args.This());
+   if (profiler->state != GCProfiler::GCProfilerState::kStarted) {
+     return;
+   }
 diff -r -u --color up/node/src/node_v8_platform-inl.h nw/node/src/node_v8_platform-inl.h
 --- up/node/src/node_v8_platform-inl.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_v8_platform-inl.h	2024-07-31 19:07:40.085863689 +0000
++++ nw/node/src/node_v8_platform-inl.h	2024-08-26 19:33:04.994595378 +0000
 @@ -18,6 +18,7 @@
  
  namespace node {
@@ -4752,10 +7226,70 @@ diff -r -u --color up/node/src/node_v8_platform-inl.h nw/node/src/node_v8_platfo
    std::unique_ptr<tracing::Agent> tracing_agent_;
    tracing::AgentWriterHandle tracing_file_writer_;
    NodePlatform* platform_;
+diff -r -u --color up/node/src/node_wasm_web_api.cc nw/node/src/node_wasm_web_api.cc
+--- up/node/src/node_wasm_web_api.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_wasm_web_api.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -81,7 +81,7 @@
+ 
+ void WasmStreamingObject::SetURL(const FunctionCallbackInfo<Value>& args) {
+   WasmStreamingObject* obj;
+-  ASSIGN_OR_RETURN_UNWRAP(&obj, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&obj, args.This());
+   CHECK(obj->streaming_);
+ 
+   CHECK_EQ(args.Length(), 1);
+@@ -92,7 +92,7 @@
+ 
+ void WasmStreamingObject::Push(const FunctionCallbackInfo<Value>& args) {
+   WasmStreamingObject* obj;
+-  ASSIGN_OR_RETURN_UNWRAP(&obj, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&obj, args.This());
+   CHECK(obj->streaming_);
+ 
+   CHECK_EQ(args.Length(), 1);
+@@ -128,7 +128,7 @@
+ 
+ void WasmStreamingObject::Finish(const FunctionCallbackInfo<Value>& args) {
+   WasmStreamingObject* obj;
+-  ASSIGN_OR_RETURN_UNWRAP(&obj, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&obj, args.This());
+   CHECK(obj->streaming_);
+ 
+   CHECK_EQ(args.Length(), 0);
+@@ -137,7 +137,7 @@
+ 
+ void WasmStreamingObject::Abort(const FunctionCallbackInfo<Value>& args) {
+   WasmStreamingObject* obj;
+-  ASSIGN_OR_RETURN_UNWRAP(&obj, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&obj, args.This());
+   CHECK(obj->streaming_);
+ 
+   CHECK_EQ(args.Length(), 1);
+diff -r -u --color up/node/src/node_watchdog.cc nw/node/src/node_watchdog.cc
+--- up/node/src/node_watchdog.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_watchdog.cc	2024-08-26 19:33:04.994595378 +0000
+@@ -147,7 +147,7 @@
+ 
+ void TraceSigintWatchdog::Start(const FunctionCallbackInfo<Value>& args) {
+   TraceSigintWatchdog* watchdog;
+-  ASSIGN_OR_RETURN_UNWRAP(&watchdog, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&watchdog, args.This());
+   Mutex::ScopedLock lock(SigintWatchdogHelper::GetInstanceActionMutex());
+   // Register this watchdog with the global SIGINT/Ctrl+C listener.
+   SigintWatchdogHelper::GetInstance()->Register(watchdog);
+@@ -158,7 +158,7 @@
+ 
+ void TraceSigintWatchdog::Stop(const FunctionCallbackInfo<Value>& args) {
+   TraceSigintWatchdog* watchdog;
+-  ASSIGN_OR_RETURN_UNWRAP(&watchdog, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&watchdog, args.This());
+   Mutex::ScopedLock lock(SigintWatchdogHelper::GetInstanceActionMutex());
+   SigintWatchdogHelper::GetInstance()->Unregister(watchdog);
+   SigintWatchdogHelper::GetInstance()->Stop();
 Only in nw/node/src: node_webkit.h
 diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
 --- up/node/src/node_worker.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/node_worker.cc	2024-07-31 19:07:40.085863689 +0000
++++ nw/node/src/node_worker.cc	2024-08-26 19:33:04.998595376 +0000
 @@ -178,7 +178,7 @@
      isolate->AddNearHeapLimitCallback(Worker::NearHeapLimit, w);
  
@@ -4793,10 +7327,603 @@ diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
        CHECK(!context.IsEmpty());
        Context::Scope context_scope(context);
        {
+diff -r -u --color up/node/src/node_zlib.cc nw/node/src/node_zlib.cc
+--- up/node/src/node_zlib.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/node_zlib.cc	2024-08-26 19:33:04.998595376 +0000
+@@ -288,7 +288,7 @@
+ 
+   static void Close(const FunctionCallbackInfo<Value>& args) {
+     CompressionStream* ctx;
+-    ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+     ctx->Close();
+   }
+ 
+@@ -339,7 +339,7 @@
+     out = Buffer::Data(out_buf) + out_off;
+ 
+     CompressionStream* ctx;
+-    ASSIGN_OR_RETURN_UNWRAP(&ctx, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&ctx, args.This());
+ 
+     ctx->Write<async>(flush, in, in_len, out, out_len);
+   }
+@@ -453,7 +453,7 @@
+ 
+   static void Reset(const FunctionCallbackInfo<Value> &args) {
+     CompressionStream* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+     AllocScope alloc_scope(wrap);
+     const CompressionError err = wrap->context()->ResetStream();
+@@ -585,7 +585,7 @@
+       " dictionary)");
+ 
+     ZlibStream* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+     Local<Context> context = args.GetIsolate()->GetCurrentContext();
+ 
+@@ -633,7 +633,7 @@
+   static void Params(const FunctionCallbackInfo<Value>& args) {
+     CHECK(args.Length() == 2 && "params(level, strategy)");
+     ZlibStream* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+     Local<Context> context = args.GetIsolate()->GetCurrentContext();
+     int level;
+     if (!args[0]->Int32Value(context).To(&level)) return;
+@@ -676,7 +676,7 @@
+ 
+   static void Init(const FunctionCallbackInfo<Value>& args) {
+     BrotliCompressionStream* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+     CHECK(args.Length() == 3 && "init(params, writeResult, writeCallback)");
+ 
+     CHECK(args[1]->IsUint32Array());
+diff -r -u --color up/node/src/pipe_wrap.cc nw/node/src/pipe_wrap.cc
+--- up/node/src/pipe_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/pipe_wrap.cc	2024-08-26 19:33:04.998595376 +0000
+@@ -160,7 +160,7 @@
+ 
+ void PipeWrap::Bind(const FunctionCallbackInfo<Value>& args) {
+   PipeWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   node::Utf8Value name(args.GetIsolate(), args[0]);
+   int err = uv_pipe_bind2(&wrap->handle_, *name, name.length(), 0);
+   args.GetReturnValue().Set(err);
+@@ -169,7 +169,7 @@
+ #ifdef _WIN32
+ void PipeWrap::SetPendingInstances(const FunctionCallbackInfo<Value>& args) {
+   PipeWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   CHECK(args[0]->IsInt32());
+   int instances = args[0].As<Int32>()->Value();
+   uv_pipe_pending_instances(&wrap->handle_, instances);
+@@ -178,7 +178,7 @@
+ 
+ void PipeWrap::Fchmod(const v8::FunctionCallbackInfo<v8::Value>& args) {
+   PipeWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   CHECK(args[0]->IsInt32());
+   int mode = args[0].As<Int32>()->Value();
+   int err = uv_pipe_chmod(&wrap->handle_, mode);
+@@ -187,7 +187,7 @@
+ 
+ void PipeWrap::Listen(const FunctionCallbackInfo<Value>& args) {
+   PipeWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+   Environment* env = wrap->env();
+   int backlog;
+   if (!args[0]->Int32Value(env->context()).To(&backlog)) return;
+@@ -200,7 +200,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   PipeWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   int fd;
+   if (!args[0]->Int32Value(env->context()).To(&fd)) return;
+@@ -215,7 +215,7 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   PipeWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK(args[0]->IsObject());
+   CHECK(args[1]->IsString());
+diff -r -u --color up/node/src/process_wrap.cc nw/node/src/process_wrap.cc
+--- up/node/src/process_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/process_wrap.cc	2024-08-26 19:33:04.998595376 +0000
+@@ -154,7 +154,7 @@
+     Environment* env = Environment::GetCurrent(args);
+     Local<Context> context = env->context();
+     ProcessWrap* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+     THROW_IF_INSUFFICIENT_PERMISSIONS(
+         env, permission::PermissionScope::kChildProcess, "");
+     int err = 0;
+@@ -310,7 +310,7 @@
+   static void Kill(const FunctionCallbackInfo<Value>& args) {
+     Environment* env = Environment::GetCurrent(args);
+     ProcessWrap* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+     int signal = args[0]->Int32Value(env->context()).FromJust();
+     int err = uv_process_kill(&wrap->process_, signal);
+     args.GetReturnValue().Set(err);
+diff -r -u --color up/node/src/quic/endpoint.cc nw/node/src/quic/endpoint.cc
+--- up/node/src/quic/endpoint.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/quic/endpoint.cc	2024-08-26 19:33:04.998595376 +0000
+@@ -1690,7 +1690,7 @@
+ void Endpoint::DoConnect(const FunctionCallbackInfo<Value>& args) {
+   auto env = Environment::GetCurrent(args);
+   Endpoint* endpoint;
+-  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.This());
+ 
+   // args[0] is a SocketAddress
+   // args[1] is a Session OptionsObject (see session.cc)
+@@ -1723,7 +1723,7 @@
+ 
+ void Endpoint::DoListen(const FunctionCallbackInfo<Value>& args) {
+   Endpoint* endpoint;
+-  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.This());
+   auto env = Environment::GetCurrent(args);
+ 
+   Session::Options options;
+@@ -1734,20 +1734,20 @@
+ 
+ void Endpoint::MarkBusy(const FunctionCallbackInfo<Value>& args) {
+   Endpoint* endpoint;
+-  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.This());
+   endpoint->MarkAsBusy(args[0]->IsTrue());
+ }
+ 
+ void Endpoint::DoCloseGracefully(const FunctionCallbackInfo<Value>& args) {
+   Endpoint* endpoint;
+-  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.This());
+   endpoint->CloseGracefully();
+ }
+ 
+ void Endpoint::LocalAddress(const FunctionCallbackInfo<Value>& args) {
+   auto env = Environment::GetCurrent(args);
+   Endpoint* endpoint;
+-  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.This());
+   if (endpoint->is_closed() || !endpoint->udp_.is_bound()) return;
+   auto addr = SocketAddressBase::Create(
+       env, std::make_shared<SocketAddress>(endpoint->local_address()));
+@@ -1756,7 +1756,7 @@
+ 
+ void Endpoint::Ref(const FunctionCallbackInfo<Value>& args) {
+   Endpoint* endpoint;
+-  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&endpoint, args.This());
+   auto env = Environment::GetCurrent(args);
+   if (args[0]->BooleanValue(env->isolate())) {
+     endpoint->udp_.Ref();
+diff -r -u --color up/node/src/quic/session.cc nw/node/src/quic/session.cc
+--- up/node/src/quic/session.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/quic/session.cc	2024-08-26 19:33:04.998595376 +0000
+@@ -1753,14 +1753,14 @@
+ 
+   static void DoDestroy(const FunctionCallbackInfo<Value>& args) {
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     session->Destroy();
+   }
+ 
+   static void GetRemoteAddress(const FunctionCallbackInfo<Value>& args) {
+     auto env = Environment::GetCurrent(args);
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     auto address = session->remote_address();
+     args.GetReturnValue().Set(
+         SocketAddressBase::Create(env, std::make_shared<SocketAddress>(address))
+@@ -1770,7 +1770,7 @@
+   static void GetCertificate(const FunctionCallbackInfo<Value>& args) {
+     auto env = Environment::GetCurrent(args);
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     Local<Value> ret;
+     if (session->tls_session().cert(env).ToLocal(&ret))
+       args.GetReturnValue().Set(ret);
+@@ -1779,7 +1779,7 @@
+   static void GetEphemeralKeyInfo(const FunctionCallbackInfo<Value>& args) {
+     auto env = Environment::GetCurrent(args);
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     Local<Object> ret;
+     if (!session->is_server() &&
+         session->tls_session().ephemeral_key(env).ToLocal(&ret))
+@@ -1789,7 +1789,7 @@
+   static void GetPeerCertificate(const FunctionCallbackInfo<Value>& args) {
+     auto env = Environment::GetCurrent(args);
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     Local<Value> ret;
+     if (session->tls_session().peer_cert(env).ToLocal(&ret))
+       args.GetReturnValue().Set(ret);
+@@ -1797,20 +1797,20 @@
+ 
+   static void GracefulClose(const FunctionCallbackInfo<Value>& args) {
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     session->Close(Session::CloseMethod::GRACEFUL);
+   }
+ 
+   static void SilentClose(const FunctionCallbackInfo<Value>& args) {
+     // This is exposed for testing purposes only!
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     session->Close(Session::CloseMethod::SILENT);
+   }
+ 
+   static void UpdateKey(const FunctionCallbackInfo<Value>& args) {
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     // Initiating a key update may fail if it is done too early (either
+     // before the TLS handshake has been confirmed or while a previous
+     // key update is being processed). When it fails, InitiateKeyUpdate()
+@@ -1821,7 +1821,7 @@
+ 
+   static void DoOpenStream(const FunctionCallbackInfo<Value>& args) {
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     DCHECK(args[0]->IsUint32());
+     auto direction = static_cast<Direction>(args[0].As<Uint32>()->Value());
+     BaseObjectPtr<Stream> stream = session->OpenStream(direction);
+@@ -1832,7 +1832,7 @@
+   static void DoSendDatagram(const FunctionCallbackInfo<Value>& args) {
+     auto env = Environment::GetCurrent(args);
+     Session* session;
+-    ASSIGN_OR_RETURN_UNWRAP(&session, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&session, args.This());
+     DCHECK(args[0]->IsArrayBufferView());
+     args.GetReturnValue().Set(BigInt::New(
+         env->isolate(),
+diff -r -u --color up/node/src/quic/streams.cc nw/node/src/quic/streams.cc
+--- up/node/src/quic/streams.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/quic/streams.cc	2024-08-26 19:33:04.998595376 +0000
+@@ -128,14 +128,14 @@
+     std::shared_ptr<DataQueue> dataqueue;
+     if (GetDataQueueFromSource(env, args[0]).To(&dataqueue)) {
+       Stream* stream;
+-      ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++      ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+       stream->set_outbound(std::move(dataqueue));
+     }
+   }
+ 
+   static void Destroy(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     if (args.Length() > 1) {
+       CHECK(args[0]->IsBigInt());
+       bool unused = false;
+@@ -148,7 +148,7 @@
+ 
+   static void SendHeaders(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     CHECK(args[0]->IsUint32());  // Kind
+     CHECK(args[1]->IsArray());   // Headers
+     CHECK(args[2]->IsUint32());  // Flags
+@@ -169,7 +169,7 @@
+   // that has already been received is still readable.
+   static void StopSending(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     uint64_t code = NGTCP2_APP_NOERROR;
+     CHECK_IMPLIES(!args[0]->IsUndefined(), args[0]->IsBigInt());
+     if (!args[0]->IsUndefined()) {
+@@ -189,7 +189,7 @@
+   // outbound queue will be dropped. The stream may still be readable.
+   static void ResetStream(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     uint64_t code = NGTCP2_APP_NOERROR;
+     CHECK_IMPLIES(!args[0]->IsUndefined(), args[0]->IsBigInt());
+     if (!args[0]->IsUndefined()) {
+@@ -210,7 +210,7 @@
+ 
+   static void SetPriority(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     CHECK(args[0]->IsUint32());  // Priority
+     CHECK(args[1]->IsUint32());  // Priority flag
+ 
+@@ -224,14 +224,14 @@
+ 
+   static void GetPriority(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     auto priority = stream->session().application().GetStreamPriority(*stream);
+     args.GetReturnValue().Set(static_cast<uint32_t>(priority));
+   }
+ 
+   static void GetReader(const FunctionCallbackInfo<Value>& args) {
+     Stream* stream;
+-    ASSIGN_OR_RETURN_UNWRAP(&stream, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&stream, args.This());
+     BaseObjectPtr<Blob::Reader> reader = stream->get_reader();
+     if (reader) return args.GetReturnValue().Set(reader->object());
+     THROW_ERR_INVALID_STATE(Environment::GetCurrent(args),
 Only in nw/node/src/res: node-nw.rc
+diff -r -u --color up/node/src/signal_wrap.cc nw/node/src/signal_wrap.cc
+--- up/node/src/signal_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/signal_wrap.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -104,7 +104,7 @@
+ 
+   static void Start(const FunctionCallbackInfo<Value>& args) {
+     SignalWrap* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+     Environment* env = wrap->env();
+     int signum;
+     if (!args[0]->Int32Value(env->context()).To(&signum)) return;
+@@ -142,7 +142,7 @@
+ 
+   static void Stop(const FunctionCallbackInfo<Value>& args) {
+     SignalWrap* wrap;
+-    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++    ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+     if (wrap->active_)  {
+       wrap->active_ = false;
+diff -r -u --color up/node/src/stream_base.cc nw/node/src/stream_base.cc
+--- up/node/src/stream_base.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/stream_base.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -492,6 +492,29 @@
+   return GetAsyncWrap()->object();
+ }
+ 
++void StreamBase::AddAccessor(v8::Isolate* isolate,
++                             v8::Local<v8::Signature> signature,
++                             enum v8::PropertyAttribute attributes,
++                             v8::Local<v8::FunctionTemplate> t,
++                             JSMethodFunction* getter,
++                             JSMethodFunction* setter,
++                             v8::Local<v8::String> string) {
++  Local<FunctionTemplate> getter_templ =
++      NewFunctionTemplate(isolate,
++                          getter,
++                          signature,
++                          ConstructorBehavior::kThrow,
++                          SideEffectType::kHasNoSideEffect);
++  Local<FunctionTemplate> setter_templ =
++      NewFunctionTemplate(isolate,
++                          setter,
++                          signature,
++                          ConstructorBehavior::kThrow,
++                          SideEffectType::kHasSideEffect);
++  t->PrototypeTemplate()->SetAccessorProperty(
++      string, getter_templ, setter_templ, attributes);
++}
++
+ void StreamBase::AddMethod(Isolate* isolate,
+                            Local<Signature> signature,
+                            enum PropertyAttribute attributes,
+@@ -561,11 +584,14 @@
+                  JSMethod<&StreamBase::WriteString<LATIN1>>);
+   t->PrototypeTemplate()->Set(FIXED_ONE_BYTE_STRING(isolate, "isStreamBase"),
+                               True(isolate));
+-  t->PrototypeTemplate()->SetAccessor(
+-      FIXED_ONE_BYTE_STRING(isolate, "onread"),
+-      BaseObject::InternalFieldGet<StreamBase::kOnReadFunctionField>,
+-      BaseObject::InternalFieldSet<StreamBase::kOnReadFunctionField,
+-                                   &Value::IsFunction>);
++  AddAccessor(isolate,
++              sig,
++              static_cast<PropertyAttribute>(DontDelete | DontEnum),
++              t,
++              BaseObject::InternalFieldGet<StreamBase::kOnReadFunctionField>,
++              BaseObject::InternalFieldSet<StreamBase::kOnReadFunctionField,
++                                           &Value::IsFunction>,
++              FIXED_ONE_BYTE_STRING(isolate, "onread"));
+ }
+ 
+ void StreamBase::RegisterExternalReferences(
+@@ -632,7 +658,7 @@
+ 
+ template <int (StreamBase::*Method)(const FunctionCallbackInfo<Value>& args)>
+ void StreamBase::JSMethod(const FunctionCallbackInfo<Value>& args) {
+-  StreamBase* wrap = StreamBase::FromObject(args.Holder().As<Object>());
++  StreamBase* wrap = StreamBase::FromObject(args.This().As<Object>());
+   if (wrap == nullptr) return;
+ 
+   if (!wrap->IsAlive()) return args.GetReturnValue().Set(UV_EINVAL);
+diff -r -u --color up/node/src/stream_base.h nw/node/src/stream_base.h
+--- up/node/src/stream_base.h	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/stream_base.h	2024-08-26 19:33:05.002595376 +0000
+@@ -413,6 +413,13 @@
+   EmitToJSStreamListener default_listener_;
+ 
+   void SetWriteResult(const StreamWriteResult& res);
++  static void AddAccessor(v8::Isolate* isolate,
++                          v8::Local<v8::Signature> sig,
++                          enum v8::PropertyAttribute attributes,
++                          v8::Local<v8::FunctionTemplate> t,
++                          JSMethodFunction* getter,
++                          JSMethodFunction* setter,
++                          v8::Local<v8::String> str);
+   static void AddMethod(v8::Isolate* isolate,
+                         v8::Local<v8::Signature> sig,
+                         enum v8::PropertyAttribute attributes,
+diff -r -u --color up/node/src/stream_pipe.cc nw/node/src/stream_pipe.cc
+--- up/node/src/stream_pipe.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/stream_pipe.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -284,26 +284,26 @@
+ 
+ void StreamPipe::Start(const FunctionCallbackInfo<Value>& args) {
+   StreamPipe* pipe;
+-  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.This());
+   pipe->is_closed_ = false;
+   pipe->writable_listener_.OnStreamWantsWrite(65536);
+ }
+ 
+ void StreamPipe::Unpipe(const FunctionCallbackInfo<Value>& args) {
+   StreamPipe* pipe;
+-  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.This());
+   pipe->Unpipe();
+ }
+ 
+ void StreamPipe::IsClosed(const FunctionCallbackInfo<Value>& args) {
+   StreamPipe* pipe;
+-  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.This());
+   args.GetReturnValue().Set(pipe->is_closed_);
+ }
+ 
+ void StreamPipe::PendingWrites(const FunctionCallbackInfo<Value>& args) {
+   StreamPipe* pipe;
+-  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&pipe, args.This());
+   args.GetReturnValue().Set(pipe->pending_writes_);
+ }
+ 
+diff -r -u --color up/node/src/stream_wrap.cc nw/node/src/stream_wrap.cc
+--- up/node/src/stream_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/stream_wrap.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -311,7 +311,7 @@
+ 
+ void LibuvStreamWrap::SetBlocking(const FunctionCallbackInfo<Value>& args) {
+   LibuvStreamWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.Holder());
++  ASSIGN_OR_RETURN_UNWRAP(&wrap, args.This());
+ 
+   CHECK_GT(args.Length(), 0);
+   if (!wrap->IsAlive())
+diff -r -u --color up/node/src/tcp_wrap.cc nw/node/src/tcp_wrap.cc
+--- up/node/src/tcp_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/tcp_wrap.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -184,9 +184,8 @@
+ 
+ void TCPWrap::SetNoDelay(const FunctionCallbackInfo<Value>& args) {
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   int enable = static_cast<int>(args[0]->IsTrue());
+   int err = uv_tcp_nodelay(&wrap->handle_, enable);
+   args.GetReturnValue().Set(err);
+@@ -195,9 +194,8 @@
+ 
+ void TCPWrap::SetKeepAlive(const FunctionCallbackInfo<Value>& args) {
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   Environment* env = wrap->env();
+   int enable;
+   if (!args[0]->Int32Value(env->context()).To(&enable)) return;
+@@ -210,9 +208,8 @@
+ #ifdef _WIN32
+ void TCPWrap::SetSimultaneousAccepts(const FunctionCallbackInfo<Value>& args) {
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   bool enable = args[0]->IsTrue();
+   int err = uv_tcp_simultaneous_accepts(&wrap->handle_, enable);
+   args.GetReturnValue().Set(err);
+@@ -222,9 +219,8 @@
+ 
+ void TCPWrap::Open(const FunctionCallbackInfo<Value>& args) {
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   int64_t val;
+   if (!args[0]->IntegerValue(args.GetIsolate()->GetCurrentContext()).To(&val))
+     return;
+@@ -243,9 +239,8 @@
+     int family,
+     std::function<int(const char* ip_address, int port, T* addr)> uv_ip_addr) {
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   Environment* env = wrap->env();
+   node::Utf8Value ip_address(env->isolate(), args[0]);
+   int port;
+@@ -279,9 +274,8 @@
+ 
+ void TCPWrap::Listen(const FunctionCallbackInfo<Value>& args) {
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   Environment* env = wrap->env();
+   int backlog;
+   if (!args[0]->Int32Value(env->context()).To(&backlog)) return;
+@@ -320,9 +314,8 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TCPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK(args[0]->IsObject());
+   CHECK(args[1]->IsString());
+@@ -361,7 +354,7 @@
+ void TCPWrap::Reset(const FunctionCallbackInfo<Value>& args) {
+   TCPWrap* wrap;
+   ASSIGN_OR_RETURN_UNWRAP(
+-      &wrap, args.Holder(), args.GetReturnValue().Set(UV_EBADF));
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   int err = wrap->Reset(args[0]);
+ 
 diff -r -u --color up/node/src/tracing/agent.h nw/node/src/tracing/agent.h
 --- up/node/src/tracing/agent.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/tracing/agent.h	2024-07-31 19:07:40.093863831 +0000
++++ nw/node/src/tracing/agent.h	2024-08-26 19:33:05.002595376 +0000
 @@ -84,7 +84,7 @@
  class Agent {
   public:
@@ -4819,7 +7946,7 @@ diff -r -u --color up/node/src/tracing/agent.h nw/node/src/tracing/agent.h
  
 diff -r -u --color up/node/src/tracing/trace_event.h nw/node/src/tracing/trace_event.h
 --- up/node/src/tracing/trace_event.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/tracing/trace_event.h	2024-07-31 19:07:40.093863831 +0000
++++ nw/node/src/tracing/trace_event.h	2024-08-26 19:33:05.002595376 +0000
 @@ -5,6 +5,9 @@
  #ifndef SRC_TRACING_TRACE_EVENT_H_
  #define SRC_TRACING_TRACE_EVENT_H_
@@ -4953,7 +8080,7 @@ diff -r -u --color up/node/src/tracing/trace_event.h nw/node/src/tracing/trace_e
  #endif  // SRC_TRACING_TRACE_EVENT_H_
 diff -r -u --color up/node/src/tracing/trace_event_common.h nw/node/src/tracing/trace_event_common.h
 --- up/node/src/tracing/trace_event_common.h	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/tracing/trace_event_common.h	2024-07-31 19:07:40.093863831 +0000
++++ nw/node/src/tracing/trace_event_common.h	2024-08-26 19:33:05.002595376 +0000
 @@ -382,10 +382,7 @@
    INTERNAL_TRACE_EVENT_ADD(TRACE_EVENT_PHASE_MARK, category_group, name, \
                             TRACE_EVENT_FLAG_COPY)
@@ -5013,9 +8140,192 @@ diff -r -u --color up/node/src/tracing/trace_event_common.h nw/node/src/tracing/
  
  // Records a clock sync event.
  #define TRACE_EVENT_CLOCK_SYNC_RECEIVER(sync_id)                               \
+diff -r -u --color up/node/src/tty_wrap.cc nw/node/src/tty_wrap.cc
+--- up/node/src/tty_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/tty_wrap.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -91,9 +91,8 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   TTYWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   CHECK(args[0]->IsArray());
+ 
+   int width, height;
+@@ -111,9 +110,8 @@
+ 
+ void TTYWrap::SetRawMode(const FunctionCallbackInfo<Value>& args) {
+   TTYWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   int err = uv_tty_set_mode(&wrap->handle_, args[0]->IsTrue());
+   args.GetReturnValue().Set(err);
+ }
+diff -r -u --color up/node/src/udp_wrap.cc nw/node/src/udp_wrap.cc
+--- up/node/src/udp_wrap.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/src/udp_wrap.cc	2024-08-26 19:33:05.002595376 +0000
+@@ -56,7 +56,7 @@
+ namespace {
+ template <int (*fn)(uv_udp_t*, int)>
+ void SetLibuvInt32(const FunctionCallbackInfo<Value>& args) {
+-  UDPWrap* wrap = Unwrap<UDPWrap>(args.Holder());
++  UDPWrap* wrap = Unwrap<UDPWrap>(args.This());
+   if (wrap == nullptr) {
+     args.GetReturnValue().Set(UV_EBADF);
+     return;
+@@ -298,9 +298,8 @@
+ 
+ void UDPWrap::DoBind(const FunctionCallbackInfo<Value>& args, int family) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   // bind(ip, port, flags)
+   CHECK_EQ(args.Length(), 3);
+@@ -328,9 +327,8 @@
+ 
+ void UDPWrap::DoConnect(const FunctionCallbackInfo<Value>& args, int family) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK_EQ(args.Length(), 2);
+ 
+@@ -352,9 +350,8 @@
+ 
+ void UDPWrap::Open(const FunctionCallbackInfo<Value>& args) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+   CHECK(args[0]->IsNumber());
+   int fd = static_cast<int>(args[0].As<Integer>()->Value());
+   int err = uv_udp_open(&wrap->handle_, fd);
+@@ -376,9 +373,8 @@
+ void UDPWrap::BufferSize(const FunctionCallbackInfo<Value>& args) {
+   Environment* env = Environment::GetCurrent(args);
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK(args[0]->IsUint32());
+   CHECK(args[1]->IsBoolean());
+@@ -421,9 +417,8 @@
+ 
+ void UDPWrap::Disconnect(const FunctionCallbackInfo<Value>& args) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK_EQ(args.Length(), 0);
+ 
+@@ -434,9 +429,8 @@
+ 
+ void UDPWrap::SetMulticastInterface(const FunctionCallbackInfo<Value>& args) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK_EQ(args.Length(), 1);
+   CHECK(args[0]->IsString());
+@@ -452,9 +446,8 @@
+ void UDPWrap::SetMembership(const FunctionCallbackInfo<Value>& args,
+                             uv_membership membership) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK_EQ(args.Length(), 2);
+ 
+@@ -486,9 +479,8 @@
+ void UDPWrap::SetSourceMembership(const FunctionCallbackInfo<Value>& args,
+                                   uv_membership membership) {
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK_EQ(args.Length(), 3);
+ 
+@@ -526,9 +518,8 @@
+   Environment* env = Environment::GetCurrent(args);
+ 
+   UDPWrap* wrap;
+-  ASSIGN_OR_RETURN_UNWRAP(&wrap,
+-                          args.Holder(),
+-                          args.GetReturnValue().Set(UV_EBADF));
++  ASSIGN_OR_RETURN_UNWRAP(
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   CHECK(args.Length() == 4 || args.Length() == 6);
+   CHECK(args[0]->IsObject());
+@@ -678,7 +669,7 @@
+ }
+ 
+ void UDPWrapBase::RecvStart(const FunctionCallbackInfo<Value>& args) {
+-  UDPWrapBase* wrap = UDPWrapBase::FromObject(args.Holder());
++  UDPWrapBase* wrap = UDPWrapBase::FromObject(args.This());
+   args.GetReturnValue().Set(wrap == nullptr ? UV_EBADF : wrap->RecvStart());
+ }
+ 
+@@ -693,7 +684,7 @@
+ 
+ 
+ void UDPWrapBase::RecvStop(const FunctionCallbackInfo<Value>& args) {
+-  UDPWrapBase* wrap = UDPWrapBase::FromObject(args.Holder());
++  UDPWrapBase* wrap = UDPWrapBase::FromObject(args.This());
+   args.GetReturnValue().Set(wrap == nullptr ? UV_EBADF : wrap->RecvStop());
+ }
+ 
+@@ -828,7 +819,7 @@
+ void UDPWrap::GetSendQueueSize(const FunctionCallbackInfo<Value>& args) {
+   UDPWrap* wrap;
+   ASSIGN_OR_RETURN_UNWRAP(
+-      &wrap, args.Holder(), args.GetReturnValue().Set(UV_EBADF));
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   size_t size = uv_udp_get_send_queue_size(&wrap->handle_);
+   args.GetReturnValue().Set(static_cast<double>(size));
+@@ -837,7 +828,7 @@
+ void UDPWrap::GetSendQueueCount(const FunctionCallbackInfo<Value>& args) {
+   UDPWrap* wrap;
+   ASSIGN_OR_RETURN_UNWRAP(
+-      &wrap, args.Holder(), args.GetReturnValue().Set(UV_EBADF));
++      &wrap, args.This(), args.GetReturnValue().Set(UV_EBADF));
+ 
+   size_t count = uv_udp_get_send_queue_count(&wrap->handle_);
+   args.GetReturnValue().Set(static_cast<double>(count));
 diff -r -u --color up/node/src/util.cc nw/node/src/util.cc
 --- up/node/src/util.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/src/util.cc	2024-07-31 19:07:40.093863831 +0000
++++ nw/node/src/util.cc	2024-08-26 19:33:05.006595375 +0000
 @@ -701,11 +701,13 @@
  
  Local<String> UnionBytes::ToStringChecked(Isolate* isolate) const {
@@ -5034,9 +8344,152 @@ diff -r -u --color up/node/src/util.cc nw/node/src/util.cc
    }
  }
  
+diff -r -u --color up/node/test/addons/cppgc-object/binding.cc nw/node/test/addons/cppgc-object/binding.cc
+--- up/node/test/addons/cppgc-object/binding.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/test/addons/cppgc-object/binding.cc	2024-08-26 19:33:05.006595375 +0000
+@@ -1,8 +1,10 @@
++#include <assert.h>
+ #include <cppgc/allocation.h>
+ #include <cppgc/garbage-collected.h>
+ #include <cppgc/heap.h>
+ #include <node.h>
+ #include <v8-cppgc.h>
++#include <v8-sandbox.h>
+ #include <v8.h>
+ #include <algorithm>
+ 
+@@ -15,8 +17,10 @@
+   static void New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+     v8::Isolate* isolate = args.GetIsolate();
+     v8::Local<v8::Object> js_object = args.This();
+-    CppGCed* gc_object = cppgc::MakeGarbageCollected<CppGCed>(
+-        isolate->GetCppHeap()->GetAllocationHandle());
++    auto* heap = isolate->GetCppHeap();
++    assert(heap != nullptr);
++    CppGCed* gc_object =
++        cppgc::MakeGarbageCollected<CppGCed>(heap->GetAllocationHandle());
+     node::SetCppgcReference(isolate, js_object, gc_object);
+     args.GetReturnValue().Set(js_object);
+   }
+@@ -24,12 +28,6 @@
+   static v8::Local<v8::Function> GetConstructor(
+       v8::Local<v8::Context> context) {
+     auto ft = v8::FunctionTemplate::New(context->GetIsolate(), New);
+-    auto ot = ft->InstanceTemplate();
+-    v8::WrapperDescriptor descriptor =
+-        context->GetIsolate()->GetCppHeap()->wrapper_descriptor();
+-    uint16_t required_size = std::max(descriptor.wrappable_instance_index,
+-                                      descriptor.wrappable_type_index);
+-    ot->SetInternalFieldCount(required_size + 1);
+     return ft->GetFunction(context).ToLocalChecked();
+   }
+ 
+diff -r -u --color up/node/test/cctest/test_cppgc.cc nw/node/test/cctest/test_cppgc.cc
+--- up/node/test/cctest/test_cppgc.cc	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/test/cctest/test_cppgc.cc	2024-08-26 19:33:05.018595371 +0000
+@@ -3,16 +3,12 @@
+ #include <cppgc/heap.h>
+ #include <node.h>
+ #include <v8-cppgc.h>
++#include <v8-sandbox.h>
+ #include <v8.h>
+ #include "node_test_fixture.h"
+ 
+ // This tests that Node.js can work with an existing CppHeap.
+ 
+-// Mimic the Blink layout.
+-static int kWrappableTypeIndex = 0;
+-static int kWrappableInstanceIndex = 1;
+-static uint16_t kEmbedderID = 0x1;
+-
+ // Mimic a class that does not know about Node.js.
+ class CppGCed : public cppgc::GarbageCollected<CppGCed> {
+  public:
+@@ -23,12 +19,11 @@
+   static void New(const v8::FunctionCallbackInfo<v8::Value>& args) {
+     v8::Isolate* isolate = args.GetIsolate();
+     v8::Local<v8::Object> js_object = args.This();
+-    CppGCed* gc_object = cppgc::MakeGarbageCollected<CppGCed>(
+-        isolate->GetCppHeap()->GetAllocationHandle());
+-    js_object->SetAlignedPointerInInternalField(kWrappableTypeIndex,
+-                                                &kEmbedderID);
+-    js_object->SetAlignedPointerInInternalField(kWrappableInstanceIndex,
+-                                                gc_object);
++    auto* heap = isolate->GetCppHeap();
++    CHECK_NOT_NULL(heap);
++    CppGCed* gc_object =
++        cppgc::MakeGarbageCollected<CppGCed>(heap->GetAllocationHandle());
++    node::SetCppgcReference(isolate, js_object, gc_object);
+     kConstructCount++;
+     args.GetReturnValue().Set(js_object);
+   }
+@@ -36,8 +31,6 @@
+   static v8::Local<v8::Function> GetConstructor(
+       v8::Local<v8::Context> context) {
+     auto ft = v8::FunctionTemplate::New(context->GetIsolate(), New);
+-    auto ot = ft->InstanceTemplate();
+-    ot->SetInternalFieldCount(2);
+     return ft->GetFunction(context).ToLocalChecked();
+   }
+ 
+@@ -58,12 +51,12 @@
+ 
+   // Create and attach the CppHeap before we set up the IsolateData so that
+   // it recognizes the existing heap.
+-  std::unique_ptr<v8::CppHeap> cpp_heap = v8::CppHeap::Create(
+-      platform.get(),
+-      v8::CppHeapCreateParams(
+-          {},
+-          v8::WrapperDescriptor(
+-              kWrappableTypeIndex, kWrappableInstanceIndex, kEmbedderID)));
++  std::unique_ptr<v8::CppHeap> cpp_heap =
++      v8::CppHeap::Create(platform.get(), v8::CppHeapCreateParams{{}});
++
++  // TODO(joyeecheung): pass it into v8::Isolate::CreateParams and let V8
++  // own it when we can keep the isolate registered/task runner discoverable
++  // during isolate disposal.
+   isolate->AttachCppHeap(cpp_heap.get());
+ 
+   // Try creating Context + IsolateData + Environment.
+diff -r -u --color up/node/test/parallel/test-timers-unref.js nw/node/test/parallel/test-timers-unref.js
+--- up/node/test/parallel/test-timers-unref.js	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/test/parallel/test-timers-unref.js	2024-08-26 19:33:05.414595259 +0000
+@@ -72,7 +72,7 @@
+     setInterval(() => timeout.unref(), SHORT_TIME);
+ }
+ 
+-// Should not assert on args.Holder()->InternalFieldCount() > 0.
++// Should not assert on args.This()->InternalFieldCount() > 0.
+ // See https://github.com/nodejs/node-v0.x-archive/issues/4261.
+ {
+   const t = setInterval(() => {}, 1);
+diff -r -u --color up/node/test/parallel/test-worker-unsupported-things.js nw/node/test/parallel/test-worker-unsupported-things.js
+--- up/node/test/parallel/test-worker-unsupported-things.js	2024-05-15 06:45:30.000000000 +0000
++++ nw/node/test/parallel/test-worker-unsupported-things.js	2024-08-26 19:33:05.442595250 +0000
+@@ -14,14 +14,16 @@
+ } else {
+   {
+     const before = process.title;
+-    process.title += ' in worker';
+-    assert.strictEqual(process.title, before);
++    const after = before + ' in worker';
++    process.title = after;
++    assert.strictEqual(process.title, after);
+   }
+ 
+   {
+     const before = process.debugPort;
+-    process.debugPort++;
+-    assert.strictEqual(process.debugPort, before);
++    const after = before + 1;
++    process.debugPort = after;
++    assert.strictEqual(process.debugPort, after);
+   }
+ 
+   {
 diff -r -u --color up/node/tools/gyp/pylib/gyp/generator/ninja.py nw/node/tools/gyp/pylib/gyp/generator/ninja.py
 --- up/node/tools/gyp/pylib/gyp/generator/ninja.py	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/tools/gyp/pylib/gyp/generator/ninja.py	2024-07-31 19:07:40.561872122 +0000
++++ nw/node/tools/gyp/pylib/gyp/generator/ninja.py	2024-08-26 19:33:05.478595240 +0000
 @@ -90,8 +90,12 @@
          # cl.exe replaces literal # characters with = in preprocessor definitions for
          # some reason. Octal-encode to work around that.
@@ -5054,7 +8507,7 @@ diff -r -u --color up/node/tools/gyp/pylib/gyp/generator/ninja.py nw/node/tools/
      """Adds an arch string to an output path."""
 diff -r -u --color up/node/tools/js2c.cc nw/node/tools/js2c.cc
 --- up/node/tools/js2c.cc	2024-05-15 06:45:30.000000000 +0000
-+++ nw/node/tools/js2c.cc	2024-07-31 19:07:40.577872405 +0000
++++ nw/node/tools/js2c.cc	2024-08-26 19:33:05.494595236 +0000
 @@ -345,7 +345,9 @@
    return WriteFileSync(out, dest.c_str());
  }
