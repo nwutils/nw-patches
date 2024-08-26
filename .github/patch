@@ -2,18 +2,18 @@
 
 NW_DIR="nw"
 NW_URI=https://github.com/nwjs
-NW_VER=90
+NW_VER=91
 
 UP_DIR="up"
 
 CHROMIUM_URI="https://github.com/chromium/chromium"
-CHROMIUM_VER="127.0.6533.73"
+CHROMIUM_VER="128.0.6613.36"
 
 NODE_URI="https://github.com/nodejs/node"
 NODE_VER="22.2.0"
 
 V8_URI="https://github.com/v8/v8"
-V8_VER="12.7.224.16"
+V8_VER="12.8.374.11"
 
 if [[ ! -d "patches" ]]; then
     mkdir patches
