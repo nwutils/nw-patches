@@ -2,18 +2,18 @@
 
 NW_DIR="nw"
 NW_URI=https://github.com/nwjs
-NW_VER=92
+NW_VER=100
 
 UP_DIR="up"
 
 CHROMIUM_URI="https://github.com/chromium/chromium"
-CHROMIUM_VER="129.0.6668.59"
+CHROMIUM_VER="137.0.7151.15"
 
 NODE_URI="https://github.com/nodejs/node"
-NODE_VER="22.7.0"
+NODE_VER="23.11.0"
 
 V8_URI="https://github.com/v8/v8"
-V8_VER="12.9.202.18"
+V8_VER="13.7.152.6"
 
 if [[ ! -d "patches" ]]; then
     mkdir patches
@@ -26,15 +26,15 @@ if [[ ! -d $NW_DIR ]]; then
 fi
 
 if [[ ! -d "$NW_DIR/chromium" ]]; then
-    git clone --branch=nw$NW_VER --depth=1 $NW_URI/chromium.src.git $NW_DIR/chromium
+    git clone --depth=1 $NW_URI/chromium.src.git $NW_DIR/chromium
 fi
 
 if [[ ! -d "$NW_DIR/node" ]]; then
-    git clone --branch=nw$NW_VER --depth=1 $NW_URI/node.git $NW_DIR/node
+    git clone --depth=1 $NW_URI/node.git $NW_DIR/node
 fi
 
 if [[ ! -d "$NW_DIR/v8" ]]; then
-    git clone --branch=nw$NW_VER --depth=1 $NW_URI/v8.git $NW_DIR/v8
+    git clone --depth=1 $NW_URI/v8.git $NW_DIR/v8
 fi
 
 if [[ ! -d $UP_DIR ]]; then
