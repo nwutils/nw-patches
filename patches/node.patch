@@ -1,8 +1,8 @@
 Only in nw/node: .git
 Only in up/node: .github
 diff -r -u --color up/node/common.gypi nw/node/common.gypi
---- up/node/common.gypi	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/common.gypi	2026-03-15 17:29:41.453139137 +0000
+--- up/node/common.gypi	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/common.gypi	2026-04-25 12:56:29.930596370 +0000
 @@ -6,22 +6,37 @@
      'visibility%': 'hidden',          # V8's visibility setting
      'target_arch%': 'ia32',           # set v8's target architecture
@@ -345,7 +345,15 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
      'msvs_settings': {
        'VCCLCompilerTool': {
          # TODO(targos): Remove condition and always use LanguageStandard options
-@@ -368,10 +540,16 @@
+@@ -304,6 +476,7 @@
+               '/Zc:__cplusplus',
+               # The following option reduces the "error C1060: compiler is out of heap space"
+               '/Zm2000',
++              '-D_LIBCPP_ABI_NAMESPACE=__1',
+             ],
+           }, {
+             'AdditionalOptions': [
+@@ -368,10 +541,16 @@
      #   drowns out other, more legitimate warnings.
      # - "C4244: conversion from 'type1' to 'type2', possible loss of data"
      #   Ususaly safe. Disable for `dep`, enable for `src`
@@ -363,7 +371,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
        [ 'configuring_node', {
          'msvs_configuration_attributes': {
            'OutputDirectory': '<(DEPTH)/out/$(Configuration)/',
-@@ -449,6 +627,9 @@
+@@ -449,6 +628,9 @@
        ['v8_enable_pointer_compression_shared_cage == 1', {
          'defines': ['V8_COMPRESS_POINTERS_IN_SHARED_CAGE'],
        }],
@@ -373,7 +381,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
        ['v8_enable_pointer_compression == 1 or v8_enable_31bit_smis_on_64bit_arch == 1', {
          'defines': ['V8_31BIT_SMIS_ON_64BIT_ARCH'],
        }],
-@@ -483,18 +664,32 @@
+@@ -483,18 +665,32 @@
            # POSIX names
            '_CRT_NONSTDC_NO_DEPRECATE',
            # Make sure the STL doesn't try to use exceptions
@@ -409,7 +417,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
        }],
        [ 'OS in "linux freebsd openbsd solaris android aix os400 cloudabi openharmony"', {
          'cflags': [ '-Wall', '-Wextra', '-Wno-unused-parameter', ],
-@@ -502,7 +697,7 @@
+@@ -502,7 +698,7 @@
            '-fno-rtti',
            '-fno-exceptions',
            '-fno-strict-aliasing',
@@ -418,7 +426,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
          ],
          'defines': [ '__STDC_FORMAT_MACROS' ],
          'ldflags': [ '-rdynamic' ],
-@@ -517,6 +712,9 @@
+@@ -517,6 +713,9 @@
            }],
            ['_toolset=="host"', {
              'conditions': [
@@ -428,7 +436,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
                [ 'host_arch=="ia32"', {
                  'cflags': [ '-m32' ],
                  'ldflags': [ '-m32' ],
-@@ -542,6 +740,18 @@
+@@ -542,6 +741,18 @@
            }],
            ['_toolset=="target"', {
              'conditions': [
@@ -447,7 +455,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
                [ 'target_arch=="ia32"', {
                  'cflags': [ '-m32' ],
                  'ldflags': [ '-m32' ],
-@@ -567,6 +777,10 @@
+@@ -567,6 +778,10 @@
            }],
          ],
          'conditions': [
@@ -458,7 +466,7 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
            [ 'OS=="solaris"', {
              'cflags': [ '-pthreads' ],
              'ldflags': [ '-pthreads' ],
-@@ -652,7 +866,7 @@
+@@ -652,7 +867,7 @@
            ['_type!="static_library"', {
              'xcode_settings': {
                'OTHER_LDFLAGS': [
@@ -469,8 +477,8 @@ diff -r -u --color up/node/common.gypi nw/node/common.gypi
            }],
 Only in nw/node: config.gypi
 diff -r -u --color up/node/deps/ada/ada.gyp nw/node/deps/ada/ada.gyp
---- up/node/deps/ada/ada.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/ada/ada.gyp	2026-03-15 17:29:41.460139086 +0000
+--- up/node/deps/ada/ada.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/ada/ada.gyp	2026-04-25 12:56:30.014711849 +0000
 @@ -1,6 +1,7 @@
  {
    'variables': {
@@ -480,8 +488,8 @@ diff -r -u --color up/node/deps/ada/ada.gyp nw/node/deps/ada/ada.gyp
    'targets': [
      {
 diff -r -u --color up/node/deps/cares/cares.gyp nw/node/deps/cares/cares.gyp
---- up/node/deps/cares/cares.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/cares/cares.gyp	2026-03-15 17:29:41.491138859 +0000
+--- up/node/deps/cares/cares.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/cares/cares.gyp	2026-04-25 12:56:30.041711617 +0000
 @@ -137,6 +137,7 @@
      'cares_sources_mac': [
        'config/darwin/ares_config.h',
@@ -508,8 +516,8 @@ diff -r -u --color up/node/deps/cares/cares.gyp nw/node/deps/cares/cares.gyp
              '-lws2_32.lib',
              '-liphlpapi.lib'
 diff -r -u --color up/node/deps/cares/src/lib/legacy/ares_create_query.c nw/node/deps/cares/src/lib/legacy/ares_create_query.c
---- up/node/deps/cares/src/lib/legacy/ares_create_query.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/cares/src/lib/legacy/ares_create_query.c	2026-03-15 17:29:41.516138676 +0000
+--- up/node/deps/cares/src/lib/legacy/ares_create_query.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/cares/src/lib/legacy/ares_create_query.c	2026-04-25 12:56:30.059745301 +0000
 @@ -24,6 +24,11 @@
   * SPDX-License-Identifier: MIT
   */
@@ -531,8 +539,8 @@ diff -r -u --color up/node/deps/cares/src/lib/legacy/ares_create_query.c nw/node
 +#pragma clang diagnostic pop
 +#endif
 diff -r -u --color up/node/deps/histogram/src/hdr_histogram.c nw/node/deps/histogram/src/hdr_histogram.c
---- up/node/deps/histogram/src/hdr_histogram.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/histogram/src/hdr_histogram.c	2026-03-15 17:29:41.534138544 +0000
+--- up/node/deps/histogram/src/hdr_histogram.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/histogram/src/hdr_histogram.c	2026-04-25 12:56:30.146869933 +0000
 @@ -146,17 +146,17 @@
  #if defined(_MSC_VER) && !(defined(__clang__) && (defined(_M_ARM) || defined(_M_ARM64)))
      uint32_t leading_zero = 0;
@@ -555,8 +563,8 @@ diff -r -u --color up/node/deps/histogram/src/hdr_histogram.c nw/node/deps/histo
  #endif
      return 63 - leading_zero; /* smallest power of 2 containing value */
 diff -r -u --color up/node/deps/inspector_protocol/inspector_protocol.gyp nw/node/deps/inspector_protocol/inspector_protocol.gyp
---- up/node/deps/inspector_protocol/inspector_protocol.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/inspector_protocol/inspector_protocol.gyp	2026-03-15 17:29:41.677137497 +0000
+--- up/node/deps/inspector_protocol/inspector_protocol.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/inspector_protocol/inspector_protocol.gyp	2026-04-25 12:56:30.261709723 +0000
 @@ -38,6 +38,15 @@
        'sources': [
          '<@(crdtp_sources)',
@@ -573,9 +581,33 @@ diff -r -u --color up/node/deps/inspector_protocol/inspector_protocol.gyp nw/nod
      },
    ]
  }
+diff -r -u --color up/node/deps/merve/merve.gyp nw/node/deps/merve/merve.gyp
+--- up/node/deps/merve/merve.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/merve/merve.gyp	2026-04-25 12:56:30.263709705 +0000
+@@ -8,7 +8,7 @@
+       'type': 'static_library',
+       'include_dirs': [
+         '.',
+-        '../v8/third_party/simdutf',
++        '../../../simdutf',
+       ],
+       'direct_dependent_settings': {
+         'include_dirs': ['.'],
+@@ -22,6 +22,11 @@
+               'AdditionalOptions': ['/std:c++20'],
+             },
+           },
++          'include_dirs': [
++            '<(PRODUCT_DIR)/../../third_party/libc++/src/include',
++            '<(PRODUCT_DIR)/../../third_party/libc++',
++            '<(PRODUCT_DIR)/../../buildtools/third_party/libc++',
++          ],
+         }],
+         ['OS!="win"', {
+           'cflags_cc': ['-std=c++20'],
 diff -r -u --color up/node/deps/nbytes/nbytes.gyp nw/node/deps/nbytes/nbytes.gyp
---- up/node/deps/nbytes/nbytes.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/nbytes/nbytes.gyp	2026-03-15 17:29:41.683137453 +0000
+--- up/node/deps/nbytes/nbytes.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/nbytes/nbytes.gyp	2026-04-25 12:56:30.268931313 +0000
 @@ -6,11 +6,19 @@
      {
        'target_name': 'nbytes',
@@ -599,8 +631,8 @@ diff -r -u --color up/node/deps/nbytes/nbytes.gyp nw/node/deps/nbytes/nbytes.gyp
    ]
  }
 diff -r -u --color up/node/deps/ncrypto/ncrypto.cc nw/node/deps/ncrypto/ncrypto.cc
---- up/node/deps/ncrypto/ncrypto.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/ncrypto/ncrypto.cc	2026-03-15 17:29:41.684137445 +0000
+--- up/node/deps/ncrypto/ncrypto.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/ncrypto/ncrypto.cc	2026-04-25 12:56:30.269518502 +0000
 @@ -1,3 +1,6 @@
 +#pragma clang diagnostic push
 +#pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -616,15 +648,15 @@ diff -r -u --color up/node/deps/ncrypto/ncrypto.cc nw/node/deps/ncrypto/ncrypto.
  #if OPENSSL_VERSION_MAJOR >= 3
  #include <openssl/core_names.h>
  #include <openssl/params.h>
-@@ -4841,3 +4845,5 @@
+@@ -4842,3 +4846,5 @@
  #endif  // OPENSSL_VERSION_MAJOR >= 3
  
  }  // namespace ncrypto
 +
 +#pragma clang diagnostic pop
 diff -r -u --color up/node/deps/ncrypto/ncrypto.gyp nw/node/deps/ncrypto/ncrypto.gyp
---- up/node/deps/ncrypto/ncrypto.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/ncrypto/ncrypto.gyp	2026-03-15 17:29:41.684137445 +0000
+--- up/node/deps/ncrypto/ncrypto.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/ncrypto/ncrypto.gyp	2026-04-25 12:56:30.269518502 +0000
 @@ -10,7 +10,8 @@
      {
        'target_name': 'ncrypto',
@@ -648,8 +680,8 @@ diff -r -u --color up/node/deps/ncrypto/ncrypto.gyp nw/node/deps/ncrypto/ncrypto
      },
    ]
 diff -r -u --color up/node/deps/ncrypto/ncrypto.h nw/node/deps/ncrypto/ncrypto.h
---- up/node/deps/ncrypto/ncrypto.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/ncrypto/ncrypto.h	2026-03-15 17:29:41.685137438 +0000
+--- up/node/deps/ncrypto/ncrypto.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/ncrypto/ncrypto.h	2026-04-25 12:56:30.269709654 +0000
 @@ -1,5 +1,8 @@
  #pragma once
  
@@ -659,15 +691,15 @@ diff -r -u --color up/node/deps/ncrypto/ncrypto.h nw/node/deps/ncrypto/ncrypto.h
  #include <openssl/bio.h>
  #include <openssl/bn.h>
  #include <openssl/dh.h>
-@@ -1686,3 +1689,5 @@
+@@ -1689,3 +1692,5 @@
  };
  
  }  // namespace ncrypto
 +
 +#pragma clang diagnostic pop
 diff -r -u --color up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h
---- up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2026-03-15 17:29:41.686137431 +0000
+--- up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h	2026-04-25 12:56:30.270709645 +0000
 @@ -36,6 +36,10 @@
  #  define __has_declspec_attribute(x) 0
  #endif
@@ -680,8 +712,8 @@ diff -r -u --color up/node/deps/nghttp2/lib/includes/nghttp2/nghttp2.h nw/node/d
  extern "C" {
  #endif
 diff -r -u --color up/node/deps/nghttp2/nghttp2.gyp nw/node/deps/nghttp2/nghttp2.gyp
---- up/node/deps/nghttp2/nghttp2.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/nghttp2/nghttp2.gyp	2026-03-15 17:29:41.691137394 +0000
+--- up/node/deps/nghttp2/nghttp2.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/nghttp2/nghttp2.gyp	2026-04-25 12:56:30.273709620 +0000
 @@ -56,7 +56,7 @@
              },
            },
@@ -692,9 +724,9 @@ diff -r -u --color up/node/deps/nghttp2/nghttp2.gyp nw/node/deps/nghttp2/nghttp2
          }]
        ],
 diff -r -u --color up/node/deps/ngtcp2/ngtcp2.gyp nw/node/deps/ngtcp2/ngtcp2.gyp
---- up/node/deps/ngtcp2/ngtcp2.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/ngtcp2/ngtcp2.gyp	2026-03-15 17:29:41.696137357 +0000
-@@ -166,7 +166,7 @@
+--- up/node/deps/ngtcp2/ngtcp2.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/ngtcp2/ngtcp2.gyp	2026-04-25 12:56:30.278604419 +0000
+@@ -168,7 +168,7 @@
          # here then we can use that adapter and also set the
          # QUIC_NGTCP2_USE_BORINGSSL define (the guard in quic/guard.h
          # would need to be updated to check for this define).
@@ -705,20 +737,20 @@ diff -r -u --color up/node/deps/ngtcp2/ngtcp2.gyp nw/node/deps/ngtcp2/ngtcp2.gyp
            ],
 Only in up/node/deps: npm
 diff -r -u --color up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c
---- up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2026-03-15 17:29:42.399132208 +0000
-@@ -353,7 +353,7 @@
+--- up/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/openssl/openssl/providers/implementations/rands/seeding/rand_unix.c	2026-04-25 12:56:30.727538614 +0000
+@@ -352,7 +352,7 @@
       * internally. So we need to check errno for ENOSYS
       */
- #  if !defined(__DragonFly__) && !defined(__NetBSD__) && !defined(__FreeBSD__)
--#    if defined(__GNUC__) && __GNUC__>=2 && defined(__ELF__) && !defined(__hpux)
-+#    if 0 //defined(__GNUC__) && __GNUC__>=2 && defined(__ELF__) && !defined(__hpux)
+ #if !defined(__DragonFly__) && !defined(__NetBSD__) && !defined(__FreeBSD__)
+-#if defined(__GNUC__) && __GNUC__ >= 2 && defined(__ELF__) && !defined(__hpux)
++#if 0 //defined(__GNUC__) && __GNUC__ >= 2 && defined(__ELF__) && !defined(__hpux)
      extern int getentropy(void *buffer, size_t length) __attribute__((weak));
  
      if (getentropy != NULL) {
 diff -r -u --color up/node/deps/openssl/openssl.gyp nw/node/deps/openssl/openssl.gyp
---- up/node/deps/openssl/openssl.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/openssl/openssl.gyp	2026-03-15 17:29:42.197133687 +0000
+--- up/node/deps/openssl/openssl.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/openssl/openssl.gyp	2026-04-25 12:56:30.581706968 +0000
 @@ -3,6 +3,10 @@
      'gas_version%': '0.0',
      'llvm_version%': '0.0',
@@ -784,8 +816,8 @@ diff -r -u --color up/node/deps/openssl/openssl.gyp nw/node/deps/openssl/openssl
    ]
  }
 diff -r -u --color up/node/deps/openssl/openssl_common.gypi nw/node/deps/openssl/openssl_common.gypi
---- up/node/deps/openssl/openssl_common.gypi	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/openssl/openssl_common.gypi	2026-03-15 17:29:42.425132017 +0000
+--- up/node/deps/openssl/openssl_common.gypi	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/openssl/openssl_common.gypi	2026-04-25 12:56:30.747668691 +0000
 @@ -13,6 +13,8 @@
      'config/',
    ],
@@ -805,9 +837,9 @@ diff -r -u --color up/node/deps/openssl/openssl_common.gypi nw/node/deps/openssl
          'libraries': [
            '-lws2_32.lib',
 diff -r -u --color up/node/deps/simdjson/simdjson.h nw/node/deps/simdjson/simdjson.h
---- up/node/deps/simdjson/simdjson.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/simdjson/simdjson.h	2026-03-15 17:29:42.452131819 +0000
-@@ -7035,6 +7035,12 @@
+--- up/node/deps/simdjson/simdjson.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/simdjson/simdjson.h	2026-04-25 12:56:30.775705298 +0000
+@@ -7362,6 +7362,12 @@
    /** Prints characters in [begin, end) verbatim. **/
    simdjson_inline void chars(const char *begin, const char *end);
  
@@ -821,8 +853,8 @@ diff -r -u --color up/node/deps/simdjson/simdjson.h nw/node/deps/simdjson/simdjs
      static_cast<formatter *>(this)->print_newline();
    }
 diff -r -u --color up/node/deps/uv/include/uv/errno.h nw/node/deps/uv/include/uv/errno.h
---- up/node/deps/uv/include/uv/errno.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/include/uv/errno.h	2026-03-15 17:29:42.523131299 +0000
+--- up/node/deps/uv/include/uv/errno.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/include/uv/errno.h	2026-04-25 12:56:30.858287986 +0000
 @@ -460,7 +460,7 @@
   * if C++ is being used. Define it directly to avoid problems when integrating
   * libuv in a C++ project.
@@ -833,8 +865,8 @@ diff -r -u --color up/node/deps/uv/include/uv/errno.h nw/node/deps/uv/include/uv
  #elif defined(__FreeBSD__)
  # define UV__ENODATA (-9919)
 diff -r -u --color up/node/deps/uv/include/uv.h nw/node/deps/uv/include/uv.h
---- up/node/deps/uv/include/uv.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/include/uv.h	2026-03-15 17:29:42.523131299 +0000
+--- up/node/deps/uv/include/uv.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/include/uv.h	2026-04-25 12:56:30.857708374 +0000
 @@ -33,6 +33,8 @@
  
  #ifndef UV_EXTERN
@@ -882,8 +914,8 @@ diff -r -u --color up/node/deps/uv/include/uv.h nw/node/deps/uv/include/uv.h
  }
  #endif
 diff -r -u --color up/node/deps/uv/src/unix/fs.c nw/node/deps/uv/src/unix/fs.c
---- up/node/deps/uv/src/unix/fs.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/unix/fs.c	2026-03-15 17:29:42.526131277 +0000
+--- up/node/deps/uv/src/unix/fs.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/unix/fs.c	2026-04-25 12:56:30.859923006 +0000
 @@ -25,6 +25,8 @@
   * return -1 with errno set. The dispatcher in uv__fs_work() takes care of
   * getting the errno to the right place (req->result or as the return value.)
@@ -918,8 +950,8 @@ diff -r -u --color up/node/deps/uv/src/unix/fs.c nw/node/deps/uv/src/unix/fs.c
 +#pragma clang diagnostic pop
 +
 diff -r -u --color up/node/deps/uv/src/unix/kqueue.c nw/node/deps/uv/src/unix/kqueue.c
---- up/node/deps/uv/src/unix/kqueue.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/unix/kqueue.c	2026-03-15 17:29:42.527131270 +0000
+--- up/node/deps/uv/src/unix/kqueue.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/unix/kqueue.c	2026-04-25 12:56:30.860704566 +0000
 @@ -50,6 +50,8 @@
  
  static void uv__fs_event(uv_loop_t* loop, uv__io_t* w, unsigned int fflags);
@@ -1034,8 +1066,8 @@ diff -r -u --color up/node/deps/uv/src/unix/kqueue.c nw/node/deps/uv/src/unix/kq
  }
  
 diff -r -u --color up/node/deps/uv/src/unix/loop.c nw/node/deps/uv/src/unix/loop.c
---- up/node/deps/uv/src/unix/loop.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/unix/loop.c	2026-03-15 17:29:42.527131270 +0000
+--- up/node/deps/uv/src/unix/loop.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/unix/loop.c	2026-04-25 12:56:30.860704566 +0000
 @@ -73,6 +73,8 @@
    loop->backend_fd = -1;
    loop->emfile_fd = -1;
@@ -1046,8 +1078,8 @@ diff -r -u --color up/node/deps/uv/src/unix/loop.c nw/node/deps/uv/src/unix/loop
    loop->stop_flag = 0;
  
 diff -r -u --color up/node/deps/uv/src/unix/proctitle.c nw/node/deps/uv/src/unix/proctitle.c
---- up/node/deps/uv/src/unix/proctitle.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/unix/proctitle.c	2026-03-15 17:29:42.528131262 +0000
+--- up/node/deps/uv/src/unix/proctitle.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/unix/proctitle.c	2026-04-25 12:56:30.861704557 +0000
 @@ -44,6 +44,14 @@
  
  
@@ -1105,8 +1137,8 @@ diff -r -u --color up/node/deps/uv/src/unix/proctitle.c nw/node/deps/uv/src/unix
    args_mem = NULL;
  }
 diff -r -u --color up/node/deps/uv/src/uv-common.c nw/node/deps/uv/src/uv-common.c
---- up/node/deps/uv/src/uv-common.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/uv-common.c	2026-03-15 17:29:42.530131248 +0000
+--- up/node/deps/uv/src/uv-common.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/uv-common.c	2026-04-25 12:56:30.862704549 +0000
 @@ -838,19 +838,43 @@
  }
  
@@ -1188,8 +1220,8 @@ diff -r -u --color up/node/deps/uv/src/uv-common.c nw/node/deps/uv/src/uv-common
    err = uv_loop_close(loop);
    (void) err;    /* Squelch compiler warnings. */
 diff -r -u --color up/node/deps/uv/src/uv-common.h nw/node/deps/uv/src/uv-common.h
---- up/node/deps/uv/src/uv-common.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/uv-common.h	2026-03-15 17:29:42.530131248 +0000
+--- up/node/deps/uv/src/uv-common.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/uv-common.h	2026-04-25 12:56:30.862704549 +0000
 @@ -346,6 +346,7 @@
  # define UV_REQ_INIT(req, typ)                                                \
    do {                                                                        \
@@ -1199,8 +1231,8 @@ diff -r -u --color up/node/deps/uv/src/uv-common.h nw/node/deps/uv/src/uv-common
    }                                                                           \
    while (0)
 diff -r -u --color up/node/deps/uv/src/win/async.c nw/node/deps/uv/src/win/async.c
---- up/node/deps/uv/src/win/async.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/win/async.c	2026-03-15 17:29:42.530131248 +0000
+--- up/node/deps/uv/src/win/async.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/win/async.c	2026-04-25 12:56:30.862704549 +0000
 @@ -82,6 +82,23 @@
    return 0;
  }
@@ -1226,8 +1258,8 @@ diff -r -u --color up/node/deps/uv/src/win/async.c nw/node/deps/uv/src/win/async
  void uv__process_async_wakeup_req(uv_loop_t* loop, uv_async_t* handle,
      uv_req_t* req) {
 diff -r -u --color up/node/deps/uv/src/win/core.c nw/node/deps/uv/src/win/core.c
---- up/node/deps/uv/src/win/core.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/win/core.c	2026-03-15 17:29:42.530131248 +0000
+--- up/node/deps/uv/src/win/core.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/win/core.c	2026-04-25 12:56:30.863956943 +0000
 @@ -193,7 +193,7 @@
     * FDs even though they return the proper error code in the release build.
     */
@@ -1238,8 +1270,8 @@ diff -r -u --color up/node/deps/uv/src/win/core.c nw/node/deps/uv/src/win/core.c
  
    /* Initialize tracking of all uv loops */
 diff -r -u --color up/node/deps/uv/src/win/process.c nw/node/deps/uv/src/win/process.c
---- up/node/deps/uv/src/win/process.c	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/win/process.c	2026-03-15 17:29:42.532131233 +0000
+--- up/node/deps/uv/src/win/process.c	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/win/process.c	2026-04-25 12:56:30.864704532 +0000
 @@ -1064,6 +1064,8 @@
      process_flags |= CREATE_SUSPENDED;
    }
@@ -1250,8 +1282,8 @@ diff -r -u --color up/node/deps/uv/src/win/process.c nw/node/deps/uv/src/win/pro
                       arguments,
                       NULL,
 diff -r -u --color up/node/deps/uv/src/win/req-inl.h nw/node/deps/uv/src/win/req-inl.h
---- up/node/deps/uv/src/win/req-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/src/win/req-inl.h	2026-03-15 17:29:42.532131233 +0000
+--- up/node/deps/uv/src/win/req-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/src/win/req-inl.h	2026-04-25 12:56:30.864704532 +0000
 @@ -88,7 +88,8 @@
  
  
@@ -1271,8 +1303,8 @@ diff -r -u --color up/node/deps/uv/src/win/req-inl.h nw/node/deps/uv/src/win/req
      switch (req->type) {
        case UV_READ:
 diff -r -u --color up/node/deps/uv/uv.gyp nw/node/deps/uv/uv.gyp
---- up/node/deps/uv/uv.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/uv/uv.gyp	2026-03-15 17:29:42.547131124 +0000
+--- up/node/deps/uv/uv.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/uv/uv.gyp	2026-04-25 12:56:30.876074351 +0000
 @@ -1,5 +1,6 @@
  {
    'variables': {
@@ -1334,9 +1366,240 @@ diff -r -u --color up/node/deps/uv/uv.gyp nw/node/deps/uv/uv.gyp
            'defines': [ 'BUILDING_UV_SHARED=1' ]
          }],
          ['OS=="zos"', {
+diff -r -u --color up/node/deps/v8/include/v8-isolate.h nw/node/deps/v8/include/v8-isolate.h
+--- up/node/deps/v8/include/v8-isolate.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/v8/include/v8-isolate.h	2026-04-25 12:56:30.883704368 +0000
+@@ -1002,13 +1002,6 @@
+   void GetHeapStatistics(HeapStatistics* heap_statistics);
+ 
+   /**
+-   * Get total allocated bytes since isolate creation.
+-   * This should be used only by Node.JS, since it's a temporary method
+-   * to avoid breaking ABI on HeapStatistics.
+-   */
+-  uint64_t GetTotalAllocatedBytes();
+-
+-  /**
+    * Returns the number of spaces in the heap.
+    */
+   size_t NumberOfHeapSpaces();
+diff -r -u --color up/node/deps/v8/include/v8-statistics.h nw/node/deps/v8/include/v8-statistics.h
+--- up/node/deps/v8/include/v8-statistics.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/v8/include/v8-statistics.h	2026-04-25 12:56:30.885704351 +0000
+@@ -155,6 +155,13 @@
+   size_t number_of_detached_contexts() { return number_of_detached_contexts_; }
+ 
+   /**
++   * Returns the total number of bytes allocated since the Isolate was created.
++   * This includes all heap objects allocated in any space (new, old, code,
++   * etc.).
++   */
++  uint64_t total_allocated_bytes() { return total_allocated_bytes_; }
++
++  /**
+    * Returns a 0/1 boolean, which signifies whether the V8 overwrite heap
+    * garbage with a bit pattern.
+    */
+@@ -175,6 +182,7 @@
+   size_t number_of_detached_contexts_;
+   size_t total_global_handles_size_;
+   size_t used_global_handles_size_;
++  uint64_t total_allocated_bytes_;
+ 
+   friend class V8;
+   friend class Isolate;
+diff -r -u --color up/node/deps/v8/src/api/api.cc nw/node/deps/v8/src/api/api.cc
+--- up/node/deps/v8/src/api/api.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/v8/src/api/api.cc	2026-04-25 12:56:30.889704316 +0000
+@@ -6584,7 +6584,8 @@
+       peak_malloced_memory_(0),
+       does_zap_garbage_(false),
+       number_of_native_contexts_(0),
+-      number_of_detached_contexts_(0) {}
++      number_of_detached_contexts_(0),
++      total_allocated_bytes_(0) {}
+ 
+ HeapSpaceStatistics::HeapSpaceStatistics()
+     : space_name_(nullptr),
+@@ -10438,6 +10439,7 @@
+   heap_statistics->number_of_native_contexts_ = heap->NumberOfNativeContexts();
+   heap_statistics->number_of_detached_contexts_ =
+       heap->NumberOfDetachedContexts();
++  heap_statistics->total_allocated_bytes_ = heap->GetTotalAllocatedBytes();
+   heap_statistics->does_zap_garbage_ = i::heap::ShouldZapGarbage();
+ 
+ #if V8_ENABLE_WEBASSEMBLY
+@@ -10448,11 +10450,6 @@
+ #endif  // V8_ENABLE_WEBASSEMBLY
+ }
+ 
+-uint64_t Isolate::GetTotalAllocatedBytes() {
+-  i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(this);
+-  return i_isolate->heap()->GetTotalAllocatedBytes();
+-}
+-
+ size_t Isolate::NumberOfHeapSpaces() {
+   return i::LAST_SPACE - i::FIRST_SPACE + 1;
+ }
+diff -r -u --color up/node/deps/v8/test/cctest/test-api.cc nw/node/deps/v8/test/cctest/test-api.cc
+--- up/node/deps/v8/test/cctest/test-api.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/v8/test/cctest/test-api.cc	2026-04-25 12:56:31.164701949 +0000
+@@ -17656,6 +17656,152 @@
+   CHECK_EQ(total_physical_size, heap_statistics.total_physical_size());
+ }
+ 
++UNINITIALIZED_TEST(GetHeapTotalAllocatedBytes) {
++  // This test is incompatible with concurrent allocation, which may occur
++  // while collecting the statistics and break the final `CHECK_EQ`s.
++  if (i::v8_flags.stress_concurrent_allocation) return;
++
++  v8::Isolate::CreateParams create_params;
++  create_params.array_buffer_allocator = CcTest::array_buffer_allocator();
++  v8::Isolate* isolate = v8::Isolate::New(create_params);
++
++  const uint32_t number_of_elements = 1;
++  const uint32_t allocation_size = i::FixedArray::SizeFor(number_of_elements);
++  const uint32_t trusted_allocation_size =
++      i::TrustedFixedArray::SizeFor(number_of_elements);
++  const uint32_t lo_number_of_elements = 256 * 1024;
++  const uint32_t lo_allocation_size =
++      i::FixedArray::SizeFor(lo_number_of_elements);
++  const uint32_t trusted_lo_allocation_size =
++      i::TrustedFixedArray::SizeFor(lo_number_of_elements);
++  const uint32_t expected_allocation_size =
++      allocation_size * 2 + lo_allocation_size * 2 + trusted_allocation_size +
++      trusted_lo_allocation_size;
++
++  {
++    v8::Isolate::Scope isolate_scope(isolate);
++    v8::HandleScope handle_scope(isolate);
++    LocalContext env(isolate);
++    i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(isolate);
++
++    v8::HeapStatistics heap_stats_before;
++    isolate->GetHeapStatistics(&heap_stats_before);
++    size_t initial_allocated = heap_stats_before.total_allocated_bytes();
++
++    i::MaybeHandle<i::FixedArray> young_alloc =
++        i_isolate->factory()->TryNewFixedArray(number_of_elements,
++                                               i::AllocationType::kYoung);
++    USE(young_alloc);
++    i::MaybeHandle<i::FixedArray> old_alloc =
++        i_isolate->factory()->TryNewFixedArray(number_of_elements,
++                                               i::AllocationType::kOld);
++    USE(old_alloc);
++    i::Handle<i::TrustedFixedArray> trusted_alloc =
++        i_isolate->factory()->NewTrustedFixedArray(number_of_elements,
++                                                   i::AllocationType::kTrusted);
++    USE(trusted_alloc);
++    i::MaybeHandle<i::FixedArray> old_lo_alloc =
++        i_isolate->factory()->TryNewFixedArray(lo_number_of_elements,
++                                               i::AllocationType::kOld);
++    USE(old_lo_alloc);
++
++    {
++      v8::HandleScope inner_handle_scope(isolate);
++      auto young_lo_alloc = i_isolate->factory()->TryNewFixedArray(
++          lo_number_of_elements, i::AllocationType::kYoung);
++      USE(young_lo_alloc);
++    }
++
++    auto trusted_lo_alloc = i_isolate->factory()->NewTrustedFixedArray(
++        lo_number_of_elements, i::AllocationType::kTrusted);
++    USE(trusted_lo_alloc);
++
++    v8::HeapStatistics heap_stats_after;
++    isolate->GetHeapStatistics(&heap_stats_after);
++    uint64_t final_allocated = heap_stats_after.total_allocated_bytes();
++
++    CHECK_GT(final_allocated, initial_allocated);
++    uint64_t allocated_diff = final_allocated - initial_allocated;
++    CHECK_GE(allocated_diff, expected_allocation_size);
++
++    // This either tests counting happening when a LAB freed and validate
++    // there's no double counting on evacuated/promoted objects.
++    v8::internal::heap::InvokeAtomicMajorGC(i_isolate->heap());
++
++    v8::HeapStatistics heap_stats_after_gc;
++    isolate->GetHeapStatistics(&heap_stats_after_gc);
++    uint64_t total_allocation_after_gc =
++        heap_stats_after_gc.total_allocated_bytes();
++
++    CHECK_EQ(total_allocation_after_gc, final_allocated);
++  }
++
++  isolate->Dispose();
++}
++
++#if V8_CAN_CREATE_SHARED_HEAP_BOOL
++
++UNINITIALIZED_TEST(GetHeapTotalAllocatedBytesSharedSpaces) {
++  // This test is incompatible with concurrent allocation, which may occur
++  // while collecting the statistics and break the final `CHECK_EQ`s.
++  if (i::v8_flags.stress_concurrent_allocation) return;
++  if (COMPRESS_POINTERS_IN_MULTIPLE_CAGES_BOOL) return;
++
++  i::v8_flags.shared_heap = true;
++  i::FlagList::EnforceFlagImplications();
++
++  v8::Isolate::CreateParams create_params;
++  create_params.array_buffer_allocator = CcTest::array_buffer_allocator();
++  v8::Isolate* isolate = v8::Isolate::New(create_params);
++
++  {
++    v8::Isolate::Scope isolate_scope(isolate);
++    v8::HandleScope handle_scope(isolate);
++    LocalContext env(isolate);
++
++    v8::HeapStatistics heap_stats_before;
++    isolate->GetHeapStatistics(&heap_stats_before);
++    size_t initial_allocated = heap_stats_before.total_allocated_bytes();
++
++    i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(isolate);
++
++    const uint32_t number_of_elements = 1;
++    const uint32_t allocation_size = i::FixedArray::SizeFor(number_of_elements);
++    const uint32_t trusted_allocation_size =
++        i::TrustedFixedArray::SizeFor(number_of_elements);
++    const uint32_t lo_number_of_elements = 256 * 1024;
++    const uint32_t lo_allocation_size =
++        i::FixedArray::SizeFor(lo_number_of_elements);
++    const uint32_t expected_allocation_size =
++        allocation_size + trusted_allocation_size + lo_allocation_size;
++
++    i::MaybeHandle<i::FixedArray> shared_alloc =
++        i_isolate->factory()->TryNewFixedArray(number_of_elements,
++                                               i::AllocationType::kSharedOld);
++    USE(shared_alloc);
++    i::Handle<i::TrustedFixedArray> shared_trusted_alloc =
++        i_isolate->factory()->NewTrustedFixedArray(
++            number_of_elements, i::AllocationType::kSharedTrusted);
++    USE(shared_trusted_alloc);
++    i::MaybeHandle<i::FixedArray> shared_lo_alloc =
++        i_isolate->factory()->TryNewFixedArray(lo_number_of_elements,
++                                               i::AllocationType::kSharedOld);
++    USE(shared_lo_alloc);
++
++    v8::HeapStatistics heap_stats_after;
++    isolate->GetHeapStatistics(&heap_stats_after);
++    uint64_t final_allocated = heap_stats_after.total_allocated_bytes();
++
++    CHECK_GT(final_allocated, initial_allocated);
++    uint64_t allocated_diff = final_allocated - initial_allocated;
++    CHECK_GE(allocated_diff, expected_allocation_size);
++  }
++
++  isolate->Dispose();
++}
++
++#endif  // V8_CAN_CREATE_SHARED_HEAP_BOOL
++
+ TEST(NumberOfNativeContexts) {
+   static const size_t kNumTestContexts = 10;
+   i::Isolate* isolate = CcTest::i_isolate();
 diff -r -u --color up/node/deps/zlib/zlib.gyp nw/node/deps/zlib/zlib.gyp
---- up/node/deps/zlib/zlib.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/deps/zlib/zlib.gyp	2026-03-15 17:29:43.928121007 +0000
+--- up/node/deps/zlib/zlib.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/deps/zlib/zlib.gyp	2026-04-25 12:56:31.831696207 +0000
 @@ -36,6 +36,17 @@
                  }],
                ],
@@ -1390,10 +1653,32 @@ diff -r -u --color up/node/deps/zlib/zlib.gyp nw/node/deps/zlib/zlib.gyp
                  ['target_arch=="x64"', {
                    'defines': [ 'INFLATE_CHUNK_READ_64LE' ],
                  }],
+diff -r -u --color up/node/doc/api/v8.md nw/node/doc/api/v8.md
+--- up/node/doc/api/v8.md	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/doc/api/v8.md	2026-04-25 12:56:31.859695966 +0000
+@@ -265,7 +265,7 @@
+ buffers and external strings.
+ 
+ `total_allocated_bytes` The value of total allocated bytes since the Isolate
+-creation.
++creation
+ 
+ <!-- eslint-skip -->
+ 
+@@ -284,8 +284,7 @@
+   number_of_detached_contexts: 0,
+   total_global_handles_size: 8192,
+   used_global_handles_size: 3296,
+-  external_memory: 318824,
+-  total_allocated_bytes: 45224088
++  external_memory: 318824
+ }
+ ```
+ 
 Only in nw/node/lib: dummystream.js
 diff -r -u --color up/node/lib/internal/bootstrap/switches/is_main_thread.js nw/node/lib/internal/bootstrap/switches/is_main_thread.js
---- up/node/lib/internal/bootstrap/switches/is_main_thread.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/bootstrap/switches/is_main_thread.js	2026-03-15 17:29:44.017120355 +0000
+--- up/node/lib/internal/bootstrap/switches/is_main_thread.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/bootstrap/switches/is_main_thread.js	2026-04-25 12:56:31.910217693 +0000
 @@ -127,6 +127,18 @@
    }
  }
@@ -1436,8 +1721,8 @@ diff -r -u --color up/node/lib/internal/bootstrap/switches/is_main_thread.js nw/
    stderr.destroySoon = stderr.destroy;
    stderrDestroy = stderr._destroy;
 diff -r -u --color up/node/lib/internal/bootstrap/web/exposed-wildcard.js nw/node/lib/internal/bootstrap/web/exposed-wildcard.js
---- up/node/lib/internal/bootstrap/web/exposed-wildcard.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/bootstrap/web/exposed-wildcard.js	2026-03-15 17:29:44.018120348 +0000
+--- up/node/lib/internal/bootstrap/web/exposed-wildcard.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/bootstrap/web/exposed-wildcard.js	2026-04-25 12:56:31.910217693 +0000
 @@ -18,6 +18,10 @@
  const config = internalBinding('config');
  const { exposeLazyDOMExceptionProperty } = internalBinding('messaging');
@@ -1465,8 +1750,8 @@ diff -r -u --color up/node/lib/internal/bootstrap/web/exposed-wildcard.js nw/nod
 +
 +
 diff -r -u --color up/node/lib/internal/main/run_main_module.js nw/node/lib/internal/main/run_main_module.js
---- up/node/lib/internal/main/run_main_module.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/main/run_main_module.js	2026-03-15 17:29:44.026120289 +0000
+--- up/node/lib/internal/main/run_main_module.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/main/run_main_module.js	2026-04-25 12:56:31.916191030 +0000
 @@ -11,6 +11,18 @@
  const { getOptionValue } = require('internal/options');
  const { emitExperimentalWarning } = require('internal/util');
@@ -1493,9 +1778,9 @@ diff -r -u --color up/node/lib/internal/main/run_main_module.js nw/node/lib/inte
 +}
 +
 diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/internal/modules/cjs/loader.js
---- up/node/lib/internal/modules/cjs/loader.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/modules/cjs/loader.js	2026-03-15 17:29:44.027120282 +0000
-@@ -257,6 +257,20 @@
+--- up/node/lib/internal/modules/cjs/loader.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/modules/cjs/loader.js	2026-04-25 12:56:31.916698035 +0000
+@@ -263,6 +263,20 @@
   * @param {string} filename Absolute path to the file
   * @returns {number}
   */
@@ -1516,7 +1801,7 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
  function stat(filename) {
    // Guard against internal bugs where a non-string filename is passed in by mistake.
    assert(typeof filename === 'string');
-@@ -487,6 +501,7 @@
+@@ -493,6 +507,7 @@
  //   -> a/index.<ext>
  
  let _readPackage = (requestPath) => packageJsonReader.read(path.resolve(requestPath, 'package.json'));
@@ -1524,7 +1809,7 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
  ObjectDefineProperty(Module, '_readPackage', {
    __proto__: null,
    get() { return _readPackage; },
-@@ -1274,6 +1289,11 @@
+@@ -1326,6 +1341,11 @@
        setOwnProperty(process, 'mainModule', module);
        setOwnProperty(module.require, 'main', process.mainModule);
        module.id = '.';
@@ -1536,15 +1821,15 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
        module[kIsMainSymbol] = true;
      } else {
        module[kIsMainSymbol] = false;
-@@ -1688,6 +1708,7 @@
-       shouldDetectModule = getOptionValue('--experimental-require-module');
+@@ -1759,6 +1779,7 @@
+       shouldDetectModule = getOptionValue('--require-module');
      }
    }
 +  shouldDetectModule = shouldDetectModule || false;
    const result = compileFunctionForCJSLoader(content, filename, false /* is_sea_main */, shouldDetectModule);
  
    // Cache the source map for the module if present.
-@@ -1855,6 +1876,12 @@
+@@ -1923,6 +1944,12 @@
   * @param {string} filename The file path of the module
   */
  Module._extensions['.js'] = function(module, filename) {
@@ -1557,7 +1842,7 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
    let format, pkg;
    const tsEnabled = getOptionValue('--strip-types');
    if (StringPrototypeEndsWith(filename, '.cjs')) {
-@@ -1900,6 +1927,13 @@
+@@ -1977,6 +2004,13 @@
  Module._extensions['.json'] = function(module, filename) {
    const { source: content } = loadSource(module, filename, 'json');
  
@@ -1571,7 +1856,7 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
    try {
      setOwnProperty(module, 'exports', JSONParse(stripBOM(content)));
    } catch (err) {
-@@ -1916,6 +1950,14 @@
+@@ -1993,6 +2027,14 @@
   */
  Module._extensions['.node'] = function(module, filename) {
    // Be aware this doesn't use `content`
@@ -1586,7 +1871,7 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
    return process.dlopen(module, path.toNamespacedPath(filename));
  };
  
-@@ -2006,6 +2048,7 @@
+@@ -2091,6 +2133,7 @@
      ArrayPrototypeUnshift(paths, path.resolve(homeDir, '.node_libraries'));
      ArrayPrototypeUnshift(paths, path.resolve(homeDir, '.node_modules'));
    }
@@ -1595,9 +1880,9 @@ diff -r -u --color up/node/lib/internal/modules/cjs/loader.js nw/node/lib/intern
    if (nodePath) {
      ArrayPrototypeUnshiftApply(paths, ArrayPrototypeFilter(
 diff -r -u --color up/node/lib/internal/modules/esm/loader.js nw/node/lib/internal/modules/esm/loader.js
---- up/node/lib/internal/modules/esm/loader.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/modules/esm/loader.js	2026-03-15 17:29:44.028120274 +0000
-@@ -836,6 +836,7 @@
+--- up/node/lib/internal/modules/esm/loader.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/modules/esm/loader.js	2026-04-25 12:56:31.917102948 +0000
+@@ -823,6 +823,7 @@
   * @returns {ModuleLoader}
   */
  function createModuleLoader(asyncLoaderHooks) {
@@ -1605,7 +1890,7 @@ diff -r -u --color up/node/lib/internal/modules/esm/loader.js nw/node/lib/intern
    // Don't spawn a new loader hook worker if we are already in a loader hook worker to avoid infinite recursion.
    if (shouldSpawnLoaderHookWorker()) {
      assert(asyncLoaderHooks === undefined, 'asyncLoaderHooks should only be provided on the loader hook thread itself');
-@@ -864,6 +865,7 @@
+@@ -851,6 +852,7 @@
        asyncLoaderHooks = new AsyncLoaderHooksProxiedToLoaderHookWorker();
      }
    }
@@ -1614,9 +1899,9 @@ diff -r -u --color up/node/lib/internal/modules/esm/loader.js nw/node/lib/intern
    return new ModuleLoader(asyncLoaderHooks);
  }
 diff -r -u --color up/node/lib/internal/modules/esm/utils.js nw/node/lib/internal/modules/esm/utils.js
---- up/node/lib/internal/modules/esm/utils.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/modules/esm/utils.js	2026-03-15 17:29:44.028120274 +0000
-@@ -79,9 +79,6 @@
+--- up/node/lib/internal/modules/esm/utils.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/modules/esm/utils.js	2026-04-25 12:56:31.917102948 +0000
+@@ -81,9 +81,6 @@
    defaultConditions = ObjectFreeze([
      'node',
      'import',
@@ -1627,20 +1912,20 @@ diff -r -u --color up/node/lib/internal/modules/esm/utils.js nw/node/lib/interna
    defaultConditionsSet = new SafeSet(defaultConditions);
  }
 diff -r -u --color up/node/lib/internal/modules/helpers.js nw/node/lib/internal/modules/helpers.js
---- up/node/lib/internal/modules/helpers.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/modules/helpers.js	2026-03-15 17:29:44.029120267 +0000
-@@ -81,8 +81,6 @@
+--- up/node/lib/internal/modules/helpers.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/modules/helpers.js	2026-04-25 12:56:31.917102948 +0000
+@@ -84,8 +84,6 @@
    cjsConditionsArray = [
      'require',
      'node',
 -    ...addonConditions,
 -    ...userConditions,
    ];
-   if (getOptionValue('--experimental-require-module')) {
+   if (getOptionValue('--require-module')) {
      cjsConditionsArray.push('module-sync');
 diff -r -u --color up/node/lib/internal/modules/run_main.js nw/node/lib/internal/modules/run_main.js
---- up/node/lib/internal/modules/run_main.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/modules/run_main.js	2026-03-15 17:29:44.029120267 +0000
+--- up/node/lib/internal/modules/run_main.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/modules/run_main.js	2026-04-25 12:56:31.917695467 +0000
 @@ -60,8 +60,9 @@
     * (or an empty list when none have been registered).
     */
@@ -1654,8 +1939,8 @@ diff -r -u --color up/node/lib/internal/modules/run_main.js nw/node/lib/internal
    if (mainPath && StringPrototypeEndsWith(mainPath, '.mjs')) { return true; }
    if (mainPath && StringPrototypeEndsWith(mainPath, '.wasm')) { return true; }
 diff -r -u --color up/node/lib/internal/process/execution.js nw/node/lib/internal/process/execution.js
---- up/node/lib/internal/process/execution.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/process/execution.js	2026-03-15 17:29:44.030120260 +0000
+--- up/node/lib/internal/process/execution.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/process/execution.js	2026-04-25 12:56:31.918595053 +0000
 @@ -157,18 +157,8 @@
      if (exceptionHandlerState.captureFn !== null) {
        exceptionHandlerState.captureFn(er);
@@ -1678,8 +1963,8 @@ diff -r -u --color up/node/lib/internal/process/execution.js nw/node/lib/interna
  
      // If we handled an error, then make sure any ticks get processed
 diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/internal/process/pre_execution.js
---- up/node/lib/internal/process/pre_execution.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/process/pre_execution.js	2026-03-15 17:29:44.031120252 +0000
+--- up/node/lib/internal/process/pre_execution.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/process/pre_execution.js	2026-04-25 12:56:31.919029561 +0000
 @@ -109,7 +109,7 @@
  
    // Patch the process object and get the resolved main entry point.
@@ -1689,7 +1974,7 @@ diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/int
    setupInspectorHooks();
    setupNetworkInspection();
    setupNavigator();
-@@ -155,6 +155,20 @@
+@@ -157,6 +157,20 @@
  
      // TODO(joyeecheung): do this for worker threads as well.
      runDeserializeCallbacks();
@@ -1710,7 +1995,7 @@ diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/int
    } else {
      assert(!internalBinding('worker').isMainThread);
      // The setup should be called in LOAD_SCRIPT message handler.
-@@ -660,14 +674,14 @@
+@@ -673,14 +687,14 @@
          has,
        },
      });
@@ -1728,8 +2013,8 @@ diff -r -u --color up/node/lib/internal/process/pre_execution.js nw/node/lib/int
  }
  
 diff -r -u --color up/node/lib/internal/source_map/source_map_cache.js nw/node/lib/internal/source_map/source_map_cache.js
---- up/node/lib/internal/source_map/source_map_cache.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/source_map/source_map_cache.js	2026-03-15 17:29:44.033120238 +0000
+--- up/node/lib/internal/source_map/source_map_cache.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/source_map/source_map_cache.js	2026-04-25 12:56:31.920850941 +0000
 @@ -69,6 +69,8 @@
   * @param {boolean} [options.generatedCode]
   */
@@ -1740,8 +2025,8 @@ diff -r -u --color up/node/lib/internal/source_map/source_map_cache.js nw/node/l
    validateObject(options, 'options');
  
 diff -r -u --color up/node/lib/internal/worker/io.js nw/node/lib/internal/worker/io.js
---- up/node/lib/internal/worker/io.js	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/lib/internal/worker/io.js	2026-03-15 17:29:44.042120172 +0000
+--- up/node/lib/internal/worker/io.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/internal/worker/io.js	2026-04-25 12:56:31.926463565 +0000
 @@ -127,6 +127,7 @@
  };
  
@@ -1750,10 +2035,38 @@ diff -r -u --color up/node/lib/internal/worker/io.js nw/node/lib/internal/worker
  ObjectDefineProperty(
    MessagePort.prototype,
    kCreateEvent,
+diff -r -u --color up/node/lib/v8.js nw/node/lib/v8.js
+--- up/node/lib/v8.js	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/lib/v8.js	2026-04-25 12:56:31.927782740 +0000
+@@ -117,7 +117,6 @@
+   stopCpuProfile: _stopCpuProfile,
+   isStringOneByteRepresentation: _isStringOneByteRepresentation,
+   updateHeapStatisticsBuffer,
+-  getTotalAllocatedBytes,
+   updateHeapSpaceStatisticsBuffer,
+   updateHeapCodeStatisticsBuffer,
+   setHeapSnapshotNearHeapLimit: _setHeapSnapshotNearHeapLimit,
+@@ -137,6 +136,7 @@
+   kTotalGlobalHandlesSizeIndex,
+   kUsedGlobalHandlesSizeIndex,
+   kExternalMemoryIndex,
++  kTotalAllocatedBytes,
+ 
+   // Properties for heap spaces statistics buffer extraction.
+   kHeapSpaces,
+@@ -247,7 +247,7 @@
+     total_global_handles_size: buffer[kTotalGlobalHandlesSizeIndex],
+     used_global_handles_size: buffer[kUsedGlobalHandlesSizeIndex],
+     external_memory: buffer[kExternalMemoryIndex],
+-    total_allocated_bytes: getTotalAllocatedBytes(),
++    total_allocated_bytes: buffer[kTotalAllocatedBytes],
+   };
+ }
+ 
 diff -r -u --color up/node/node.gyp nw/node/node.gyp
---- up/node/node.gyp	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/node.gyp	2026-03-15 17:29:44.045120150 +0000
-@@ -1,20 +1,33 @@
+--- up/node/node.gyp	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/node.gyp	2026-04-25 12:56:31.927782740 +0000
+@@ -1,15 +1,35 @@
  {
    'variables': {
      'v8_use_siphash%': 0,
@@ -1768,18 +2081,8 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +    'v8_enable_pointer_compression': 0,
 +    'v8_enable_31bit_smis_on_64bit_arch': 0,
 +    'openssl_quic': 'false',
-+    'node_shared_libuv': 'false',
-     'node_no_browser_globals%': 'false',
-     'node_snapshot_main%': '',
--    'node_use_node_snapshot%': 'false',
-+    'node_use_node_snapshot': 'false',
-     'node_use_v8_platform%': 'true',
--    'node_use_bundled_v8%': 'true',
--    'node_shared%': 'false',
--    'node_write_snapshot_as_string_literals': 'true',
 +    'node_write_snapshot_as_array_literals': 'true',
      'force_dynamic_crt%': 0,
-     'ossfuzz' : 'false',
 +    'node_use_bundled_v8': 'false',
 +    'node_shared': 'true',
 +    'v8_enable_inspector': 1,
@@ -1788,38 +2091,58 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +    'node_enable_d8': 'false',
 +    'node_use_node_code_cache': 'false',
 +    'enable_lto': 'false',
-     'node_module_version%': '',
--    'node_use_amaro%': 'true',
-+    'node_use_amaro': 'true',
-     'node_shared_brotli%': 'false',
-     'node_shared_zstd%': 'false',
-     'node_shared_zlib%': 'false',
-@@ -24,14 +37,18 @@
-     'node_shared_sqlite%': 'false',
-     'node_shared_uvwasi%': 'false',
-     'node_shared_nghttp2%': 'false',
--    'node_use_openssl%': 'true',
--    'node_use_sqlite%': 'true',
--    'node_shared_openssl%': 'false',
-+    'node_use_openssl': 'true',
-+    'node_use_sqlite': 'true',
 +    'nw_browser_tests%': 0,
-+    'node_shared_openssl': 'false',
 +    'openssl_fips': '',
 +    'openssl_is_fips': 'false',
 +    'node_use_large_pages': 'false',
-     'node_v8_options%': '',
-     'node_enable_v8_vtunejit%': 'false',
--    'node_core_target_name%': 'node',
--    'node_lib_target_name%': 'libnode',
--    'node_intermediate_lib_type%': 'static_library',
 +    'node_core_target_name%': 'nodebin',
 +    'node_lib_target_name%': 'node',
 +    'node_intermediate_lib_type%': 'shared_library',
      'node_builtin_modules_path%': '',
+-    'node_core_target_name%': 'node',
+     'node_enable_v8_vtunejit%': 'false',
+     'node_intermediate_lib_type%': 'static_library',
+-    'node_lib_target_name%': 'libnode',
+     'node_module_version%': '',
+     'node_no_browser_globals%': 'false',
+     'node_shared_brotli%': 'false',
+@@ -17,12 +37,12 @@
+     'node_shared_gtest%': 'false',
+     'node_shared_hdr_histogram%': 'false',
+     'node_shared_http_parser%': 'false',
+-    'node_shared_libuv%': 'false',
++    'node_shared_libuv': 'false',
+     'node_shared_lief%': 'false',
+     'node_shared_merve%': 'false',
+     'node_shared_nbytes%': 'false',
+     'node_shared_nghttp2%': 'false',
+-    'node_shared_openssl%': 'false',
++    'node_shared_openssl': 'false',
+     'node_shared_sqlite%': 'false',
+     'node_shared_temporal_capi%': 'false',
+     'node_shared_uvwasi%': 'false',
+@@ -30,16 +50,15 @@
+     'node_shared_zstd%': 'false',
+     'node_shared%': 'false',
+     'node_snapshot_main%': '',
+-    'node_use_amaro%': 'true',
++    'node_use_amaro': 'true',
+     'node_use_bundled_v8%': 'true',
+     'node_use_lief%': 'false',
+-    'node_use_node_snapshot%': 'false',
+-    'node_use_openssl%': 'true',
++    'node_use_node_snapshot': 'false',
++    'node_use_openssl': 'true',
+     'node_use_quic%': 'false',
+-    'node_use_sqlite%': 'true',
++    'node_use_sqlite': 'true',
+     'node_use_v8_platform%': 'true',
+     'node_v8_options%': '',
+-    'node_write_snapshot_as_string_literals': 'true',
+     'ossfuzz' : 'false',
      'linked_module_files': [
      ],
-@@ -40,9 +57,332 @@
+@@ -48,9 +67,332 @@
      # The lengths of their file names combined should not exceed the
      # Windows command length limit or there would be an error.
      # See https://docs.microsoft.com/en-us/troubleshoot/windows-client/shell-experience/command-line-string-limitation
@@ -1881,7 +2204,6 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +'lib/internal/querystring.js',
 +'lib/internal/linkedlist.js',
 +'lib/internal/async_hooks.js',
-+'lib/internal/v8_prof_processor.js',
 +'lib/internal/trace_events_async_hooks.js',
 +'lib/internal/cli_table.js',
 +'lib/internal/child_process.js',
@@ -1931,6 +2253,8 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +'lib/internal/process/execution.js',
 +'lib/internal/process/warning.js',
 +'lib/internal/encoding.js',
++'lib/internal/encoding/single-byte.js',
++'lib/internal/encoding/util.js',
 +'lib/internal/repl/completion.js',
 +'lib/internal/priority_queue.js',
 +'lib/internal/quic/quic.js',
@@ -1938,7 +2262,6 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +'lib/internal/quic/stats.js',
 +'lib/internal/quic/symbols.js',
 +'lib/internal/modules/package_json_reader.js',
-+'lib/internal/modules/esm/formats.js',
 +'lib/internal/modules/esm/loader.js',
 +'lib/internal/modules/esm/module_map.js',
 +'lib/internal/modules/esm/resolve.js',
@@ -2154,13 +2477,11 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
      ],
      'deps_files': [
        'deps/v8/tools/splaytree.mjs',
-@@ -59,9 +399,13 @@
+@@ -67,9 +409,11 @@
        'deps/acorn/acorn/dist/acorn.js',
        'deps/acorn/acorn-walk/dist/walk.js',
        'deps/minimatch/index.js',
 -      '<@(node_builtin_shareable_builtins)',
-+      'deps/cjs-module-lexer/lexer.js',
-+      'deps/cjs-module-lexer/dist/lexer.js',
 +      'deps/undici/undici.js', #nwjs: reverting ca5be26b318affe7ee63a4b9c0489393c7dae661
      ],
      'node_sources': [
@@ -2169,7 +2490,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
        'src/api/async_resource.cc',
        'src/api/callback.cc',
        'src/api/embed_helpers.cc',
-@@ -98,6 +442,7 @@
+@@ -107,6 +451,7 @@
        'src/js_udp_wrap.cc',
        'src/module_wrap.cc',
        'src/node.cc',
@@ -2177,7 +2498,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
        'src/node_api.cc',
        'src/node_binding.cc',
        'src/node_blob.cc',
-@@ -176,11 +521,11 @@
+@@ -189,11 +534,11 @@
        'src/tcp_wrap.cc',
        'src/timers.cc',
        'src/timer_wrap.cc',
@@ -2194,7 +2515,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
        'src/tty_wrap.cc',
        'src/udp_wrap.cc',
        'src/util.cc',
-@@ -482,7 +827,7 @@
+@@ -501,7 +846,7 @@
          '-W',
          '-Wno-unused-parameter',
          '-Werror=undefined-inline',
@@ -2203,7 +2524,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
          '-Werror=ctad-maybe-unsupported',
        ],
      },
-@@ -529,6 +874,9 @@
+@@ -548,6 +893,9 @@
        }],
      ],
    },
@@ -2213,7 +2534,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
  
    'targets': [
      {
-@@ -639,7 +987,7 @@
+@@ -665,7 +1013,7 @@
                'ldflags': [
                  '-Wl,--whole-archive',
                  '<(obj_dir)/<(STATIC_LIB_PREFIX)<(node_core_target_name)<(STATIC_LIB_SUFFIX)',
@@ -2222,7 +2543,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
                  '-Wl,--no-whole-archive',
                ],
              }],
-@@ -855,24 +1203,49 @@
+@@ -888,20 +1236,45 @@
        'includes': [
          'node.gypi',
        ],
@@ -2244,11 +2565,6 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +        '../simdutf',
        ],
        'dependencies': [
-         'deps/googletest/googletest.gyp:gtest_prod',
-         'deps/histogram/histogram.gyp:histogram',
-         'deps/nbytes/nbytes.gyp:nbytes',
--        'tools/v8_gypfiles/abseil.gyp:abseil',
-+        #'tools/v8_gypfiles/abseil.gyp:abseil',
          'node_js2c#host',
 +        #'deps/ada/ada.gyp:ada',
        ],
@@ -2274,7 +2590,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
          'deps/postject/postject-api.h',
          # javascript files to make for an even more pleasant IDE experience
          '<@(library_files)',
-@@ -895,8 +1268,15 @@
+@@ -924,8 +1297,15 @@
          'NODE_API_EXPERIMENTAL_NO_WARNING=1',
          # Warn when using deprecated V8 APIs.
          'V8_DEPRECATION_WARNINGS=1',
@@ -2291,7 +2607,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
        ],
  
        # - "C4244: conversion from 'type1' to 'type2', possible loss of data"
-@@ -904,6 +1284,13 @@
+@@ -933,6 +1313,13 @@
        'msvs_disabled_warnings!': [4244],
  
        'conditions': [
@@ -2305,7 +2621,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
          [ 'openssl_default_cipher_list!=""', {
            'defines': [
              'NODE_OPENSSL_DEFAULT_CIPHER_LIST="<(openssl_default_cipher_list)"'
-@@ -956,15 +1343,20 @@
+@@ -1002,15 +1389,20 @@
            'conditions': [
              [ 'node_intermediate_lib_type!="static_library"', {
                'sources': [
@@ -2333,16 +2649,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
            ],
          }],
          [ 'node_use_openssl=="true"', {
-@@ -1205,7 +1597,7 @@
-         'deps/googletest/googletest.gyp:gtest_main',
-         'deps/histogram/histogram.gyp:histogram',
-         'deps/nbytes/nbytes.gyp:nbytes',
--        'tools/v8_gypfiles/abseil.gyp:abseil',
-+        #'tools/v8_gypfiles/abseil.gyp:abseil',
-       ],
- 
-       'includes': [
-@@ -1215,7 +1607,7 @@
+@@ -1287,7 +1679,7 @@
        'include_dirs': [
          'src',
          'tools/msvs/genfiles',
@@ -2351,7 +2658,7 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
          'deps/cares/include',
          'deps/uv/include',
          'test/cctest',
-@@ -1227,7 +1619,7 @@
+@@ -1299,7 +1691,7 @@
          'NODE_WANT_INTERNALS=1',
        ],
  
@@ -2359,8 +2666,8 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
 +      #'sources': [ '<@(node_cctest_sources)' ],
  
        'conditions': [
-         [ 'node_use_openssl=="true"', {
-@@ -1375,22 +1767,25 @@
+         [ 'node_shared_gtest=="false"', {
+@@ -1539,6 +1931,7 @@
        'include_dirs': [
          'tools',
          'src',
@@ -2368,18 +2675,15 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
        ],
        'sources': [
          'tools/js2c.cc',
-         'tools/executable_wrapper.h',
-         'src/embedded_data.h',
+@@ -1547,6 +1940,7 @@
          'src/embedded_data.cc',
+         'src/builtin_info.h',
+         'src/builtin_info.cc',
 +        '../simdutf/simdutf.cpp',
        ],
        'conditions': [
-         [ 'node_shared_simdutf=="false"', {
--          'dependencies': [ 'tools/v8_gypfiles/v8.gyp:simdutf#host' ],
-+          #'dependencies': [ 'tools/v8_gypfiles/v8.gyp:simdutf#host' ],
-         }],
-         [ 'node_shared_libuv=="false"', {
-           'dependencies': [ 'deps/uv/uv.gyp:libuv#host' ],
+         [ 'OS=="mac"', {
+@@ -1560,6 +1954,7 @@
          }],
          [ 'OS in "linux mac openharmony"', {
            'defines': ['NODE_JS2C_USE_STRING_LITERALS'],
@@ -2388,8 +2692,8 @@ diff -r -u --color up/node/node.gyp nw/node/node.gyp
          [ 'debug_node=="true"', {
            'cflags!': [ '-O3' ],
 diff -r -u --color up/node/node.gypi nw/node/node.gypi
---- up/node/node.gypi	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/node.gypi	2026-03-15 17:29:44.046120143 +0000
+--- up/node/node.gypi	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/node.gypi	2026-04-25 12:56:31.927782740 +0000
 @@ -29,7 +29,7 @@
      [ 'clang==1', {
        'cflags': [
@@ -2399,7 +2703,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
          '-Werror=ctad-maybe-unsupported',
        ],
      }],
-@@ -70,12 +70,12 @@
+@@ -72,12 +72,12 @@
          '_UNICODE=1',
        ],
        'conditions': [
@@ -2417,7 +2721,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
              ],
            }]
        ]
-@@ -83,15 +83,15 @@
+@@ -85,15 +85,15 @@
        'defines': [ '__POSIX__' ],
      }],
      [ 'node_enable_d8=="true"', {
@@ -2436,7 +2740,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
        ],
      }],
      [ 'node_use_v8_platform=="true"', {
-@@ -114,11 +114,19 @@
+@@ -116,11 +116,19 @@
          'NODE_RELEASE_URLBASE="<(node_release_urlbase)"',
        ]
      }],
@@ -2458,7 +2762,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
        ],
        'conditions': [
          [ 'icu_small=="true"', {
-@@ -137,7 +145,7 @@
+@@ -139,7 +147,7 @@
         target_arch=="ia32" or target_arch=="x32")', {
        'defines': [ 'NODE_ENABLE_VTUNE_PROFILING' ],
        'dependencies': [
@@ -2467,7 +2771,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
        ],
      }],
      [ 'node_no_browser_globals=="true"', {
-@@ -156,7 +164,7 @@
+@@ -158,7 +166,7 @@
            'msvs_settings': {
              'VCLinkerTool': {
                'AdditionalOptions': [
@@ -2476,7 +2780,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
                ],
              },
            },
-@@ -195,7 +203,7 @@
+@@ -197,7 +205,7 @@
            'msvs_settings': {
              'VCLinkerTool': {
                'AdditionalOptions': [
@@ -2485,7 +2789,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
                ],
              },
            },
-@@ -219,9 +227,15 @@
+@@ -221,9 +229,15 @@
      [ 'node_shared_nghttp2=="false"', {
        'dependencies': [ 'deps/nghttp2/nghttp2.gyp:nghttp2' ],
      }],
@@ -2501,17 +2805,8 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
 +        #'dependencies': [ 'deps/ada/ada.gyp:ada' ],
      }],
  
-     [ 'node_shared_simdjson=="false"', {
-@@ -229,7 +243,7 @@
-     }],
- 
-     [ 'node_shared_simdutf=="false"', {
--        'dependencies': [ 'tools/v8_gypfiles/v8.gyp:simdutf' ],
-+    #    'dependencies': [ 'tools/v8_gypfiles/v8.gyp:simdutf' ],
-     }],
- 
-     [ 'node_shared_brotli=="false"', {
-@@ -256,6 +270,18 @@
+     [ 'node_shared_merve=="false"', {
+@@ -263,6 +277,18 @@
          # we need to use node's preferred "darwin" rather than gyp's preferred "mac"
          'NODE_PLATFORM="darwin"',
        ],
@@ -2530,7 +2825,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
      }],
      [ 'OS=="freebsd"', {
        'libraries': [
-@@ -318,12 +344,23 @@
+@@ -325,12 +351,23 @@
          '-Wl,--no-whole-archive',
        ]
      }],
@@ -2560,7 +2855,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
      }],
      [ 'debug_node=="true"', {
        'cflags!': [ '-O3' ],
-@@ -335,6 +372,53 @@
+@@ -342,6 +379,53 @@
          ],
        },
      }],
@@ -2614,7 +2909,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
      [ 'coverage=="true" and node_shared=="false" and OS in "mac freebsd linux openharmony"', {
        'cflags!': [ '-O3' ],
        'ldflags': [ '--coverage',
-@@ -374,7 +458,8 @@
+@@ -381,7 +465,8 @@
      }],
      [ 'OS in "freebsd linux openharmony"', {
        'ldflags': [ '-Wl,-z,relro',
@@ -2624,20 +2919,16 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
      }],
      [ 'node_use_openssl=="true"', {
        'defines': [ 'HAVE_OPENSSL=1' ],
-@@ -387,9 +472,9 @@
-             './deps/ngtcp2/ngtcp2.gyp:nghttp3',
+@@ -392,7 +477,7 @@
+             './deps/openssl/openssl.gyp:openssl',
  
              # For tests
 -            './deps/openssl/openssl.gyp:openssl-cli',
--            './deps/ngtcp2/ngtcp2.gyp:ngtcp2_test_server',
--            './deps/ngtcp2/ngtcp2.gyp:ngtcp2_test_client',
 +            #'./deps/openssl/openssl.gyp:openssl-cli',
-+            #'./deps/ngtcp2/ngtcp2.gyp:ngtcp2_test_server',
-+            #'./deps/ngtcp2/ngtcp2.gyp:ngtcp2_test_client',
            ],
            'conditions': [
              # -force_load or --whole-archive are not applicable for
-@@ -397,22 +482,22 @@
+@@ -400,22 +485,22 @@
              [ 'force_load=="true"', {
                'xcode_settings': {
                  'OTHER_LDFLAGS': [
@@ -2656,7 +2947,7 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
                'conditions': [
                  ['OS in "linux freebsd openharmony" and node_shared=="false"', {
                    'ldflags': [
--                    '-Wl,--whole-archive,'
+-                    '-Wl,--whole-archive',
 -                      '<(obj_dir)/deps/openssl/<(openssl_product)',
 -                    '-Wl,--no-whole-archive',
 +                    #'-Wl,--whole-archive,'
@@ -2666,8 +2957,8 @@ diff -r -u --color up/node/node.gypi nw/node/node.gypi
                  }],
                  # openssl.def is based on zlib.def, zlib symbols
 diff -r -u --color up/node/src/README.md nw/node/src/README.md
---- up/node/src/README.md	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/README.md	2026-03-15 17:29:44.046120143 +0000
+--- up/node/src/README.md	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/README.md	2026-04-25 12:56:31.929153786 +0000
 @@ -126,10 +126,10 @@
  * `obj->GetInternalField(i)` to get a JavaScript value from an internal field.
  * `obj->SetInternalField(i, v)` to store a JavaScript value in an
@@ -2684,8 +2975,8 @@ diff -r -u --color up/node/src/README.md nw/node/src/README.md
  [`Context`][]s provide the same feature under the name “embedder data”.
  
 diff -r -u --color up/node/src/aliased_buffer.h nw/node/src/aliased_buffer.h
---- up/node/src/aliased_buffer.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/aliased_buffer.h	2026-03-15 17:29:44.046120143 +0000
+--- up/node/src/aliased_buffer.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/aliased_buffer.h	2026-04-25 12:56:31.929153786 +0000
 @@ -6,6 +6,7 @@
  #include <cinttypes>
  #include "memory_tracker.h"
@@ -2695,8 +2986,8 @@ diff -r -u --color up/node/src/aliased_buffer.h nw/node/src/aliased_buffer.h
  namespace node {
  
 diff -r -u --color up/node/src/api/callback.cc nw/node/src/api/callback.cc
---- up/node/src/api/callback.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/api/callback.cc	2026-03-15 17:29:44.047120135 +0000
+--- up/node/src/api/callback.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/api/callback.cc	2026-04-25 12:56:31.929625922 +0000
 @@ -4,6 +4,10 @@
  #include "node.h"
  #include "v8.h"
@@ -2737,8 +3028,8 @@ diff -r -u --color up/node/src/api/callback.cc nw/node/src/api/callback.cc
    Context::Scope context_scope(env->context());
    MaybeLocal<Value> ret = InternalMakeCallback(
 diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
---- up/node/src/api/environment.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/api/environment.cc	2026-03-15 17:29:44.047120135 +0000
+--- up/node/src/api/environment.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/api/environment.cc	2026-04-25 12:56:31.929625922 +0000
 @@ -54,6 +54,8 @@
  using v8::String;
  using v8::Value;
@@ -2748,13 +3039,7 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
  bool AllowWasmCodeGenerationCallback(Local<Context> context,
                                       Local<String>) {
    Local<Value> wasm_code_gen =
-@@ -136,10 +138,16 @@
- }
- 
- void NodeArrayBufferAllocator::Free(void* data, size_t size) {
-+  if (data == &zero_fill_field_)
-+    return;
-   total_mem_usage_.fetch_sub(size, std::memory_order_relaxed);
+@@ -135,6 +137,10 @@
    allocator_->Free(data, size);
  }
  
@@ -2765,7 +3050,7 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
  DebuggingArrayBufferAllocator::~DebuggingArrayBufferAllocator() {
    CHECK(allocations_.empty());
  }
-@@ -223,8 +231,6 @@
+@@ -218,8 +224,6 @@
      // heap based on the actual physical memory.
      params->constraints.ConfigureDefaults(total_memory, 0);
    }
@@ -2774,7 +3059,7 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
  
  #ifdef NODE_ENABLE_VTUNE_PROFILING
    params->code_event_handler = vTune::GetVtuneCodeEventHandler();
-@@ -237,12 +243,12 @@
+@@ -232,12 +236,12 @@
              errors::PerIsolateMessageListener,
              Isolate::MessageErrorLevel::kMessageError |
                  Isolate::MessageErrorLevel::kMessageWarning);
@@ -2789,7 +3074,7 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
    auto* fatal_error_cb = s.fatal_error_callback ?
        s.fatal_error_callback : OnFatalError;
    isolate->SetFatalErrorHandler(fatal_error_cb);
-@@ -287,14 +293,18 @@
+@@ -282,14 +286,18 @@
          shadow_realm::HostCreateShadowRealmContextCallback);
    }
  
@@ -2808,7 +3093,7 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
  }
  
  void SetIsolateUpForNode(v8::Isolate* isolate,
-@@ -674,8 +684,8 @@
+@@ -796,8 +804,8 @@
  // InitializeContext, because embedders don't necessarily
  // call NewContext and so they will experience breakages.
  Local<Context> NewContext(Isolate* isolate,
@@ -2820,8 +3105,8 @@ diff -r -u --color up/node/src/api/environment.cc nw/node/src/api/environment.cc
  
    if (InitializeContext(context).IsNothing()) {
 diff -r -u --color up/node/src/api/hooks.cc nw/node/src/api/hooks.cc
---- up/node/src/api/hooks.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/api/hooks.cc	2026-03-15 17:29:44.047120135 +0000
+--- up/node/src/api/hooks.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/api/hooks.cc	2026-04-25 12:56:31.929625922 +0000
 @@ -21,6 +21,14 @@
    env->RunAtExitCallbacks();
  }
@@ -2838,9 +3123,9 @@ diff -r -u --color up/node/src/api/hooks.cc nw/node/src/api/hooks.cc
    CHECK_NOT_NULL(env);
    env->AtExit(cb, arg);
 diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
---- up/node/src/async_wrap.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/async_wrap.cc	2026-03-15 17:29:44.047120135 +0000
-@@ -121,6 +121,7 @@
+--- up/node/src/async_wrap.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/async_wrap.cc	2026-04-25 12:56:31.929695363 +0000
+@@ -126,6 +126,7 @@
  }
  
  void AsyncWrap::EmitTraceEventBefore() {
@@ -2848,7 +3133,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
    switch (provider_type()) {
  #define V(PROVIDER)                                                           \
      case PROVIDER_ ## PROVIDER:                                               \
-@@ -133,6 +134,7 @@
+@@ -138,6 +139,7 @@
      default:
        UNREACHABLE();
    }
@@ -2856,7 +3141,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
  }
  
  
-@@ -143,6 +145,7 @@
+@@ -148,6 +150,7 @@
  
  
  void AsyncWrap::EmitTraceEventAfter(ProviderType type, double async_id) {
@@ -2864,7 +3149,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
    switch (type) {
  #define V(PROVIDER)                                                           \
      case PROVIDER_ ## PROVIDER:                                               \
-@@ -155,6 +158,7 @@
+@@ -160,6 +163,7 @@
      default:
        UNREACHABLE();
    }
@@ -2872,7 +3157,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
  }
  
  
-@@ -194,6 +198,11 @@
+@@ -199,6 +203,11 @@
    SET_HOOK_FN(destroy);
    SET_HOOK_FN(promise_resolve);
  #undef SET_HOOK_FN
@@ -2884,7 +3169,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
  }
  
  static void SetPromiseHooks(const FunctionCallbackInfo<Value>& args) {
-@@ -545,6 +554,7 @@
+@@ -565,6 +574,7 @@
  }
  
  void AsyncWrap::EmitTraceEventDestroy() {
@@ -2892,7 +3177,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
    switch (provider_type()) {
    #define V(PROVIDER)                                                         \
      case PROVIDER_ ## PROVIDER:                                               \
-@@ -557,6 +567,7 @@
+@@ -577,6 +587,7 @@
      default:
        UNREACHABLE();
    }
@@ -2900,7 +3185,7 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
  }
  
  void AsyncWrap::EmitDestroy(Environment* env, double async_id) {
-@@ -613,7 +624,9 @@
+@@ -633,7 +644,9 @@
      }
    }
  
@@ -2911,8 +3196,8 @@ diff -r -u --color up/node/src/async_wrap.cc nw/node/src/async_wrap.cc
    context_frame_.Reset(isolate, async_context_frame::current(isolate));
  
 diff -r -u --color up/node/src/base_object-inl.h nw/node/src/base_object-inl.h
---- up/node/src/base_object-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/base_object-inl.h	2026-03-15 17:29:44.048120128 +0000
+--- up/node/src/base_object-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/base_object-inl.h	2026-04-25 12:56:31.929695363 +0000
 @@ -74,8 +74,9 @@
      return false;
    }
@@ -2955,8 +3240,8 @@ diff -r -u --color up/node/src/base_object-inl.h nw/node/src/base_object-inl.h
  
  template <typename T>
 diff -r -u --color up/node/src/base_object.cc nw/node/src/base_object.cc
---- up/node/src/base_object.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/base_object.cc	2026-03-15 17:29:44.048120128 +0000
+--- up/node/src/base_object.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/base_object.cc	2026-04-25 12:56:31.929695363 +0000
 @@ -45,7 +45,8 @@
  
    {
@@ -2968,8 +3253,8 @@ diff -r -u --color up/node/src/base_object.cc nw/node/src/base_object.cc
  }
  
 diff -r -u --color up/node/src/base_object.h nw/node/src/base_object.h
---- up/node/src/base_object.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/base_object.h	2026-03-15 17:29:44.048120128 +0000
+--- up/node/src/base_object.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/base_object.h	2026-04-25 12:56:31.929695363 +0000
 @@ -27,6 +27,7 @@
  #include <type_traits>  // std::remove_reference
  #include "base_object_types.h"
@@ -2978,9 +3263,21 @@ diff -r -u --color up/node/src/base_object.h nw/node/src/base_object.h
  #include "util.h"
  #include "v8.h"
  
+diff -r -u --color up/node/src/builtin_info.cc nw/node/src/builtin_info.cc
+--- up/node/src/builtin_info.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/builtin_info.cc	2026-04-25 12:56:31.929695363 +0000
+@@ -41,7 +41,7 @@
+     case BuiltinSourceType::kSourceTextModule:
+       return "kSourceTextModule";
+   }
+-  abort();
++  return "";
+ }
+ 
+ }  // namespace builtins
 diff -r -u --color up/node/src/cppgc_helpers-inl.h nw/node/src/cppgc_helpers-inl.h
---- up/node/src/cppgc_helpers-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/cppgc_helpers-inl.h	2026-03-15 17:29:44.049120121 +0000
+--- up/node/src/cppgc_helpers-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/cppgc_helpers-inl.h	2026-04-25 12:56:31.930695355 +0000
 @@ -19,8 +19,10 @@
    v8::Object::Wrap<v8::CppHeapPointerTag::kDefaultTag>(isolate, obj, wrappable);
    // Keep the layout consistent with BaseObjects.
@@ -3004,9 +3301,22 @@ diff -r -u --color up/node/src/cppgc_helpers-inl.h nw/node/src/cppgc_helpers-inl
    return ptr;
  }
  
+diff -r -u --color up/node/src/crypto/crypto_context.cc nw/node/src/crypto/crypto_context.cc
+--- up/node/src/crypto/crypto_context.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/crypto/crypto_context.cc	2026-04-25 12:56:31.931695346 +0000
+@@ -2409,7 +2409,8 @@
+ void SecureContext::CtxGetter(const FunctionCallbackInfo<Value>& info) {
+   SecureContext* sc;
+   ASSIGN_OR_RETURN_UNWRAP(&sc, info.This());
+-  Local<External> ext = External::New(info.GetIsolate(), sc->ctx_.get());
++  Local<External> ext = External::New(
++      info.GetIsolate(), sc->ctx_.get(), v8::kExternalPointerTypeTagDefault);
+   info.GetReturnValue().Set(ext);
+ }
+ 
 diff -r -u --color up/node/src/env-inl.h nw/node/src/env-inl.h
---- up/node/src/env-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/env-inl.h	2026-03-15 17:29:44.100119747 +0000
+--- up/node/src/env-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/env-inl.h	2026-04-25 12:56:31.934695320 +0000
 @@ -196,20 +196,29 @@
    if (!ContextEmbedderTag::IsNodeContext(context)) [[unlikely]] {
      return nullptr;
@@ -3043,8 +3353,8 @@ diff -r -u --color up/node/src/env-inl.h nw/node/src/env-inl.h
  
  inline v8::Isolate* Environment::isolate() const {
 diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
---- up/node/src/env.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/env.cc	2026-03-15 17:29:44.101119740 +0000
+--- up/node/src/env.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/env.cc	2026-04-25 12:56:31.934695320 +0000
 @@ -78,6 +78,8 @@
  using v8::Value;
  using worker::Worker;
@@ -3054,7 +3364,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  int const ContextEmbedderTag::kNodeContextTag = 0x6e6f64;
  void* const ContextEmbedderTag::kNodeContextTagPtr = const_cast<void*>(
      static_cast<const void*>(&ContextEmbedderTag::kNodeContextTag));
-@@ -674,12 +676,16 @@
+@@ -675,12 +677,16 @@
                                    Realm* realm,
                                    const ContextInfo& info) {
    context->SetAlignedPointerInEmbedderData(ContextEmbedderIndex::kEnvironment,
@@ -3074,7 +3384,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    // This must not be done before other context fields are initialized.
    ContextEmbedderTag::TagNodeContext(context);
-@@ -695,11 +701,15 @@
+@@ -696,11 +702,15 @@
  void Environment::UnassignFromContext(Local<v8::Context> context) {
    if (!context.IsEmpty()) {
      context->SetAlignedPointerInEmbedderData(ContextEmbedderIndex::kEnvironment,
@@ -3093,7 +3403,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
    }
    UntrackContext(context);
  }
-@@ -829,6 +839,7 @@
+@@ -830,6 +840,7 @@
          isolate_data->worker_context()->env()->builtin_loader());
    } else if (isolate_data->snapshot_data() != nullptr) {
      // ... otherwise, if a snapshot was provided, use its code cache.
@@ -3101,7 +3411,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
      size_t cache_size = isolate_data->snapshot_data()->code_cache.size();
      per_process::Debug(DebugCategory::CODE_CACHE,
                         "snapshot contains %zu code cache\n",
-@@ -837,6 +848,7 @@
+@@ -838,6 +849,7 @@
        builtin_loader()->RefreshCodeCache(
            isolate_data->snapshot_data()->code_cache);
      }
@@ -3109,7 +3419,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
    }
  
    // Compile builtins eagerly when building the snapshot so that inner functions
-@@ -885,11 +897,13 @@
+@@ -886,11 +898,13 @@
    inspector_agent_ = std::make_unique<inspector::Agent>(this);
  #endif
  
@@ -3123,7 +3433,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    destroy_async_id_list_.reserve(512);
  
-@@ -898,6 +912,7 @@
+@@ -899,6 +913,7 @@
        time_origin_,
        time_origin_timestamp_,
        MAYBE_FIELD_PTR(env_info, performance_state));
@@ -3131,15 +3441,15 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    if (*TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED(
            TRACING_CATEGORY_NODE1(environment)) != 0) {
-@@ -908,6 +923,7 @@
+@@ -909,6 +924,7 @@
                                        "args",
                                        tracing::CastTracedValue(traced_value));
    }
 +#endif
  
-   if (options_->permission) {
+   if (options_->permission || options_->permission_audit) {
      permission()->EnablePermissions();
-@@ -974,7 +990,7 @@
+@@ -978,7 +994,7 @@
  void Environment::InitializeMainContext(Local<Context> context,
                                          const EnvSerializeInfo* env_info) {
    principal_realm_ = std::make_unique<PrincipalRealm>(
@@ -3148,7 +3458,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
    if (env_info != nullptr) {
      DeserializeProperties(env_info);
    }
-@@ -1083,6 +1099,7 @@
+@@ -1087,6 +1103,7 @@
  void Environment::InitializeLibuv() {
    HandleScope handle_scope(isolate());
    Context::Scope context_scope(context());
@@ -3156,7 +3466,7 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
  
    CHECK_EQ(0, uv_timer_init(event_loop(), timer_handle()));
    uv_unref(reinterpret_cast<uv_handle_t*>(timer_handle()));
-@@ -1593,7 +1610,7 @@
+@@ -1597,7 +1614,7 @@
  }
  
  void Environment::ToggleImmediateRef(bool ref) {
@@ -3166,8 +3476,8 @@ diff -r -u --color up/node/src/env.cc nw/node/src/env.cc
    if (ref) {
      // Idle handle is needed only to stop the event loop from blocking in poll.
 diff -r -u --color up/node/src/env.h nw/node/src/env.h
---- up/node/src/env.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/env.h	2026-03-15 17:29:44.101119740 +0000
+--- up/node/src/env.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/env.h	2026-04-25 12:56:31.935695312 +0000
 @@ -1084,6 +1084,7 @@
    void UntrackContext(v8::Local<v8::Context> context);
    void PurgeTrackedEmptyContexts();
@@ -3177,9 +3487,9 @@ diff -r -u --color up/node/src/env.h nw/node/src/env.h
    v8::Isolate* const isolate_;
    v8::ExternalMemoryAccounter* const external_memory_accounter_;
 diff -r -u --color up/node/src/env_properties.h nw/node/src/env_properties.h
---- up/node/src/env_properties.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/env_properties.h	2026-03-15 17:29:44.101119740 +0000
-@@ -426,6 +426,7 @@
+--- up/node/src/env_properties.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/env_properties.h	2026-04-25 12:56:31.935695312 +0000
+@@ -429,6 +429,7 @@
    V(object_stats_template, v8::DictionaryTemplate)                             \
    V(page_stats_template, v8::DictionaryTemplate)                               \
    V(pipe_constructor_template, v8::FunctionTemplate)                           \
@@ -3188,9 +3498,9 @@ diff -r -u --color up/node/src/env_properties.h nw/node/src/env_properties.h
    V(secure_context_constructor_template, v8::FunctionTemplate)                 \
    V(shutdown_wrap_template, v8::ObjectTemplate)                                \
 diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
---- up/node/src/heap_utils.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/heap_utils.cc	2026-03-15 17:29:44.101119740 +0000
-@@ -345,9 +345,11 @@
+--- up/node/src/heap_utils.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/heap_utils.cc	2026-04-25 12:56:31.935695312 +0000
+@@ -351,9 +351,11 @@
  inline void TakeSnapshot(Environment* env,
                           v8::OutputStream* out,
                           HeapProfiler::HeapSnapshotOptions options) {
@@ -3202,7 +3512,7 @@ diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
  }
  
  }  // namespace
-@@ -433,6 +435,7 @@
+@@ -439,6 +441,7 @@
  }
  
  void CreateHeapSnapshotStream(const FunctionCallbackInfo<Value>& args) {
@@ -3210,7 +3520,7 @@ diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
    Environment* env = Environment::GetCurrent(args);
    CHECK_EQ(args.Length(), 1);
    auto options = GetHeapSnapshotOptions(args[0]);
-@@ -443,6 +446,7 @@
+@@ -449,6 +452,7 @@
        CreateHeapSnapshotStream(env, std::move(snapshot));
    if (stream)
      args.GetReturnValue().Set(stream->object());
@@ -3219,8 +3529,8 @@ diff -r -u --color up/node/src/heap_utils.cc nw/node/src/heap_utils.cc
  
  void TriggerHeapSnapshot(const FunctionCallbackInfo<Value>& args) {
 diff -r -u --color up/node/src/histogram.cc nw/node/src/histogram.cc
---- up/node/src/histogram.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/histogram.cc	2026-03-15 17:29:44.102119732 +0000
+--- up/node/src/histogram.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/histogram.cc	2026-04-25 12:56:31.935695312 +0000
 @@ -136,7 +136,8 @@
    MakeWeak();
    wrap->SetAlignedPointerInInternalField(
@@ -3263,9 +3573,9 @@ diff -r -u --color up/node/src/histogram.cc nw/node/src/histogram.cc
  
  std::unique_ptr<worker::TransferData>
 diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspector/node_inspector.gypi
---- up/node/src/inspector/node_inspector.gypi	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/inspector/node_inspector.gypi	2026-03-15 17:29:44.102119732 +0000
-@@ -86,7 +86,7 @@
+--- up/node/src/inspector/node_inspector.gypi	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/inspector/node_inspector.gypi	2026-04-25 12:56:31.936768351 +0000
+@@ -109,7 +109,7 @@
    ],
    'dependencies': [
      '<(protocol_tool_path)/inspector_protocol.gyp:crdtp',
@@ -3274,16 +3584,16 @@ diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspect
    ],
    'actions': [
      {
-@@ -99,7 +99,7 @@
+@@ -122,7 +122,7 @@
        ],
        'action': [
          '<(python)',
 -        '<(protocol_tool_path)/convert_protocol_to_json.py',
 +        '../../v8/third_party/inspector_protocol/convert_protocol_to_json.py',
-         '<@(_inputs)',
+         'src/inspector/node_protocol.pdl',
          '<@(_outputs)',
        ],
-@@ -130,7 +130,7 @@
+@@ -153,7 +153,7 @@
      {
        'action_name': 'concatenate_protocols',
        'inputs': [
@@ -3292,7 +3602,7 @@ diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspect
          '<(SHARED_INTERMEDIATE_DIR)/src/node_protocol.json',
        ],
        'outputs': [
-@@ -138,7 +138,7 @@
+@@ -161,7 +161,7 @@
        ],
        'action': [
          '<(python)',
@@ -3302,8 +3612,8 @@ diff -r -u --color up/node/src/inspector/node_inspector.gypi nw/node/src/inspect
          '<@(_outputs)',
        ],
 diff -r -u --color up/node/src/inspector/tracing_agent.cc nw/node/src/inspector/tracing_agent.cc
---- up/node/src/inspector/tracing_agent.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/inspector/tracing_agent.cc	2026-03-15 17:29:44.103119725 +0000
+--- up/node/src/inspector/tracing_agent.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/inspector/tracing_agent.cc	2026-04-25 12:56:31.936768351 +0000
 @@ -96,7 +96,7 @@
    void AppendTraceEvent(
        v8::platform::tracing::TraceObject* trace_event) override {
@@ -3330,9 +3640,9 @@ diff -r -u --color up/node/src/inspector/tracing_agent.cc nw/node/src/inspector/
  }
  
 diff -r -u --color up/node/src/inspector_agent.cc nw/node/src/inspector_agent.cc
---- up/node/src/inspector_agent.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/inspector_agent.cc	2026-03-15 17:29:44.104119718 +0000
-@@ -902,6 +902,9 @@
+--- up/node/src/inspector_agent.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/inspector_agent.cc	2026-04-25 12:56:31.937695294 +0000
+@@ -927,6 +927,9 @@
  std::unique_ptr<InspectorSession> Agent::Connect(
      std::unique_ptr<InspectorSessionDelegate> delegate,
      bool prevent_shutdown) {
@@ -3342,7 +3652,7 @@ diff -r -u --color up/node/src/inspector_agent.cc nw/node/src/inspector_agent.cc
    THROW_IF_INSUFFICIENT_PERMISSIONS(parent_env_,
                                      permission::PermissionScope::kInspector,
                                      "Connect",
-@@ -911,8 +914,6 @@
+@@ -936,8 +939,6 @@
      return std::unique_ptr<InspectorSession>{};
    }
  
@@ -3352,8 +3662,8 @@ diff -r -u --color up/node/src/inspector_agent.cc nw/node/src/inspector_agent.cc
                                              prevent_shutdown);
    return std::unique_ptr<InspectorSession>(
 diff -r -u --color up/node/src/inspector_js_api.cc nw/node/src/inspector_js_api.cc
---- up/node/src/inspector_js_api.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/inspector_js_api.cc	2026-03-15 17:29:44.104119718 +0000
+--- up/node/src/inspector_js_api.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/inspector_js_api.cc	2026-04-25 12:56:31.937695294 +0000
 @@ -84,6 +84,7 @@
                         Local<Function> callback)
        : BaseObject(env, wrap), callback_(env->isolate(), callback) {
@@ -3362,9 +3672,77 @@ diff -r -u --color up/node/src/inspector_js_api.cc nw/node/src/inspector_js_api.
      session_ = ConnectionType::Connect(
          inspector, std::make_unique<JSBindingsSessionDelegate>(env, this));
    }
+diff -r -u --color up/node/src/js_native_api_v8.cc nw/node/src/js_native_api_v8.cc
+--- up/node/src/js_native_api_v8.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/js_native_api_v8.cc	2026-04-25 12:56:31.938695286 +0000
+@@ -355,8 +355,8 @@
+   auto val = obj->GetPrivate(context, NAPI_PRIVATE_KEY(context, wrapper))
+                  .ToLocalChecked();
+   RETURN_STATUS_IF_FALSE(env, val->IsExternal(), napi_invalid_arg);
+-  Reference* reference =
+-      static_cast<v8impl::Reference*>(val.As<v8::External>()->Value());
++  Reference* reference = static_cast<v8impl::Reference*>(
++      val.As<v8::External>()->Value(v8::kExternalPointerTypeTagDefault));
+ 
+   if (result) {
+     *result = reference->Data();
+@@ -395,14 +395,16 @@
+     bundle->cb_data = data;
+     bundle->env = env;
+ 
+-    v8::Local<v8::Value> cbdata = v8::External::New(env->isolate, bundle);
++    v8::Local<v8::Value> cbdata = v8::External::New(
++        env->isolate, bundle, v8::kExternalPointerTypeTagDefault);
+     ReferenceWithFinalizer::New(
+         env, cbdata, 0, ReferenceOwnership::kRuntime, Delete, bundle, nullptr);
+     return cbdata;
+   }
+ 
+   static CallbackBundle* FromCallbackData(v8::Local<v8::Value> data) {
+-    return reinterpret_cast<CallbackBundle*>(data.As<v8::External>()->Value());
++    return reinterpret_cast<CallbackBundle*>(
++        data.As<v8::External>()->Value(v8::kExternalPointerTypeTagDefault));
+   }
+ 
+  public:
+@@ -573,9 +575,11 @@
+         env, obj, 0, v8impl::ReferenceOwnership::kRuntime, native_object);
+   }
+ 
+-  CHECK(obj->SetPrivate(context,
+-                        NAPI_PRIVATE_KEY(context, wrapper),
+-                        v8::External::New(env->isolate, reference))
++  CHECK(obj->SetPrivate(
++               context,
++               NAPI_PRIVATE_KEY(context, wrapper),
++               v8::External::New(
++                   env->isolate, reference, v8::kExternalPointerTypeTagDefault))
+             .FromJust());
+ 
+   return GET_RETURN_STATUS(env);
+@@ -842,7 +846,8 @@
+  public:
+   static v8::Local<v8::External> New(napi_env env, void* data) {
+     ExternalWrapper* wrapper = new ExternalWrapper(data);
+-    v8::Local<v8::External> external = v8::External::New(env->isolate, wrapper);
++    v8::Local<v8::External> external = v8::External::New(
++        env->isolate, wrapper, v8::kExternalPointerTypeTagDefault);
+     wrapper->persistent_.Reset(env->isolate, external);
+     wrapper->persistent_.SetWeak(
+         wrapper, WeakCallback, v8::WeakCallbackType::kParameter);
+@@ -851,7 +856,8 @@
+   }
+ 
+   static ExternalWrapper* From(v8::Local<v8::External> external) {
+-    return static_cast<ExternalWrapper*>(external->Value());
++    return static_cast<ExternalWrapper*>(
++        external->Value(v8::kExternalPointerTypeTagDefault));
+   }
+ 
+   void* Data() { return data_; }
 diff -r -u --color up/node/src/js_udp_wrap.cc nw/node/src/js_udp_wrap.cc
---- up/node/src/js_udp_wrap.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/js_udp_wrap.cc	2026-03-15 17:29:44.106119703 +0000
+--- up/node/src/js_udp_wrap.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/js_udp_wrap.cc	2026-04-25 12:56:31.938695286 +0000
 @@ -55,8 +55,9 @@
    : AsyncWrap(env, obj, PROVIDER_JSUDPWRAP) {
    MakeWeak();
@@ -3378,8 +3756,8 @@ diff -r -u --color up/node/src/js_udp_wrap.cc nw/node/src/js_udp_wrap.cc
  
  int JSUDPWrap::RecvStart() {
 diff -r -u --color up/node/src/large_pages/node_large_page.cc nw/node/src/large_pages/node_large_page.cc
---- up/node/src/large_pages/node_large_page.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/large_pages/node_large_page.cc	2026-03-15 17:29:44.106119703 +0000
+--- up/node/src/large_pages/node_large_page.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/large_pages/node_large_page.cc	2026-04-25 12:56:31.938695286 +0000
 @@ -99,8 +99,8 @@
  // This symbol must be declared weak because this file becomes part of all
  // Node.js targets (like node_mksnapshot, node_mkcodecache, and cctest) and
@@ -3392,8 +3770,8 @@ diff -r -u --color up/node/src/large_pages/node_large_page.cc nw/node/src/large_
  #endif  // defined(__linux__) || defined(__FreeBSD__)
  
 diff -r -u --color up/node/src/module_wrap.cc nw/node/src/module_wrap.cc
---- up/node/src/module_wrap.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/module_wrap.cc	2026-03-15 17:29:44.106119703 +0000
+--- up/node/src/module_wrap.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/module_wrap.cc	2026-04-25 12:56:31.939843725 +0000
 @@ -16,6 +16,8 @@
  #include <algorithm>
  
@@ -3519,7 +3897,7 @@ diff -r -u --color up/node/src/module_wrap.cc nw/node/src/module_wrap.cc
    if (!receiver_val->IsObject()) {
      THROW_ERR_INVALID_INVOCATION(isolate);
      return;
-@@ -1424,8 +1427,10 @@
+@@ -1425,8 +1428,10 @@
    Local<Function> import_meta_callback = args[0].As<Function>();
    realm->set_host_initialize_import_meta_object_callback(import_meta_callback);
  
@@ -3531,8 +3909,8 @@ diff -r -u --color up/node/src/module_wrap.cc nw/node/src/module_wrap.cc
  
  MaybeLocal<Value> ModuleWrap::SyntheticModuleEvaluationStepsCallback(
 diff -r -u --color up/node/src/module_wrap.h nw/node/src/module_wrap.h
---- up/node/src/module_wrap.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/module_wrap.h	2026-03-15 17:29:44.107119696 +0000
+--- up/node/src/module_wrap.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/module_wrap.h	2026-04-25 12:56:31.939843725 +0000
 @@ -224,6 +224,14 @@
    std::vector<ModuleWrap*> linked_module_wraps_;
  };
@@ -3549,8 +3927,8 @@ diff -r -u --color up/node/src/module_wrap.h nw/node/src/module_wrap.h
  }  // namespace node
  
 diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
---- up/node/src/node.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node.cc	2026-03-15 17:29:44.107119696 +0000
+--- up/node/src/node.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node.cc	2026-04-25 12:56:31.939843725 +0000
 @@ -47,6 +47,13 @@
  #include "node_v8_platform-inl.h"
  #include "node_version.h"
@@ -3601,7 +3979,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  namespace per_process {
  
  // node_dotenv.h
-@@ -393,7 +415,7 @@
+@@ -389,7 +411,7 @@
      return StartExecution(env, "internal/main/watch_mode");
    }
  
@@ -3610,7 +3988,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
      return StartExecution(env, "internal/main/run_main_module");
    }
  
-@@ -794,6 +816,7 @@
+@@ -790,6 +812,7 @@
    }
  #endif
  
@@ -3618,7 +3996,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
    std::vector<char*> v8_args_as_char_ptr(v8_args.size());
    if (v8_args.size() > 0) {
      for (size_t i = 0; i < v8_args.size(); ++i)
-@@ -802,13 +825,13 @@
+@@ -798,13 +821,13 @@
      V8::SetFlagsFromCommandLine(&argc, v8_args_as_char_ptr.data(), true);
      v8_args_as_char_ptr.resize(argc);
    }
@@ -3633,7 +4011,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  
    return ExitCode::kNoFailure;
  }
-@@ -839,11 +862,13 @@
+@@ -835,11 +858,13 @@
    // Register built-in bindings
    binding::RegisterBuiltinBindings();
  
@@ -3647,7 +4025,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  
    // Cache the original command line to be
    // used in diagnostic reports.
-@@ -852,13 +877,15 @@
+@@ -848,13 +873,15 @@
    // Node provides a "v8.setFlagsFromString" method to dynamically change flags.
    // Hence do not freeze flags when initializing V8. In a browser setting, this
    // is security relevant, for Node it's less important.
@@ -3665,15 +4043,15 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  #endif
  
    if (!!(flags & ProcessInitializationFlags::kGeneratePredictableSnapshot) ||
-@@ -869,6 +896,7 @@
+@@ -865,6 +892,7 @@
  
    // Specify this explicitly to avoid being affected by V8 changes to the
    // default value.
 +  if (!node_is_nwjs)
    V8::SetFlagsFromString("--rehash-snapshot");
  
- #if HAVE_OPENSSL
-@@ -1003,7 +1031,7 @@
+   HandleEnvOptions(per_process::cli_options->per_isolate->per_env);
+@@ -990,7 +1018,7 @@
    if (!per_process::cli_options->title.empty())
      uv_set_process_title(per_process::cli_options->title.c_str());
  
@@ -3682,7 +4060,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
    if (!(flags & ProcessInitializationFlags::kNoICU)) {
      // If the parameter isn't given, use the env variable.
      if (per_process::cli_options->icu_data_dir.empty())
-@@ -1059,6 +1087,115 @@
+@@ -1046,6 +1074,115 @@
    return ExitCode::kNoFailure;
  }
  
@@ -3798,7 +4176,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  static std::shared_ptr<InitializationResultImpl>
  InitializeOncePerProcessInternal(const std::vector<std::string>& args,
                                   ProcessInitializationFlags::Flags flags =
-@@ -1084,9 +1221,9 @@
+@@ -1071,9 +1208,9 @@
      }
    }
  
@@ -3811,7 +4189,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
      int lp_result = node::MapStaticCodeToLargePages();
      if (per_process::cli_options->use_largepages == "on" && lp_result != 0) {
        result->errors_.emplace_back(node::LargePagesError(lp_result));
-@@ -1233,13 +1370,31 @@
+@@ -1220,13 +1357,31 @@
  #endif  // HAVE_OPENSSL
    }
  
@@ -3832,7 +4210,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
 +    udata_setCommonData((uint8_t*)icu_data, &err);
 +
    if (!(flags & ProcessInitializationFlags::kNoInitializeNodeV8Platform)) {
-     uv_thread_setname("MainThread");
+     uv_thread_setname("node-MainThread");
      per_process::v8_platform.Initialize(
          static_cast<int>(per_process::cli_options->v8_thread_pool_size));
      result->platform_ = per_process::v8_platform.Platform();
@@ -3843,7 +4221,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
    if (!(flags & ProcessInitializationFlags::kNoInitializeCppgc)) {
      v8::PageAllocator* allocator = nullptr;
      if (result->platform_ != nullptr) {
-@@ -1247,6 +1402,7 @@
+@@ -1234,6 +1389,7 @@
      }
      cppgc::InitializeProcess(allocator);
    }
@@ -3851,7 +4229,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  
    if (!(flags & ProcessInitializationFlags::kNoInitializeV8)) {
      V8::Initialize();
-@@ -1288,7 +1444,7 @@
+@@ -1275,7 +1431,7 @@
    }
  #endif  // NODE_USE_V8_WASM_TRAP_HANDLER
  
@@ -3860,7 +4238,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
    per_process::v8_initialized = true;
  
    return result;
-@@ -1579,6 +1735,10 @@
+@@ -1588,6 +1744,10 @@
    return 0;
  }
  
@@ -3871,7 +4249,7 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
  }  // namespace node
  
  #if !HAVE_INSPECTOR
-@@ -1586,3 +1746,527 @@
+@@ -1595,3 +1755,527 @@
  
  NODE_BINDING_CONTEXT_AWARE_INTERNAL(inspector, Initialize)
  #endif  // !HAVE_INSPECTOR
@@ -4400,8 +4778,8 @@ diff -r -u --color up/node/src/node.cc nw/node/src/node.cc
 +#endif
 +}
 diff -r -u --color up/node/src/node.h nw/node/src/node.h
---- up/node/src/node.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node.h	2026-03-15 17:29:44.107119696 +0000
+--- up/node/src/node.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node.h	2026-04-25 12:56:31.939843725 +0000
 @@ -240,6 +240,8 @@
    // Initialize the process for predictable snapshot generation.
    kGeneratePredictableSnapshot = 1 << 14,
@@ -4420,7 +4798,7 @@ diff -r -u --color up/node/src/node.h nw/node/src/node.h
  
  // Runs Node.js-specific tweaks on an already constructed context
  // Return value indicates success of operation
-@@ -1230,6 +1232,13 @@
+@@ -1308,6 +1310,13 @@
      }                                                                 \
    }
  
@@ -4434,7 +4812,7 @@ diff -r -u --color up/node/src/node.h nw/node/src/node.h
  #define NODE_MODULE_CONTEXT_AWARE_X(modname, regfunc, priv, flags)    \
    extern "C" {                                                        \
      static node::node_module _module =                                \
-@@ -1247,6 +1256,9 @@
+@@ -1325,6 +1334,9 @@
      NODE_C_CTOR(_register_ ## modname) {                              \
        node_module_register(&_module);                                 \
      }                                                                 \
@@ -4445,14 +4823,14 @@ diff -r -u --color up/node/src/node.h nw/node/src/node.h
  
  // Usage: `NODE_MODULE(NODE_GYP_MODULE_NAME, InitializerFunction)`
 diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
---- up/node/src/node_binding.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_binding.cc	2026-03-15 17:29:44.108119688 +0000
+--- up/node/src/node_binding.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_binding.cc	2026-04-25 12:56:31.940695269 +0000
 @@ -1,3 +1,4 @@
 +#include "uv.h"
  #include "node_binding.h"
  #include <atomic>
  #include "env-inl.h"
-@@ -266,21 +267,40 @@
+@@ -268,21 +269,40 @@
  static node_module* modlist_linked;
  static thread_local node_module* thread_local_modpending;
  
@@ -4498,7 +4876,7 @@ diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
    } else {
      thread_local_modpending = mp;
    }
-@@ -449,6 +469,7 @@
+@@ -451,6 +471,7 @@
    auto context = env->context();
  
    CHECK_NULL(thread_local_modpending);
@@ -4506,7 +4884,7 @@ diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
  
    if (args.Length() < 2) {
      return THROW_ERR_MISSING_ARGS(
-@@ -517,7 +538,9 @@
+@@ -519,7 +540,9 @@
          return true;
        } else {
          mp = dlib->GetSavedModuleFromGlobalHandleMap();
@@ -4517,7 +4895,7 @@ diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
            dlib->Close();
            THROW_ERR_DLOPEN_FAILED(
                env, "Module did not self-register: '%s'.", filename);
-@@ -557,6 +580,7 @@
+@@ -559,6 +582,7 @@
  
      // Do not keep the lock while running userland addon loading code.
      Mutex::ScopedUnlock unlock(lock);
@@ -4525,7 +4903,7 @@ diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
      if (mp->nm_context_register_func != nullptr) {
        mp->nm_context_register_func(exports, module, context, mp->nm_priv);
      } else if (mp->nm_register_func != nullptr) {
-@@ -644,7 +668,8 @@
+@@ -646,7 +670,8 @@
    node::Utf8Value module_v(isolate, module);
    Local<Object> exports;
  
@@ -4536,9 +4914,9 @@ diff -r -u --color up/node/src/node_binding.cc nw/node/src/node_binding.cc
      exports = InitInternalBinding(realm, mod);
      realm->internal_bindings.insert(mod);
 diff -r -u --color up/node/src/node_binding.h nw/node/src/node_binding.h
---- up/node/src/node_binding.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_binding.h	2026-03-15 17:29:44.108119688 +0000
-@@ -112,6 +112,22 @@
+--- up/node/src/node_binding.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_binding.h	2026-04-25 12:56:31.940695269 +0000
+@@ -113,6 +113,22 @@
  // Globals per process
  // This is set by node::Init() which is used by embedders
  extern bool node_is_initialized;
@@ -4562,30 +4940,32 @@ diff -r -u --color up/node/src/node_binding.h nw/node/src/node_binding.h
  namespace binding {
  
 diff -r -u --color up/node/src/node_buffer.cc nw/node/src/node_buffer.cc
---- up/node/src/node_buffer.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_buffer.cc	2026-03-15 17:29:44.108119688 +0000
-@@ -128,7 +128,7 @@
-       ArrayBuffer::NewBackingStore(data, length, [](void*, size_t, void* arg) {
-         static_cast<CallbackInfo*>(arg)->OnBackingStoreFree();
-       }, self);
--  Local<ArrayBuffer> ab = ArrayBuffer::New(env->isolate(), std::move(bs));
-+  Local<ArrayBuffer> ab = ArrayBuffer::NewNode(env->isolate(), std::move(bs));
- 
-   // V8 simply ignores the BackingStore deleter callback if data == nullptr,
-   // but our API contract requires it being called.
-@@ -1270,7 +1270,7 @@
-                                      sizeof(*zero_fill_field),
-                                      [](void*, size_t, void*) {},
-                                      nullptr);
--    ab = ArrayBuffer::New(env->isolate(), std::move(backing));
-+    ab = ArrayBuffer::NewNode(env->isolate(), std::move(backing));
-   }
- 
-   if (ab->SetPrivate(env->context(),
+--- up/node/src/node_buffer.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_buffer.cc	2026-04-25 12:56:31.940695269 +0000
+@@ -1474,7 +1474,18 @@
+   // 0-length, or zero-fill flag is set, or building snapshot
+   if (size == 0 || per_process::cli_options->zero_fill_all_buffers ||
+       env->isolate_data()->is_building_snapshot()) {
+-    buf = ArrayBuffer::New(isolate, size);
++    std::unique_ptr<BackingStore> store = ArrayBuffer::NewBackingStore(
++        isolate,
++        size,
++        BackingStoreInitializationMode::kZeroInitialized,
++        v8::BackingStoreOnFailureMode::kReturnNull);
++
++    if (!store) [[unlikely]] {
++      THROW_ERR_MEMORY_ALLOCATION_FAILED(env);
++      return;
++    }
++
++    buf = ArrayBuffer::New(isolate, std::move(store));
+   } else {
+     std::unique_ptr<BackingStore> store = ArrayBuffer::NewBackingStore(
+         isolate,
 diff -r -u --color up/node/src/node_builtins.cc nw/node/src/node_builtins.cc
---- up/node/src/node_builtins.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_builtins.cc	2026-03-15 17:29:44.109119681 +0000
-@@ -301,7 +301,7 @@
+--- up/node/src/node_builtins.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_builtins.cc	2026-04-25 12:56:31.940695269 +0000
+@@ -290,7 +290,7 @@
      }
    }
  
@@ -4594,25 +4974,34 @@ diff -r -u --color up/node/src/node_builtins.cc nw/node/src/node_builtins.cc
    ScriptCompiler::CompileOptions options =
        has_cache ? ScriptCompiler::kConsumeCodeCache
                  : ScriptCompiler::kNoCompileOptions;
-@@ -368,6 +368,7 @@
-                                                                : "is accepted");
+@@ -406,6 +406,7 @@
+                        is_cache_accepted ? "is accepted" : "is rejected");
    }
  
 +#if 0
    if (result == Result::kWithoutCache && optional_realm != nullptr &&
        !optional_realm->env()->isolate_data()->is_building_snapshot()) {
      // We failed to accept this cache, maybe because it was rejected, maybe
-@@ -378,6 +379,7 @@
+@@ -416,6 +417,7 @@
      // space (which is what isolates pending to be serialized have).
-     SaveCodeCache(id, fun);
+     SaveCodeCache(builtin_source->id, compiled_result);
    }
 +#endif
  
-   return scope.Escape(fun);
+   return scope.Escape(compiled_result);
  }
+@@ -741,7 +743,7 @@
+   // Pre-fetch all dependencies.
+   if (requests->Length() > 0) {
+     for (int i = 0; i < requests->Length(); i++) {
+-      Local<ModuleRequest> req = requests->Get(context, i).As<ModuleRequest>();
++      Local<ModuleRequest> req = requests->Get(i).As<ModuleRequest>();
+       std::string specifier =
+           Utf8Value(isolate, req->GetSpecifier()).ToString();
+       std::string resolved_id = ResolveRequestForBuiltin(specifier);
 diff -r -u --color up/node/src/node_context_data.h nw/node/src/node_context_data.h
---- up/node/src/node_context_data.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_context_data.h	2026-03-15 17:29:44.109119681 +0000
+--- up/node/src/node_context_data.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_context_data.h	2026-04-25 12:56:31.941695260 +0000
 @@ -3,6 +3,7 @@
  
  #if defined(NODE_WANT_INTERNALS) && NODE_WANT_INTERNALS
@@ -4641,8 +5030,8 @@ diff -r -u --color up/node/src/node_context_data.h nw/node/src/node_context_data
        return false;
      }
 diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
---- up/node/src/node_contextify.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_contextify.cc	2026-03-15 17:29:44.109119681 +0000
+--- up/node/src/node_contextify.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_contextify.cc	2026-04-25 12:56:31.941695260 +0000
 @@ -37,6 +37,7 @@
  #include "util-inl.h"
  
@@ -4651,7 +5040,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
  namespace contextify {
  
  using errors::TryCatchScope;
-@@ -164,9 +165,12 @@
+@@ -154,9 +155,12 @@
    // This should only be done after the initial initializations of the context
    // global object is finished.
    DCHECK_NULL(v8_context->GetAlignedPointerFromEmbedderData(
@@ -4666,7 +5055,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
  }
  
  void ContextifyContext::InitializeGlobalTemplates(IsolateData* isolate_data) {
-@@ -274,6 +278,12 @@
+@@ -264,6 +268,12 @@
      v8_context->SetEmbedderData(ContextEmbedderIndex::kSandboxObject,
                                  sandbox_obj);
    }
@@ -4679,7 +5068,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
  
    // Delegate the code generation validation to
    // node::ModifyCodeGenerationFromStrings.
-@@ -460,7 +470,7 @@
+@@ -450,7 +460,7 @@
    // args.GetIsolate()->GetCurrentContext() and take the pointer at
    // ContextEmbedderIndex::kContextifyContext, as V8 is supposed to
    // push the creation context before invoking these callbacks.
@@ -4688,7 +5077,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
  }
  
  ContextifyContext* ContextifyContext::Get(Local<Object> object) {
-@@ -473,7 +483,8 @@
+@@ -463,7 +473,8 @@
    }
    return static_cast<ContextifyContext*>(
        context->GetAlignedPointerFromEmbedderData(
@@ -4698,7 +5087,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
  }
  
  bool ContextifyContext::IsStillInitializing(const ContextifyContext* ctx) {
-@@ -593,10 +604,21 @@
+@@ -583,10 +594,21 @@
      return Intercepted::kNo;
    }
  
@@ -4720,7 +5109,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
    bool is_contextual_store = ctx->global_proxy() != args.This();
  
    // Indicator to not return before setting (undeclared) function declarations
-@@ -613,7 +635,7 @@
+@@ -603,7 +625,7 @@
        !is_function) {
      return Intercepted::kNo;
    }
@@ -4729,7 +5118,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
    if (!is_declared && property->IsSymbol()) {
      return Intercepted::kNo;
    }
-@@ -1026,6 +1048,7 @@
+@@ -1001,6 +1023,7 @@
  
    ContextifyScript* contextify_script = New(env, args.This());
  
@@ -4737,7 +5126,7 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
    if (*TRACE_EVENT_API_GET_CATEGORY_GROUP_ENABLED(
            TRACING_CATEGORY_NODE2(vm, script)) != 0) {
      Utf8Value fn(isolate, filename);
-@@ -1034,6 +1057,7 @@
+@@ -1009,6 +1032,7 @@
                         "filename",
                         TRACE_STR_COPY(*fn));
    }
@@ -4746,8 +5135,8 @@ diff -r -u --color up/node/src/node_contextify.cc nw/node/src/node_contextify.cc
    ScriptCompiler::CachedData* cached_data = nullptr;
    if (!cached_data_buf.IsEmpty()) {
 diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
---- up/node/src/node_errors.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_errors.cc	2026-03-15 17:29:44.110119674 +0000
+--- up/node/src/node_errors.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_errors.cc	2026-04-25 12:56:31.942695252 +0000
 @@ -37,6 +37,8 @@
  using v8::Undefined;
  using v8::Value;
@@ -4757,7 +5146,7 @@ diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
  bool IsExceptionDecorated(Environment* env, Local<Value> er) {
    if (!er.IsEmpty() && er->IsObject()) {
      Local<Object> err_obj = er.As<Object>();
-@@ -1247,9 +1249,12 @@
+@@ -1282,9 +1284,12 @@
      // error is supposed to be thrown at this point.
      // Since we don't have access to Environment here, there is not
      // much we can do, so we just print whatever is useful and crash.
@@ -4770,7 +5159,7 @@ diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
    }
  
    // Invoke process._fatalException() to give user a chance to handle it.
-@@ -1257,19 +1262,20 @@
+@@ -1292,19 +1297,20 @@
    // monkey-patchable.
    Local<Object> process_object = env->process_object();
    Local<String> fatal_exception_string = env->fatal_exception_string();
@@ -4795,7 +5184,7 @@ diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
      return;
    }
  
-@@ -1287,7 +1293,7 @@
+@@ -1340,7 +1346,7 @@
      Local<Value> argv[2] = { error,
                               Boolean::New(env->isolate(), from_promise) };
  
@@ -4804,7 +5193,7 @@ diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
          env->context(), process_object, arraysize(argv), argv);
    }
  
-@@ -1316,7 +1322,10 @@
+@@ -1369,7 +1375,10 @@
  
    // If the global uncaught exception handler sets process.exitCode,
    // exit with that code. Otherwise, exit with `ExitCode::kGenericUserError`.
@@ -4817,9 +5206,9 @@ diff -r -u --color up/node/src/node_errors.cc nw/node/src/node_errors.cc
  
  void TriggerUncaughtException(Isolate* isolate, const v8::TryCatch& try_catch) {
 diff -r -u --color up/node/src/node_file.cc nw/node/src/node_file.cc
---- up/node/src/node_file.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_file.cc	2026-03-15 17:29:44.111119666 +0000
-@@ -995,9 +995,9 @@
+--- up/node/src/node_file.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_file.cc	2026-04-25 12:56:31.943695243 +0000
+@@ -1011,9 +1011,9 @@
      THROW_IF_INSUFFICIENT_PERMISSIONS(
          env, permission::PermissionScope::kFileSystemRead, path.ToStringView());
      FSReqWrapSync req_wrap_sync("access", *path);
@@ -4832,8 +5221,8 @@ diff -r -u --color up/node/src/node_file.cc nw/node/src/node_file.cc
  }
  
 diff -r -u --color up/node/src/node_http2.cc nw/node/src/node_http2.cc
---- up/node/src/node_http2.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_http2.cc	2026-03-15 17:29:44.112119659 +0000
+--- up/node/src/node_http2.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_http2.cc	2026-04-25 12:56:31.943695243 +0000
 @@ -21,6 +21,10 @@
  #include <utility>
  #include <vector>
@@ -4877,7 +5266,7 @@ diff -r -u --color up/node/src/node_http2.cc nw/node/src/node_http2.cc
  }
  
  // Closes the session and frees the associated resources
-@@ -3620,5 +3628,6 @@
+@@ -3626,5 +3634,6 @@
  }
  }  // namespace http2
  }  // namespace node
@@ -4885,8 +5274,8 @@ diff -r -u --color up/node/src/node_http2.cc nw/node/src/node_http2.cc
  
  NODE_BINDING_CONTEXT_AWARE_INTERNAL(http2, node::http2::Initialize)
 diff -r -u --color up/node/src/node_http_common-inl.h nw/node/src/node_http_common-inl.h
---- up/node/src/node_http_common-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_http_common-inl.h	2026-03-15 17:29:44.112119659 +0000
+--- up/node/src/node_http_common-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_http_common-inl.h	2026-04-25 12:56:31.943695243 +0000
 @@ -1,6 +1,9 @@
  #ifndef SRC_NODE_HTTP_COMMON_INL_H_
  #define SRC_NODE_HTTP_COMMON_INL_H_
@@ -4905,9 +5294,9 @@ diff -r -u --color up/node/src/node_http_common-inl.h nw/node/src/node_http_comm
 +
  #endif  // SRC_NODE_HTTP_COMMON_INL_H_
 diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
---- up/node/src/node_internals.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_internals.h	2026-03-15 17:29:44.113119652 +0000
-@@ -59,6 +59,8 @@
+--- up/node/src/node_internals.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_internals.h	2026-04-25 12:56:31.944695234 +0000
+@@ -60,6 +60,8 @@
  static constexpr uint64_t kMaxPointerCompressionHeap = uint64_t{1}
                                                         << 32;  // 4 GiB
  
@@ -4916,7 +5305,7 @@ diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
  // Convert a struct sockaddr to a { address: '1.2.3.4', port: 1234 } JS object.
  // Sets address and port properties on the info object and returns it.
  // If |info| is omitted, a new object is returned.
-@@ -129,6 +131,7 @@
+@@ -128,6 +130,7 @@
    void* Allocate(size_t size) override;  // Defined in src/node.cc
    void* AllocateUninitialized(size_t size) override;
    void Free(void* data, size_t size) override;
@@ -4924,7 +5313,7 @@ diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
    virtual void RegisterPointer(void* data, size_t size) {
      total_mem_usage_.fetch_add(size, std::memory_order_relaxed);
    }
-@@ -316,7 +319,7 @@
+@@ -314,7 +317,7 @@
   private:
    Environment* env_;
    uv_work_t work_req_;
@@ -4934,8 +5323,8 @@ diff -r -u --color up/node/src/node_internals.h nw/node/src/node_internals.h
  
  #define TRACING_CATEGORY_NODE "node"
 diff -r -u --color up/node/src/node_main_instance.cc nw/node/src/node_main_instance.cc
---- up/node/src/node_main_instance.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_main_instance.cc	2026-03-15 17:29:44.113119652 +0000
+--- up/node/src/node_main_instance.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_main_instance.cc	2026-04-25 12:56:31.944695234 +0000
 @@ -30,6 +30,8 @@
  using v8::Local;
  using v8::Locker;
@@ -4965,8 +5354,8 @@ diff -r -u --color up/node/src/node_main_instance.cc nw/node/src/node_main_insta
  
  ExitCode NodeMainInstance::Run() {
 diff -r -u --color up/node/src/node_messaging.cc nw/node/src/node_messaging.cc
---- up/node/src/node_messaging.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_messaging.cc	2026-03-15 17:29:44.113119652 +0000
+--- up/node/src/node_messaging.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_messaging.cc	2026-04-25 12:56:31.945695226 +0000
 @@ -305,6 +305,14 @@
    SerializerDelegate(Environment* env, Local<Context> context, Message* m)
        : env_(env), context_(context), msg_(m) {}
@@ -4983,8 +5372,8 @@ diff -r -u --color up/node/src/node_messaging.cc nw/node/src/node_messaging.cc
      ThrowDataCloneException(context_, message);
    }
 diff -r -u --color up/node/src/node_metadata.cc nw/node/src/node_metadata.cc
---- up/node/src/node_metadata.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_metadata.cc	2026-03-15 17:29:44.114119645 +0000
+--- up/node/src/node_metadata.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_metadata.cc	2026-04-25 12:56:31.945695226 +0000
 @@ -36,7 +36,8 @@
  #endif
  #endif  // HAVE_OPENSSL
@@ -4995,7 +5384,7 @@ diff -r -u --color up/node/src/node_metadata.cc nw/node/src/node_metadata.cc
  #include <ngtcp2/version.h>
  #include <nghttp3/version.h>
  #endif
-@@ -148,7 +149,7 @@
+@@ -159,7 +160,7 @@
    unicode = U_UNICODE_VERSION;
  #endif  // NODE_HAVE_I18N_SUPPORT
  
@@ -5004,9 +5393,36 @@ diff -r -u --color up/node/src/node_metadata.cc nw/node/src/node_metadata.cc
    ngtcp2 = NGTCP2_VERSION;
    nghttp3 = NGHTTP3_VERSION;
  #endif
+diff -r -u --color up/node/src/node_modules.cc nw/node/src/node_modules.cc
+--- up/node/src/node_modules.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_modules.cc	2026-04-25 12:56:31.945695226 +0000
+@@ -552,8 +552,10 @@
+ 
+   v8::LocalVector<v8::Name> names(isolate,
+                                   {FIXED_ONE_BYTE_STRING(isolate, "external")});
+-  v8::LocalVector<v8::Value> values(isolate,
+-                                    {v8::External::New(isolate, cache_entry)});
++  v8::LocalVector<v8::Value> values(
++      isolate,
++      {v8::External::New(
++          isolate, cache_entry, v8::kExternalPointerTypeTagDefault)});
+   if (cache_entry->cache != nullptr) {
+     Debug(env,
+           DebugCategory::COMPILE_CACHE,
+@@ -592,8 +594,8 @@
+   DCHECK(env->use_compile_cache());
+   CHECK(args[0]->IsExternal());
+   CHECK(args[1]->IsString());  // TODO(joyeecheung): accept buffer.
+-  auto* cache_entry =
+-      static_cast<CompileCacheEntry*>(args[0].As<External>()->Value());
++  auto* cache_entry = static_cast<CompileCacheEntry*>(
++      args[0].As<External>()->Value(v8::kExternalPointerTypeTagDefault));
+   Utf8Value utf8(isolate, args[1].As<String>());
+   env->compile_cache_handler()->MaybeSave(cache_entry, utf8.ToStringView());
+ }
 diff -r -u --color up/node/src/node_object_wrap.h nw/node/src/node_object_wrap.h
---- up/node/src/node_object_wrap.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_object_wrap.h	2026-03-15 17:29:44.114119645 +0000
+--- up/node/src/node_object_wrap.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_object_wrap.h	2026-04-25 12:56:31.945695226 +0000
 @@ -49,7 +49,8 @@
      assert(handle->InternalFieldCount() > 0);
      // Cast to ObjectWrap before casting to T.  A direct cast from void
@@ -5028,9 +5444,9 @@ diff -r -u --color up/node/src/node_object_wrap.h nw/node/src/node_object_wrap.h
      MakeWeak();
    }
 diff -r -u --color up/node/src/node_options.cc nw/node/src/node_options.cc
---- up/node/src/node_options.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_options.cc	2026-03-15 17:29:44.114119645 +0000
-@@ -1398,6 +1398,7 @@
+--- up/node/src/node_options.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_options.cc	2026-04-25 12:56:31.945695226 +0000
+@@ -1467,6 +1467,7 @@
  
    Insert(iop, &PerProcessOptions::get_per_isolate_options);
  
@@ -5038,17 +5454,17 @@ diff -r -u --color up/node/src/node_options.cc nw/node/src/node_options.cc
    AddOption("--node-memory-debug",
              "Run with extra debug checks for memory leaks in Node.js itself",
              NoOp{},
-@@ -1420,6 +1421,7 @@
-       "performance.",
-       &PerProcessOptions::disable_wasm_trap_handler,
-       kAllowedInEnvvar);
+@@ -1493,6 +1494,7 @@
+   AddOption("--build-sea",
+             "Build a Node.js single executable application",
+             &PerProcessOptions::build_sea);
 +#endif
  }
  
  inline std::string RemoveBrackets(const std::string& host) {
 diff -r -u --color up/node/src/node_perf.cc nw/node/src/node_perf.cc
---- up/node/src/node_perf.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_perf.cc	2026-03-15 17:29:44.115119637 +0000
+--- up/node/src/node_perf.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_perf.cc	2026-04-25 12:56:31.946695217 +0000
 @@ -122,10 +122,12 @@
  
  void PerformanceState::Mark(PerformanceMilestone milestone, uint64_t ts) {
@@ -5079,8 +5495,8 @@ diff -r -u --color up/node/src/node_perf.cc nw/node/src/node_perf.cc
  
  static void RemoveGarbageCollectionTracking(
 diff -r -u --color up/node/src/node_platform.cc nw/node/src/node_platform.cc
---- up/node/src/node_platform.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_platform.cc	2026-03-15 17:29:44.115119637 +0000
+--- up/node/src/node_platform.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_platform.cc	2026-04-25 12:56:31.946695217 +0000
 @@ -468,8 +468,8 @@
    // TODO(addaleax): It's a bit icky that we use global state here, but we can't
    // really do anything about it unless V8 starts exposing a way to access the
@@ -5093,8 +5509,8 @@ diff -r -u --color up/node/src/node_platform.cc nw/node/src/node_platform.cc
    thread_pool_size = GetActualThreadPoolSize(thread_pool_size);
    worker_thread_task_runner_ = std::make_shared<WorkerThreadsTaskRunner>(
 diff -r -u --color up/node/src/node_process.h nw/node/src/node_process.h
---- up/node/src/node_process.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_process.h	2026-03-15 17:29:44.115119637 +0000
+--- up/node/src/node_process.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_process.h	2026-04-25 12:56:31.946695217 +0000
 @@ -47,7 +47,7 @@
      const std::string& warning,
      std::string_view deprecation_code);
@@ -5105,9 +5521,9 @@ diff -r -u --color up/node/src/node_process.h nw/node/src/node_process.h
  
  namespace process {
 diff -r -u --color up/node/src/node_process_methods.cc nw/node/src/node_process_methods.cc
---- up/node/src/node_process_methods.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_process_methods.cc	2026-03-15 17:29:44.115119637 +0000
-@@ -673,7 +673,8 @@
+--- up/node/src/node_process_methods.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_process_methods.cc	2026-04-25 12:56:31.946695217 +0000
+@@ -681,7 +681,8 @@
  BindingData* BindingData::FromV8Value(Local<Value> value) {
    Local<Object> v8_object = value.As<Object>();
    return static_cast<BindingData*>(
@@ -5118,8 +5534,8 @@ diff -r -u --color up/node/src/node_process_methods.cc nw/node/src/node_process_
  
  void BindingData::MemoryInfo(MemoryTracker* tracker) const {
 diff -r -u --color up/node/src/node_process_object.cc nw/node/src/node_process_object.cc
---- up/node/src/node_process_object.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_process_object.cc	2026-03-15 17:29:44.115119637 +0000
+--- up/node/src/node_process_object.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_process_object.cc	2026-04-25 12:56:31.946695217 +0000
 @@ -93,7 +93,7 @@
    }
  }
@@ -5139,9 +5555,9 @@ diff -r -u --color up/node/src/node_process_object.cc nw/node/src/node_process_o
    if (process
            ->SetPrivate(context,
 diff -r -u --color up/node/src/node_realm-inl.h nw/node/src/node_realm-inl.h
---- up/node/src/node_realm-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_realm-inl.h	2026-03-15 17:29:44.116119630 +0000
-@@ -20,8 +20,8 @@
+--- up/node/src/node_realm-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_realm-inl.h	2026-04-25 12:56:31.946695217 +0000
+@@ -21,8 +21,8 @@
    if (!ContextEmbedderTag::IsNodeContext(context)) [[unlikely]] {
      return nullptr;
    }
@@ -5153,8 +5569,8 @@ diff -r -u --color up/node/src/node_realm-inl.h nw/node/src/node_realm-inl.h
  
  inline Realm* Realm::GetCurrent(
 diff -r -u --color up/node/src/node_realm.cc nw/node/src/node_realm.cc
---- up/node/src/node_realm.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_realm.cc	2026-03-15 17:29:44.116119630 +0000
+--- up/node/src/node_realm.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_realm.cc	2026-04-25 12:56:31.946695217 +0000
 @@ -21,8 +21,8 @@
  using v8::String;
  using v8::Value;
@@ -5175,7 +5591,7 @@ diff -r -u --color up/node/src/node_realm.cc nw/node/src/node_realm.cc
    set_process_object(process_object);
  }
  
-@@ -315,8 +315,8 @@
+@@ -311,8 +311,8 @@
  
  PrincipalRealm::PrincipalRealm(Environment* env,
                                 v8::Local<v8::Context> context,
@@ -5187,8 +5603,8 @@ diff -r -u --color up/node/src/node_realm.cc nw/node/src/node_realm.cc
    // Or the properties are deserialized with DeserializeProperties() when the
    // env drained the deserialize requests.
 diff -r -u --color up/node/src/node_realm.h nw/node/src/node_realm.h
---- up/node/src/node_realm.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_realm.h	2026-03-15 17:29:44.116119630 +0000
+--- up/node/src/node_realm.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_realm.h	2026-04-25 12:56:31.946695217 +0000
 @@ -90,7 +90,7 @@
    template <typename T>
    static inline Realm* GetCurrent(const v8::PropertyCallbackInfo<T>& info);
@@ -5216,9 +5632,9 @@ diff -r -u --color up/node/src/node_realm.h nw/node/src/node_realm.h
  
    SET_MEMORY_INFO_NAME(PrincipalRealm)
 diff -r -u --color up/node/src/node_snapshotable.cc nw/node/src/node_snapshotable.cc
---- up/node/src/node_snapshotable.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_snapshotable.cc	2026-03-15 17:29:44.118119615 +0000
-@@ -1309,7 +1309,8 @@
+--- up/node/src/node_snapshotable.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_snapshotable.cc	2026-04-25 12:56:31.948695200 +0000
+@@ -1370,7 +1370,8 @@
      case ContextEmbedderIndex::kContextifyContext:
      case ContextEmbedderIndex::kRealm:
      case ContextEmbedderIndex::kContextTag: {
@@ -5228,7 +5644,7 @@ diff -r -u --color up/node/src/node_snapshotable.cc nw/node/src/node_snapshotabl
        per_process::Debug(
            DebugCategory::MKSNAPSHOT,
            "Serialize context data, index=%d, holder=%p, ptr=%p\n",
-@@ -1400,7 +1401,8 @@
+@@ -1461,7 +1462,8 @@
    // For the moment we do not set any internal fields in ArrayBuffer
    // or ArrayBufferViews, so just return nullptr.
    if (holder->IsArrayBuffer() || holder->IsArrayBufferView()) {
@@ -5238,7 +5654,7 @@ diff -r -u --color up/node/src/node_snapshotable.cc nw/node/src/node_snapshotabl
      return StartupData{nullptr, 0};
    }
  
-@@ -1419,8 +1421,9 @@
+@@ -1480,8 +1482,9 @@
                       static_cast<int>(index),
                       *holder);
  
@@ -5250,9 +5666,30 @@ diff -r -u --color up/node/src/node_snapshotable.cc nw/node/src/node_snapshotabl
    // If the native object is already set to null, ignore it.
    if (object_ptr == nullptr) {
      return StartupData{nullptr, 0};
+diff -r -u --color up/node/src/node_sqlite.cc nw/node/src/node_sqlite.cc
+--- up/node/src/node_sqlite.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_sqlite.cc	2026-04-25 12:56:31.949695191 +0000
+@@ -729,7 +729,7 @@
+   }
+ 
+   DatabaseSyncLimits* limits;
+-  ASSIGN_OR_RETURN_UNWRAP(&limits, info.This(), Intercepted::kNo);
++  ASSIGN_OR_RETURN_UNWRAP(&limits, info.Holder(), Intercepted::kNo);
+ 
+   Environment* env = limits->env();
+   Isolate* isolate = env->isolate();
+@@ -761,7 +761,7 @@
+   }
+ 
+   DatabaseSyncLimits* limits;
+-  ASSIGN_OR_RETURN_UNWRAP(&limits, info.This(), Intercepted::kNo);
++  ASSIGN_OR_RETURN_UNWRAP(&limits, info.Holder(), Intercepted::kNo);
+ 
+   Environment* env = limits->env();
+   Isolate* isolate = env->isolate();
 diff -r -u --color up/node/src/node_trace_events.cc nw/node/src/node_trace_events.cc
---- up/node/src/node_trace_events.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_trace_events.cc	2026-03-15 17:29:44.119119608 +0000
+--- up/node/src/node_trace_events.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_trace_events.cc	2026-04-25 12:56:31.949695191 +0000
 @@ -78,6 +78,7 @@
  }
  
@@ -5314,9 +5751,18 @@ diff -r -u --color up/node/src/node_trace_events.cc nw/node/src/node_trace_event
  
  void NodeCategorySet::RegisterExternalReferences(
 diff -r -u --color up/node/src/node_util.cc nw/node/src/node_util.cc
---- up/node/src/node_util.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_util.cc	2026-03-15 17:29:44.120119601 +0000
-@@ -370,7 +370,7 @@
+--- up/node/src/node_util.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_util.cc	2026-04-25 12:56:31.950695183 +0000
+@@ -93,7 +93,7 @@
+   Isolate* isolate = args.GetIsolate();
+   Local<External> external = args[0].As<External>();
+ 
+-  void* ptr = external->Value();
++  void* ptr = external->Value(v8::kExternalPointerTypeTagDefault);
+   uint64_t value = reinterpret_cast<uint64_t>(ptr);
+   Local<BigInt> ret = BigInt::NewFromUnsigned(isolate, value);
+   args.GetReturnValue().Set(ret);
+@@ -366,7 +366,7 @@
    // When this getter is invoked in a vm context, the `Realm::GetCurrent(info)`
    // returns a nullptr and retrieve the creation context via `this` object and
    // get the creation Realm.
@@ -5325,10 +5771,56 @@ diff -r -u --color up/node/src/node_util.cc nw/node/src/node_util.cc
    if (!receiver_val->IsObject()) {
      THROW_ERR_INVALID_INVOCATION(isolate);
      return;
+diff -r -u --color up/node/src/node_v8.cc nw/node/src/node_v8.cc
+--- up/node/src/node_v8.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_v8.cc	2026-04-25 12:56:31.950695183 +0000
+@@ -73,7 +73,8 @@
+   V(10, number_of_detached_contexts, kNumberOfDetachedContextsIndex)           \
+   V(11, total_global_handles_size, kTotalGlobalHandlesSizeIndex)               \
+   V(12, used_global_handles_size, kUsedGlobalHandlesSizeIndex)                 \
+-  V(13, external_memory, kExternalMemoryIndex)
++  V(13, external_memory, kExternalMemoryIndex)                                 \
++  V(14, total_allocated_bytes, kTotalAllocatedBytes)
+ 
+ #define V(a, b, c) +1
+ static constexpr size_t kHeapStatisticsPropertiesCount =
+@@ -212,12 +213,6 @@
+ #undef V
+ }
+ 
+-void GetTotalAllocatedBytes(const FunctionCallbackInfo<Value>& args) {
+-  Isolate* isolate = args.GetIsolate();
+-  uint64_t allocated_bytes = isolate->GetTotalAllocatedBytes();
+-  args.GetReturnValue().Set(Number::New(isolate, allocated_bytes));
+-}
+-
+ 
+ void UpdateHeapSpaceStatisticsBuffer(const FunctionCallbackInfo<Value>& args) {
+   BindingData* data = Realm::GetBindingData<BindingData>(args);
+@@ -700,11 +695,6 @@
+ 
+   SetMethod(context,
+             target,
+-            "getTotalAllocatedBytes",
+-            GetTotalAllocatedBytes);
+-
+-  SetMethod(context,
+-            target,
+             "updateHeapCodeStatisticsBuffer",
+             UpdateHeapCodeStatisticsBuffer);
+   SetMethodNoSideEffect(
+@@ -784,7 +774,6 @@
+ void RegisterExternalReferences(ExternalReferenceRegistry* registry) {
+   registry->Register(CachedDataVersionTag);
+   registry->Register(UpdateHeapStatisticsBuffer);
+-  registry->Register(GetTotalAllocatedBytes);
+   registry->Register(UpdateHeapCodeStatisticsBuffer);
+   registry->Register(UpdateHeapSpaceStatisticsBuffer);
+   registry->Register(SetFlagsFromString);
 Only in nw/node/src: node_v8_embedder.h
 diff -r -u --color up/node/src/node_v8_platform-inl.h nw/node/src/node_v8_platform-inl.h
---- up/node/src/node_v8_platform-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_v8_platform-inl.h	2026-03-15 17:29:44.120119601 +0000
+--- up/node/src/node_v8_platform-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_v8_platform-inl.h	2026-04-25 12:56:31.950695183 +0000
 @@ -18,6 +18,7 @@
  
  namespace node {
@@ -5412,8 +5904,8 @@ diff -r -u --color up/node/src/node_v8_platform-inl.h nw/node/src/node_v8_platfo
    tracing::AgentWriterHandle tracing_file_writer_;
    NodePlatform* platform_;
 diff -r -u --color up/node/src/node_wasm_web_api.cc nw/node/src/node_wasm_web_api.cc
---- up/node/src/node_wasm_web_api.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_wasm_web_api.cc	2026-03-15 17:29:44.120119601 +0000
+--- up/node/src/node_wasm_web_api.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_wasm_web_api.cc	2026-04-25 12:56:31.950695183 +0000
 @@ -132,7 +132,7 @@
    CHECK(obj->streaming_);
  
@@ -5425,9 +5917,9 @@ diff -r -u --color up/node/src/node_wasm_web_api.cc nw/node/src/node_wasm_web_ap
  void WasmStreamingObject::Abort(const FunctionCallbackInfo<Value>& args) {
 Only in nw/node/src: node_webkit.h
 diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
---- up/node/src/node_webstorage.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_webstorage.cc	2026-03-15 17:29:44.121119593 +0000
-@@ -531,7 +531,7 @@
+--- up/node/src/node_webstorage.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_webstorage.cc	2026-04-25 12:56:31.950695183 +0000
+@@ -530,7 +530,7 @@
  static bool ShouldIntercept(Local<Name> property,
                              const PropertyCallbackInfo<T>& info) {
    Environment* env = Environment::GetCurrent(info);
@@ -5436,7 +5928,7 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
  
    if (proto->IsObject()) {
      bool has_prop;
-@@ -555,7 +555,7 @@
+@@ -554,7 +554,7 @@
    }
  
    Storage* storage;
@@ -5445,7 +5937,7 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
    Local<Value> result;
  
    if (storage->Load(property).ToLocal(&result) && !result->IsNull()) {
-@@ -569,7 +569,7 @@
+@@ -568,7 +568,7 @@
                                   Local<Value> value,
                                   const PropertyCallbackInfo<void>& info) {
    Storage* storage;
@@ -5454,7 +5946,7 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
  
    if (storage->Store(property, value).IsNothing()) {
      info.GetReturnValue().SetFalse();
-@@ -585,7 +585,7 @@
+@@ -584,7 +584,7 @@
    }
  
    Storage* storage;
@@ -5463,7 +5955,7 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
    Local<Value> result;
    if (!storage->Load(property).ToLocal(&result) || result->IsNull()) {
      return Intercepted::kNo;
-@@ -598,7 +598,7 @@
+@@ -597,7 +597,7 @@
  static Intercepted StorageDeleter(Local<Name> property,
                                    const PropertyCallbackInfo<Boolean>& info) {
    Storage* storage;
@@ -5472,7 +5964,7 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
  
    info.GetReturnValue().Set(storage->Remove(property).IsJust());
  
-@@ -607,7 +607,7 @@
+@@ -606,7 +606,7 @@
  
  static void StorageEnumerator(const PropertyCallbackInfo<Array>& info) {
    Storage* storage;
@@ -5481,7 +5973,7 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
    Local<Array> result;
    if (!storage->Enumerate().ToLocal(&result)) {
      return;
-@@ -619,7 +619,7 @@
+@@ -618,7 +618,7 @@
                                    const PropertyDescriptor& desc,
                                    const PropertyCallbackInfo<void>& info) {
    Storage* storage;
@@ -5491,8 +5983,8 @@ diff -r -u --color up/node/src/node_webstorage.cc nw/node/src/node_webstorage.cc
    if (desc.has_value()) {
      return StorageSetter(property, desc.value(), info);
 diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
---- up/node/src/node_worker.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/node_worker.cc	2026-03-15 17:29:44.121119593 +0000
+--- up/node/src/node_worker.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/node_worker.cc	2026-04-25 12:56:31.951695174 +0000
 @@ -199,7 +199,7 @@
      isolate->AddNearHeapLimitCallback(Worker::NearHeapLimit, w);
  
@@ -5502,7 +5994,7 @@ diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
        Isolate::Scope isolate_scope(isolate);
        // V8 computes its stack limit the first time a `Locker` is used based on
        // --stack-size. Reset it to the correct value.
-@@ -304,13 +304,15 @@
+@@ -303,13 +303,15 @@
  
    Debug(this, "Creating isolate for worker with id %llu", thread_id_.id);
  
@@ -5519,7 +6011,7 @@ diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
      Isolate::Scope isolate_scope(isolate_);
      SealHandleScope outer_seal(isolate_);
  
-@@ -370,6 +372,10 @@
+@@ -369,6 +371,10 @@
        }
  
        if (is_stopped()) return;
@@ -5530,10 +6022,19 @@ diff -r -u --color up/node/src/node_worker.cc nw/node/src/node_worker.cc
        CHECK(!context.IsEmpty());
        Context::Scope context_scope(context);
        {
+@@ -1284,7 +1290,7 @@
+               Number::New(isolate, heap_stats->total_global_handles_size()),
+               Number::New(isolate, heap_stats->used_global_handles_size()),
+               Number::New(isolate, heap_stats->external_memory()),
+-              Number::New(isolate, isolate->GetTotalAllocatedBytes())};
++              Number::New(isolate, heap_stats->total_allocated_bytes())};
+ 
+           Local<Object> obj;
+           if (!NewDictionaryInstanceNullProto(
 Only in nw/node/src/res: node-nw.rc
 diff -r -u --color up/node/src/stream_base-inl.h nw/node/src/stream_base-inl.h
---- up/node/src/stream_base-inl.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/stream_base-inl.h	2026-03-15 17:29:44.127119549 +0000
+--- up/node/src/stream_base-inl.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/stream_base-inl.h	2026-04-25 12:56:31.955823530 +0000
 @@ -19,22 +19,22 @@
  
  void StreamReq::AttachToObject(v8::Local<v8::Object> req_wrap_obj) {
@@ -5596,9 +6097,22 @@ diff -r -u --color up/node/src/stream_base-inl.h nw/node/src/stream_base-inl.h
  }
  
  }  // namespace node
+diff -r -u --color up/node/src/stream_base.cc nw/node/src/stream_base.cc
+--- up/node/src/stream_base.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/stream_base.cc	2026-04-25 12:56:31.955823530 +0000
+@@ -653,7 +653,8 @@
+   StreamBase* wrap = StreamBase::FromObject(args.This().As<Object>());
+   if (wrap == nullptr) return;
+ 
+-  Local<External> ext = External::New(args.GetIsolate(), wrap);
++  Local<External> ext = External::New(
++      args.GetIsolate(), wrap, v8::kExternalPointerTypeTagDefault);
+   args.GetReturnValue().Set(ext);
+ }
+ 
 diff -r -u --color up/node/src/tracing/agent.h nw/node/src/tracing/agent.h
---- up/node/src/tracing/agent.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/tracing/agent.h	2026-03-15 17:29:44.128119542 +0000
+--- up/node/src/tracing/agent.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/tracing/agent.h	2026-04-25 12:56:31.957554840 +0000
 @@ -35,10 +35,11 @@
  class TracingController : public v8::platform::tracing::TracingController {
   public:
@@ -5633,8 +6147,8 @@ diff -r -u --color up/node/src/tracing/agent.h nw/node/src/tracing/agent.h
  }
  
 diff -r -u --color up/node/src/tracing/trace_event.h nw/node/src/tracing/trace_event.h
---- up/node/src/tracing/trace_event.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/tracing/trace_event.h	2026-03-15 17:29:44.128119542 +0000
+--- up/node/src/tracing/trace_event.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/tracing/trace_event.h	2026-04-25 12:56:31.957554840 +0000
 @@ -5,6 +5,9 @@
  #ifndef SRC_TRACING_TRACE_EVENT_H_
  #define SRC_TRACING_TRACE_EVENT_H_
@@ -5783,8 +6297,8 @@ diff -r -u --color up/node/src/tracing/trace_event.h nw/node/src/tracing/trace_e
 +
  #endif  // SRC_TRACING_TRACE_EVENT_H_
 diff -r -u --color up/node/src/tracing/trace_event_common.h nw/node/src/tracing/trace_event_common.h
---- up/node/src/tracing/trace_event_common.h	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/tracing/trace_event_common.h	2026-03-15 17:29:44.129119535 +0000
+--- up/node/src/tracing/trace_event_common.h	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/tracing/trace_event_common.h	2026-04-25 12:56:31.957554840 +0000
 @@ -209,8 +209,8 @@
  // enabled, then this does nothing.
  // - category and name strings must have application lifetime (statics or
@@ -5856,8 +6370,8 @@ diff -r -u --color up/node/src/tracing/trace_event_common.h nw/node/src/tracing/
  // Records a clock sync event.
  #define TRACE_EVENT_CLOCK_SYNC_RECEIVER(sync_id)                               \
 diff -r -u --color up/node/src/udp_wrap.cc nw/node/src/udp_wrap.cc
---- up/node/src/udp_wrap.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/udp_wrap.cc	2026-03-15 17:29:44.129119535 +0000
+--- up/node/src/udp_wrap.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/udp_wrap.cc	2026-04-25 12:56:31.957695122 +0000
 @@ -127,8 +127,8 @@
  
  UDPWrapBase* UDPWrapBase::FromObject(Local<Object> obj) {
@@ -5882,9 +6396,9 @@ diff -r -u --color up/node/src/udp_wrap.cc nw/node/src/udp_wrap.cc
    int r = uv_udp_init(env->event_loop(), &handle_);
    CHECK_EQ(r, 0);  // can't fail anyway
 diff -r -u --color up/node/src/util.cc nw/node/src/util.cc
---- up/node/src/util.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/src/util.cc	2026-03-15 17:29:44.129119535 +0000
-@@ -727,11 +727,13 @@
+--- up/node/src/util.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/src/util.cc	2026-04-25 12:56:31.957695122 +0000
+@@ -637,11 +637,13 @@
  
  Local<String> UnionBytes::ToStringChecked(Isolate* isolate) const {
    if (is_one_byte()) {
@@ -5902,9 +6416,39 @@ diff -r -u --color up/node/src/util.cc nw/node/src/util.cc
    }
  }
  
+diff -r -u --color up/node/test/cctest/test_environment.cc nw/node/test/cctest/test_environment.cc
+--- up/node/test/cctest/test_environment.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/test/cctest/test_environment.cc	2026-04-25 12:56:31.966674417 +0000
+@@ -700,14 +700,18 @@
+ 
+   using IntVec = std::vector<int>;
+   IntVec callback_calls;
+-  v8::Local<v8::Function> must_call = v8::Function::New(
+-      context,
+-      [](const v8::FunctionCallbackInfo<v8::Value>& info) {
+-        IntVec* callback_calls = static_cast<IntVec*>(
+-            info.Data().As<v8::External>()->Value());
+-        callback_calls->push_back(info[0].As<v8::Int32>()->Value());
+-      },
+-      v8::External::New(isolate_, static_cast<void*>(&callback_calls)))
++  v8::Local<v8::Function> must_call =
++      v8::Function::New(
++          context,
++          [](const v8::FunctionCallbackInfo<v8::Value>& info) {
++            IntVec* callback_calls =
++                static_cast<IntVec*>(info.Data().As<v8::External>()->Value(
++                    v8::kExternalPointerTypeTagDefault));
++            callback_calls->push_back(info[0].As<v8::Int32>()->Value());
++          },
++          v8::External::New(isolate_,
++                            static_cast<void*>(&callback_calls),
++                            v8::kExternalPointerTypeTagDefault))
+           .ToLocalChecked();
+   context->Global()->Set(
+       context,
 diff -r -u --color up/node/tools/gyp/gyp_main.py nw/node/tools/gyp/gyp_main.py
---- up/node/tools/gyp/gyp_main.py	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/tools/gyp/gyp_main.py	2026-03-15 17:29:44.798114634 +0000
+--- up/node/tools/gyp/gyp_main.py	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/tools/gyp/gyp_main.py	2026-04-25 12:56:32.314079338 +0000
 @@ -39,6 +39,7 @@
  # else the 'gyp' library will not be found
  path = UnixifyPath(sys.argv[0])
@@ -5914,8 +6458,8 @@ diff -r -u --color up/node/tools/gyp/gyp_main.py nw/node/tools/gyp/gyp_main.py
  
  if __name__ == "__main__":
 diff -r -u --color up/node/tools/gyp/pylib/gyp/MSVSVersion.py nw/node/tools/gyp/pylib/gyp/MSVSVersion.py
---- up/node/tools/gyp/pylib/gyp/MSVSVersion.py	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/tools/gyp/pylib/gyp/MSVSVersion.py	2026-03-15 17:29:44.799114627 +0000
+--- up/node/tools/gyp/pylib/gyp/MSVSVersion.py	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/tools/gyp/pylib/gyp/MSVSVersion.py	2026-04-25 12:56:32.314732545 +0000
 @@ -87,7 +87,7 @@
      def _SetupScriptInternal(self, target_arch):
          """Returns a command (with arguments) to be used to set up the
@@ -5935,8 +6479,8 @@ diff -r -u --color up/node/tools/gyp/pylib/gyp/MSVSVersion.py nw/node/tools/gyp/
              if host_arch != msvc_target_arch:
                  arg += "_" + msvc_target_arch
 diff -r -u --color up/node/tools/gyp/pylib/gyp/common.py nw/node/tools/gyp/pylib/gyp/common.py
---- up/node/tools/gyp/pylib/gyp/common.py	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/tools/gyp/pylib/gyp/common.py	2026-03-15 17:29:44.799114627 +0000
+--- up/node/tools/gyp/pylib/gyp/common.py	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/tools/gyp/pylib/gyp/common.py	2026-04-25 12:56:32.314732545 +0000
 @@ -143,7 +143,7 @@
  
      # Convert to normalized (and therefore absolute paths).
@@ -5947,8 +6491,8 @@ diff -r -u --color up/node/tools/gyp/pylib/gyp/common.py nw/node/tools/gyp/pylib
      # On Windows, we can't create a relative path to a different drive, so just
      # use the absolute path.
 diff -r -u --color up/node/tools/gyp/pylib/gyp/generator/ninja.py nw/node/tools/gyp/pylib/gyp/generator/ninja.py
---- up/node/tools/gyp/pylib/gyp/generator/ninja.py	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/tools/gyp/pylib/gyp/generator/ninja.py	2026-03-15 17:29:44.802114605 +0000
+--- up/node/tools/gyp/pylib/gyp/generator/ninja.py	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/tools/gyp/pylib/gyp/generator/ninja.py	2026-04-25 12:56:32.316692032 +0000
 @@ -89,8 +89,12 @@
          # cl.exe replaces literal # characters with = in preprocessor definitions for
          # some reason. Octal-encode to work around that.
@@ -5995,7 +6539,7 @@ diff -r -u --color up/node/tools/gyp/pylib/gyp/generator/ninja.py nw/node/tools/
              self.ninja.variable("asm", "$ml_" + arch)
  
          if self.flavor == "mac":
-@@ -2325,7 +2336,10 @@
+@@ -2324,7 +2335,10 @@
              )
              if clang_cl:
                  # Use clang-cl to cross-compile for x86 or x86_64.
@@ -6008,8 +6552,8 @@ diff -r -u --color up/node/tools/gyp/pylib/gyp/generator/ninja.py nw/node/tools/
  
      cc = GetEnvironFallback(["CC_target", "CC"], cc)
 diff -r -u --color up/node/tools/gyp/pylib/gyp/msvs_emulation.py nw/node/tools/gyp/pylib/gyp/msvs_emulation.py
---- up/node/tools/gyp/pylib/gyp/msvs_emulation.py	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/tools/gyp/pylib/gyp/msvs_emulation.py	2026-03-15 17:29:44.804114590 +0000
+--- up/node/tools/gyp/pylib/gyp/msvs_emulation.py	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/tools/gyp/pylib/gyp/msvs_emulation.py	2026-04-25 12:56:32.317692023 +0000
 @@ -327,7 +327,7 @@
          if not platform:  # If no specific override, use the configuration's.
              platform = configuration_platform
@@ -6029,10 +6573,10 @@ diff -r -u --color up/node/tools/gyp/pylib/gyp/msvs_emulation.py nw/node/tools/g
          cl_paths = {}
          for arch in archs:
 diff -r -u --color up/node/tools/js2c.cc nw/node/tools/js2c.cc
---- up/node/tools/js2c.cc	2025-11-16 19:50:32.000000000 +0000
-+++ nw/node/tools/js2c.cc	2026-03-15 17:29:44.815114509 +0000
-@@ -11,7 +11,7 @@
- #include <vector>
+--- up/node/tools/js2c.cc	2026-03-23 16:43:05.000000000 +0000
++++ nw/node/tools/js2c.cc	2026-04-25 12:56:32.326900407 +0000
+@@ -12,7 +12,7 @@
+ #include "builtin_info.h"
  #include "embedded_data.h"
  #include "executable_wrapper.h"
 -#include "simdutf.h"
@@ -6040,7 +6584,7 @@ diff -r -u --color up/node/tools/js2c.cc nw/node/tools/js2c.cc
  #include "uv.h"
  
  #if defined(_WIN32)
-@@ -324,7 +324,9 @@
+@@ -325,7 +325,9 @@
    return WriteFileSync(out, dest.c_str());
  }
  
@@ -6051,7 +6595,7 @@ diff -r -u --color up/node/tools/js2c.cc nw/node/tools/js2c.cc
    size_t end = filename.size();
    size_t start = 0;
    std::string prefix;
-@@ -353,7 +355,7 @@
+@@ -354,7 +356,7 @@
    size_t length = result.size();
  
    for (size_t i = 0; i < length; ++i) {
