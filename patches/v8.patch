@@ -1,7 +1,7 @@
 Only in nw/v8: .git
 diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
---- up/v8/BUILD.gn	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/BUILD.gn	2026-04-25 12:56:39.498626656 +0000
+--- up/v8/BUILD.gn	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/BUILD.gn	2026-05-02 09:15:27.040269615 +0000
 @@ -62,7 +62,7 @@
    v8_deprecation_warnings = true
  
@@ -191,8 +191,8 @@ diff -r -u --color up/v8/BUILD.gn nw/v8/BUILD.gn
  if (current_toolchain == v8_generator_toolchain) {
    v8_executable("bytecode_builtins_list_generator") {
 diff -r -u --color up/v8/gni/v8.gni nw/v8/gni/v8.gni
---- up/v8/gni/v8.gni	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/gni/v8.gni	2026-04-25 12:56:39.501422635 +0000
+--- up/v8/gni/v8.gni	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/gni/v8.gni	2026-05-02 09:15:27.044371298 +0000
 @@ -477,6 +477,15 @@
    }
  }
@@ -211,8 +211,8 @@ diff -r -u --color up/v8/gni/v8.gni nw/v8/gni/v8.gni
      import("//build/config/ios/rules.gni")
 Only in nw/v8: gypfiles
 diff -r -u --color up/v8/include/libplatform/v8-tracing.h nw/v8/include/libplatform/v8-tracing.h
---- up/v8/include/libplatform/v8-tracing.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/libplatform/v8-tracing.h	2026-04-25 12:56:39.504522791 +0000
+--- up/v8/include/libplatform/v8-tracing.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/libplatform/v8-tracing.h	2026-05-02 09:15:27.048543994 +0000
 @@ -35,7 +35,7 @@
  
  const int kTraceMaxNumArgs = 2;
@@ -232,8 +232,8 @@ diff -r -u --color up/v8/include/libplatform/v8-tracing.h nw/v8/include/libplatf
        char phase, const uint8_t* category_enabled_flag, const char* name,
        const char* scope, uint64_t id, uint64_t bind_id, int num_args,
 diff -r -u --color up/v8/include/v8-array-buffer.h nw/v8/include/v8-array-buffer.h
---- up/v8/include/v8-array-buffer.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-array-buffer.h	2026-04-25 12:56:39.504522791 +0000
+--- up/v8/include/v8-array-buffer.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-array-buffer.h	2026-05-02 09:15:27.048543994 +0000
 @@ -186,7 +186,8 @@
       * while kReservation is for larger allocations with the ability to set
       * access permissions.
@@ -263,8 +263,8 @@ diff -r -u --color up/v8/include/v8-array-buffer.h nw/v8/include/v8-array-buffer
     * Detaches this ArrayBuffer and all its views (typed arrays).
     * Detaching sets the byte length of the buffer and all typed arrays to zero,
 diff -r -u --color up/v8/include/v8-context.h nw/v8/include/v8-context.h
---- up/v8/include/v8-context.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-context.h	2026-04-25 12:56:39.504522791 +0000
+--- up/v8/include/v8-context.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-context.h	2026-05-02 09:15:27.048543994 +0000
 @@ -255,6 +255,12 @@
     */
    Maybe<void> DeepFreeze(DeepFreezeDelegate* delegate = nullptr);
@@ -278,9 +278,30 @@ diff -r -u --color up/v8/include/v8-context.h nw/v8/include/v8-context.h
    /** Returns the microtask queue associated with a current context. */
    MicrotaskQueue* GetMicrotaskQueue();
  
+diff -r -u --color up/v8/include/v8-external.h nw/v8/include/v8-external.h
+--- up/v8/include/v8-external.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-external.h	2026-05-02 09:15:27.048543994 +0000
+@@ -39,7 +39,7 @@
+    * \return The new External object.
+    */
+   static Local<External> New(Isolate* isolate, void* value,
+-                             ExternalPointerTypeTag tag);
++                             ExternalPointerTypeTag tag = kExternalPointerTypeTagDefault);
+   V8_INLINE static External* Cast(Data* value) {
+ #ifdef V8_ENABLE_CHECKS
+     CheckCast(value);
+@@ -55,7 +55,7 @@
+    * used.
+    * \return The value of the external pointer.
+    */
+-  void* Value(ExternalPointerTypeTag tag) const;
++  void* Value(ExternalPointerTypeTag tag = kExternalPointerTypeTagDefault) const;
+ 
+  private:
+   static void CheckCast(v8::Data* obj);
 diff -r -u --color up/v8/include/v8-initialization.h nw/v8/include/v8-initialization.h
---- up/v8/include/v8-initialization.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-initialization.h	2026-04-25 12:56:39.504626601 +0000
+--- up/v8/include/v8-initialization.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-initialization.h	2026-05-02 09:15:27.048543994 +0000
 @@ -174,6 +174,7 @@
     */
    static bool InitializeICUDefaultLocation(const char* exec_path,
@@ -290,8 +311,8 @@ diff -r -u --color up/v8/include/v8-initialization.h nw/v8/include/v8-initializa
    /**
     * Initialize the external startup data. The embedder only needs to
 diff -r -u --color up/v8/include/v8-internal.h nw/v8/include/v8-internal.h
---- up/v8/include/v8-internal.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-internal.h	2026-04-25 12:56:39.504626601 +0000
+--- up/v8/include/v8-internal.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-internal.h	2026-05-02 09:15:27.049269732 +0000
 @@ -1464,6 +1464,18 @@
  #endif
    }
@@ -312,8 +333,8 @@ diff -r -u --color up/v8/include/v8-internal.h nw/v8/include/v8-internal.h
    // v8-isolate.h header.
    V8_EXPORT static v8::Isolate* GetCurrentIsolate();
 diff -r -u --color up/v8/include/v8-isolate.h nw/v8/include/v8-isolate.h
---- up/v8/include/v8-isolate.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-isolate.h	2026-04-25 12:56:39.505626591 +0000
+--- up/v8/include/v8-isolate.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-isolate.h	2026-05-02 09:15:27.049269732 +0000
 @@ -290,6 +290,7 @@
   */
  class V8_EXPORT Isolate {
@@ -360,8 +381,8 @@ diff -r -u --color up/v8/include/v8-isolate.h nw/v8/include/v8-isolate.h
  
    /**
 diff -r -u --color up/v8/include/v8-message.h nw/v8/include/v8-message.h
---- up/v8/include/v8-message.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-message.h	2026-04-25 12:56:39.505626591 +0000
+--- up/v8/include/v8-message.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-message.h	2026-05-02 09:15:27.050269745 +0000
 @@ -108,6 +108,14 @@
   public:
    Local<String> Get() const;
@@ -378,8 +399,17 @@ diff -r -u --color up/v8/include/v8-message.h nw/v8/include/v8-message.h
        Local<Context> context) const;
    V8_WARN_UNUSED_RESULT MaybeLocal<String> GetSourceLine(
 diff -r -u --color up/v8/include/v8-object.h nw/v8/include/v8-object.h
---- up/v8/include/v8-object.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-object.h	2026-04-25 12:56:39.505626591 +0000
+--- up/v8/include/v8-object.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-object.h	2026-05-02 09:15:27.050269745 +0000
+@@ -405,7 +405,7 @@
+   // is removed.
+   V8_WARN_UNUSED_RESULT Maybe<bool> SetNativeDataProperty(
+       Local<Context> context, Local<Name> name,
+-      AccessorNameGetterCallback getter, nullptr_t setter = nullptr,
++      AccessorNameGetterCallback getter, std::nullptr_t setter = nullptr,
+       Local<Value> data = Local<Value>(), PropertyAttribute attributes = None,
+       SideEffectType getter_side_effect_type = SideEffectType::kHasSideEffect,
+       SideEffectType setter_side_effect_type = SideEffectType::kHasSideEffect) {
 @@ -871,6 +871,21 @@
        Local<Context> context, int argc, Local<Value> argv[]);
  
@@ -403,8 +433,8 @@ diff -r -u --color up/v8/include/v8-object.h nw/v8/include/v8-object.h
     * representation of the elements of this object as an array.
     * If this object is a SetIterator or MapIterator, this returns all
 diff -r -u --color up/v8/include/v8-platform.h nw/v8/include/v8-platform.h
---- up/v8/include/v8-platform.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-platform.h	2026-04-25 12:56:39.506626582 +0000
+--- up/v8/include/v8-platform.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-platform.h	2026-05-02 09:15:27.050269745 +0000
 @@ -1546,6 +1546,7 @@
        TaskPriority priority, std::unique_ptr<Task> task,
        double delay_in_seconds, const SourceLocation& location) = 0;
@@ -414,8 +444,8 @@ diff -r -u --color up/v8/include/v8-platform.h nw/v8/include/v8-platform.h
  }  // namespace v8
  
 diff -r -u --color up/v8/include/v8-script.h nw/v8/include/v8-script.h
---- up/v8/include/v8-script.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-script.h	2026-04-25 12:56:39.506626582 +0000
+--- up/v8/include/v8-script.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-script.h	2026-05-02 09:15:27.051269758 +0000
 @@ -816,6 +816,7 @@
        CompileOptions options = kNoCompileOptions,
        NoCacheReason no_cache_reason = kNoCacheNoReason);
@@ -434,9 +464,154 @@ diff -r -u --color up/v8/include/v8-script.h nw/v8/include/v8-script.h
  }  // namespace v8
  
  #endif  // INCLUDE_V8_SCRIPT_H_
+diff -r -u --color up/v8/include/v8-template.h nw/v8/include/v8-template.h
+--- up/v8/include/v8-template.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-template.h	2026-05-02 09:15:27.051269758 +0000
+@@ -117,7 +117,7 @@
+   // is removed.
+   void SetNativeDataProperty(
+       Local<Name> name, AccessorNameGetterCallback getter,
+-      nullptr_t setter = nullptr, Local<Value> data = Local<Value>(),
++      std::nullptr_t setter = nullptr, Local<Value> data = Local<Value>(),
+       PropertyAttribute attribute = None,
+       SideEffectType getter_side_effect_type = SideEffectType::kHasSideEffect,
+       SideEffectType setter_side_effect_type = SideEffectType::kHasSideEffect) {
+@@ -748,7 +748,7 @@
+             PropertyHandlerFlags::kInternalNewCallbacksSignatures));
+   }
+ 
+-  static NamedPropertySetterCallbackV2 ConvertSetter(nullptr_t) {
++  static NamedPropertySetterCallbackV2 ConvertSetter(std::nullptr_t) {
+     return nullptr;
+   }
+   static NamedPropertySetterCallbackV2 ConvertSetter(
+@@ -760,7 +760,7 @@
+     return NamedPropertySetterCallbackV2(value);
+   }
+ 
+-  static NamedPropertyDefinerCallbackV2 ConvertDefiner(nullptr_t) {
++  static NamedPropertyDefinerCallbackV2 ConvertDefiner(std::nullptr_t) {
+     return nullptr;
+   }
+   static NamedPropertyDefinerCallbackV2 ConvertDefiner(
+@@ -775,11 +775,11 @@
+  public:
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // NamedPropertySetterCallbackV2/NamedPropertyDefinerCallbackV2 is done.
+-  template <typename TSetter = nullptr_t, typename TDefiner = nullptr_t>
+-    requires((std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t, typename TDefiner = std::nullptr_t>
++    requires((std::is_same_v<TSetter, std::nullptr_t> ||
+               std::is_same_v<TSetter, NamedPropertySetterCallback> ||
+               std::is_same_v<TSetter, NamedPropertySetterCallbackV2>) &&
+-             (std::is_same_v<TDefiner, nullptr_t> ||
++             (std::is_same_v<TDefiner, std::nullptr_t> ||
+               std::is_same_v<TDefiner, NamedPropertyDefinerCallback> ||
+               std::is_same_v<TDefiner, NamedPropertyDefinerCallbackV2>))
+   NamedPropertyHandlerConfiguration(
+@@ -804,8 +804,8 @@
+ 
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // NamedPropertySetterCallbackV2/NamedPropertyDefinerCallbackV2 is done.
+-  template <typename TSetter = nullptr_t>
+-    requires(std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t>
++    requires(std::is_same_v<TSetter, std::nullptr_t> ||
+              std::is_same_v<TSetter, NamedPropertySetterCallback> ||
+              std::is_same_v<TSetter, NamedPropertySetterCallbackV2>)
+   explicit NamedPropertyHandlerConfiguration(
+@@ -828,11 +828,11 @@
+ 
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // NamedPropertySetterCallbackV2/NamedPropertyDefinerCallbackV2 is done.
+-  template <typename TSetter = nullptr_t, typename TDefiner = nullptr_t>
+-    requires((std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t, typename TDefiner = std::nullptr_t>
++    requires((std::is_same_v<TSetter, std::nullptr_t> ||
+               std::is_same_v<TSetter, NamedPropertySetterCallback> ||
+               std::is_same_v<TSetter, NamedPropertySetterCallbackV2>) &&
+-             (std::is_same_v<TDefiner, nullptr_t> ||
++             (std::is_same_v<TDefiner, std::nullptr_t> ||
+               std::is_same_v<TDefiner, NamedPropertyDefinerCallback> ||
+               std::is_same_v<TDefiner, NamedPropertyDefinerCallbackV2>))
+   NamedPropertyHandlerConfiguration(
+@@ -875,7 +875,7 @@
+             PropertyHandlerFlags::kInternalNewCallbacksSignatures));
+   }
+ 
+-  static IndexedPropertySetterCallback ConvertSetter(nullptr_t) {
++  static IndexedPropertySetterCallback ConvertSetter(std::nullptr_t) {
+     return nullptr;
+   }
+   static IndexedPropertySetterCallback ConvertSetter(
+@@ -887,7 +887,7 @@
+     return IndexedPropertySetterCallback(value);
+   }
+ 
+-  static IndexedPropertyDefinerCallback ConvertDefiner(nullptr_t) {
++  static IndexedPropertyDefinerCallback ConvertDefiner(std::nullptr_t) {
+     return nullptr;
+   }
+   static IndexedPropertyDefinerCallback ConvertDefiner(
+@@ -902,11 +902,11 @@
+  public:
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // IndexedPropertySetterCallback/IndexedPropertyDefinerCallback is done.
+-  template <typename TSetter = nullptr_t, typename TDefiner = nullptr_t>
+-    requires((std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t, typename TDefiner = std::nullptr_t>
++    requires((std::is_same_v<TSetter, std::nullptr_t> ||
+               std::is_same_v<TSetter, IndexedPropertySetterCallback> ||
+               std::is_same_v<TSetter, IndexedPropertySetterCallbackV2>) &&
+-             (std::is_same_v<TDefiner, nullptr_t> ||
++             (std::is_same_v<TDefiner, std::nullptr_t> ||
+               std::is_same_v<TDefiner, IndexedPropertyDefinerCallback> ||
+               std::is_same_v<TDefiner, IndexedPropertyDefinerCallbackV2>))
+   IndexedPropertyHandlerConfiguration(
+@@ -931,8 +931,8 @@
+ 
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // IndexedPropertySetterCallback/IndexedPropertyDefinerCallback is done.
+-  template <typename TSetter = nullptr_t>
+-    requires(std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t>
++    requires(std::is_same_v<TSetter, std::nullptr_t> ||
+              std::is_same_v<TSetter, IndexedPropertySetterCallback> ||
+              std::is_same_v<TSetter, IndexedPropertySetterCallbackV2>)
+   explicit IndexedPropertyHandlerConfiguration(
+@@ -955,11 +955,11 @@
+ 
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // IndexedPropertySetterCallback/IndexedPropertyDefinerCallback is done.
+-  template <typename TSetter = nullptr_t, typename TDefiner = nullptr_t>
+-    requires((std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t, typename TDefiner = std::nullptr_t>
++    requires((std::is_same_v<TSetter, std::nullptr_t> ||
+               std::is_same_v<TSetter, IndexedPropertySetterCallback> ||
+               std::is_same_v<TSetter, IndexedPropertySetterCallbackV2>) &&
+-             (std::is_same_v<TDefiner, nullptr_t> ||
++             (std::is_same_v<TDefiner, std::nullptr_t> ||
+               std::is_same_v<TDefiner, IndexedPropertyDefinerCallback> ||
+               std::is_same_v<TDefiner, IndexedPropertyDefinerCallbackV2>))
+   IndexedPropertyHandlerConfiguration(
+@@ -983,11 +983,11 @@
+ 
+   // TODO(https://crbug.com/348660658): cleanup once migration to
+   // IndexedPropertySetterCallback/IndexedPropertyDefinerCallback is done.
+-  template <typename TSetter = nullptr_t, typename TDefiner = nullptr_t>
+-    requires((std::is_same_v<TSetter, nullptr_t> ||
++  template <typename TSetter = std::nullptr_t, typename TDefiner = std::nullptr_t>
++    requires((std::is_same_v<TSetter, std::nullptr_t> ||
+               std::is_same_v<TSetter, IndexedPropertySetterCallback> ||
+               std::is_same_v<TSetter, IndexedPropertySetterCallbackV2>) &&
+-             (std::is_same_v<TDefiner, nullptr_t> ||
++             (std::is_same_v<TDefiner, std::nullptr_t> ||
+               std::is_same_v<TDefiner, IndexedPropertyDefinerCallback> ||
+               std::is_same_v<TDefiner, IndexedPropertyDefinerCallbackV2>))
+   IndexedPropertyHandlerConfiguration(
 diff -r -u --color up/v8/include/v8-wasm.h nw/v8/include/v8-wasm.h
---- up/v8/include/v8-wasm.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8-wasm.h	2026-04-25 12:56:39.507626573 +0000
+--- up/v8/include/v8-wasm.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8-wasm.h	2026-05-02 09:15:27.052269771 +0000
 @@ -123,6 +123,9 @@
    static void CheckCast(Value* obj);
  };
@@ -448,8 +623,8 @@ diff -r -u --color up/v8/include/v8-wasm.h nw/v8/include/v8-wasm.h
   * The V8 interface for WebAssembly streaming compilation. When streaming
   * compilation is initiated, V8 passes a {WasmStreaming} object to the embedder
 diff -r -u --color up/v8/include/v8config.h nw/v8/include/v8config.h
---- up/v8/include/v8config.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/include/v8config.h	2026-04-25 12:56:39.507626573 +0000
+--- up/v8/include/v8config.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/include/v8config.h	2026-05-02 09:15:27.052269771 +0000
 @@ -396,7 +396,7 @@
           && !defined(_WIN32)))                         /* not on windows */    \
       && !defined(COMPONENT_BUILD)                      /* no component build */\
@@ -471,8 +646,8 @@ diff -r -u --color up/v8/include/v8config.h nw/v8/include/v8config.h
  #if defined(BUILDING_V8_SHARED) && defined(USING_V8_SHARED)
  #error Inconsistent build configuration: To build the V8 shared library \
 diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
---- up/v8/src/api/api.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/api/api.cc	2026-04-25 12:56:39.510626546 +0000
+--- up/v8/src/api/api.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/api/api.cc	2026-05-02 09:15:27.056269823 +0000
 @@ -325,6 +325,11 @@
    i::V8::SetSnapshotBlob(snapshot_blob);
  }
@@ -562,7 +737,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Local<v8::Object> v8::Object::New(Isolate* v8_isolate) {
    i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(v8_isolate);
    ApiRuntimeCallStatsScope rcs_scope(i_isolate, RCCId::kAPI_Object_New);
-@@ -9212,6 +9248,25 @@
+@@ -9213,6 +9249,25 @@
        static_cast<v8::BackingStore*>(backing_store.release()));
  }
  
@@ -588,7 +763,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  Local<ArrayBuffer> v8::ArrayBufferView::Buffer() {
    auto obj = Utils::OpenDirectHandle(this);
    i::Isolate* i_isolate = i::Isolate::Current();
-@@ -9827,6 +9882,11 @@
+@@ -9828,6 +9883,11 @@
    i_isolate->ClearKeptObjects();
  }
  
@@ -600,7 +775,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  v8::Local<v8::Context> Isolate::GetCurrentContext() {
    i::Isolate* i_isolate = reinterpret_cast<i::Isolate*>(this);
    i::Tagged<i::Context> context = i_isolate->context();
-@@ -9940,6 +10000,16 @@
+@@ -9941,6 +10001,16 @@
    i_isolate->heap()->SetEmbedderRootsHandler(handler);
  }
  
@@ -617,7 +792,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  CppHeap* Isolate::GetCppHeap() const {
    const i::Isolate* i_isolate = reinterpret_cast<const i::Isolate*>(this);
    return i_isolate->heap()->cpp_heap();
-@@ -10052,6 +10122,13 @@
+@@ -10053,6 +10123,13 @@
  
  Isolate::CreateParams::~CreateParams() = default;
  
@@ -631,7 +806,7 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  // static
  // This is separate so that tests can provide a different |isolate|.
  void Isolate::Initialize(Isolate* v8_isolate,
-@@ -12134,6 +12211,29 @@
+@@ -12135,6 +12212,29 @@
  }
  #endif  // !V8_ENABLE_WEBASSEMBLY
  
@@ -662,8 +837,8 @@ diff -r -u --color up/v8/src/api/api.cc nw/v8/src/api/api.cc
  
  const size_t HandleScopeImplementer::kEnteredContextsOffset =
 diff -r -u --color up/v8/src/codegen/compiler.cc nw/v8/src/codegen/compiler.cc
---- up/v8/src/codegen/compiler.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/codegen/compiler.cc	2026-04-25 12:56:39.556626124 +0000
+--- up/v8/src/codegen/compiler.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/codegen/compiler.cc	2026-05-02 09:15:27.117270619 +0000
 @@ -4001,7 +4001,9 @@
      maybe_script = lookup_result.script();
      maybe_result = lookup_result.toplevel_sfi();
@@ -676,8 +851,8 @@ diff -r -u --color up/v8/src/codegen/compiler.cc nw/v8/src/codegen/compiler.cc
      } else if (can_consume_code_cache) {
        compile_timer.set_consuming_code_cache();
 diff -r -u --color up/v8/src/common/thread-local-storage.h nw/v8/src/common/thread-local-storage.h
---- up/v8/src/common/thread-local-storage.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/common/thread-local-storage.h	2026-04-25 12:56:39.576625941 +0000
+--- up/v8/src/common/thread-local-storage.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/common/thread-local-storage.h	2026-05-02 09:15:27.142270945 +0000
 @@ -7,7 +7,7 @@
  
  #include "include/v8config.h"
@@ -688,8 +863,8 @@ diff -r -u --color up/v8/src/common/thread-local-storage.h nw/v8/src/common/thre
  #else
  #define V8_TLS_LIBRARY_MODE 0
 diff -r -u --color up/v8/src/debug/debug-scopes.cc nw/v8/src/debug/debug-scopes.cc
---- up/v8/src/debug/debug-scopes.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/debug/debug-scopes.cc	2026-04-25 12:56:39.628771646 +0000
+--- up/v8/src/debug/debug-scopes.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/debug/debug-scopes.cc	2026-05-02 09:15:27.206513237 +0000
 @@ -313,7 +313,10 @@
    info_ = std::make_unique<ParseInfo>(isolate_, flags, &compile_state,
                                        reusable_compile_state_.get());
@@ -703,8 +878,8 @@ diff -r -u --color up/v8/src/debug/debug-scopes.cc nw/v8/src/debug/debug-scopes.
            ? parsing::ParseProgram(info_.get(), script, maybe_outer_scope,
                                    isolate_, parsing::ReportStatisticsMode::kNo)
 diff -r -u --color up/v8/src/flags/flag-definitions.h nw/v8/src/flags/flag-definitions.h
---- up/v8/src/flags/flag-definitions.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/flags/flag-definitions.h	2026-04-25 12:56:39.650670356 +0000
+--- up/v8/src/flags/flag-definitions.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/flags/flag-definitions.h	2026-05-02 09:15:27.233932834 +0000
 @@ -3224,7 +3224,7 @@
  DEFINE_IMPLICATION(log_maps, log_code)
  
@@ -724,8 +899,8 @@ diff -r -u --color up/v8/src/flags/flag-definitions.h nw/v8/src/flags/flag-defin
  DEFINE_BOOL(slow_histograms, false,
              "Enable slow histograms with more overhead.")
 diff -r -u --color up/v8/src/heap/cppgc-js/cpp-heap.cc nw/v8/src/heap/cppgc-js/cpp-heap.cc
---- up/v8/src/heap/cppgc-js/cpp-heap.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/heap/cppgc-js/cpp-heap.cc	2026-04-25 12:56:39.654625227 +0000
+--- up/v8/src/heap/cppgc-js/cpp-heap.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/heap/cppgc-js/cpp-heap.cc	2026-05-02 09:15:27.240053069 +0000
 @@ -537,6 +537,11 @@
  }
  
@@ -739,8 +914,8 @@ diff -r -u --color up/v8/src/heap/cppgc-js/cpp-heap.cc nw/v8/src/heap/cppgc-js/c
  }
  
 diff -r -u --color up/v8/src/heap/heap.cc nw/v8/src/heap/heap.cc
---- up/v8/src/heap/heap.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/heap/heap.cc	2026-04-25 12:56:39.662625154 +0000
+--- up/v8/src/heap/heap.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/heap/heap.cc	2026-05-02 09:15:27.250272353 +0000
 @@ -6332,6 +6332,21 @@
    cpp_heap_ = cpp_heap;
  }
@@ -764,8 +939,8 @@ diff -r -u --color up/v8/src/heap/heap.cc nw/v8/src/heap/heap.cc
    if (!embedder_stack_state_origin_) return {};
    return embedder_stack_state_;
 diff -r -u --color up/v8/src/heap/heap.h nw/v8/src/heap/heap.h
---- up/v8/src/heap/heap.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/heap/heap.h	2026-04-25 12:56:39.663625144 +0000
+--- up/v8/src/heap/heap.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/heap/heap.h	2026-05-02 09:15:27.251272366 +0000
 @@ -1151,6 +1151,9 @@
    // Unified heap (C++) support. ===============================================
    // ===========================================================================
@@ -786,8 +961,8 @@ diff -r -u --color up/v8/src/heap/heap.h nw/v8/src/heap/heap.h
        Tagged<String> (*)(Heap* heap, FullObjectSlot pointer);
  
 diff -r -u --color up/v8/src/heap/marking-visitor-inl.h nw/v8/src/heap/marking-visitor-inl.h
---- up/v8/src/heap/marking-visitor-inl.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/heap/marking-visitor-inl.h	2026-04-25 12:56:39.666625117 +0000
+--- up/v8/src/heap/marking-visitor-inl.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/heap/marking-visitor-inl.h	2026-05-02 09:15:27.254272405 +0000
 @@ -527,6 +527,13 @@
      return false;
    }
@@ -803,8 +978,8 @@ diff -r -u --color up/v8/src/heap/marking-visitor-inl.h nw/v8/src/heap/marking-v
  }
  
 diff -r -u --color up/v8/src/init/icu_util.cc nw/v8/src/init/icu_util.cc
---- up/v8/src/init/icu_util.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/init/icu_util.cc	2026-04-25 12:56:39.674788149 +0000
+--- up/v8/src/init/icu_util.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/init/icu_util.cc	2026-05-02 09:15:27.265799978 +0000
 @@ -36,6 +36,10 @@
  }  // namespace
  #endif
@@ -817,8 +992,8 @@ diff -r -u --color up/v8/src/init/icu_util.cc nw/v8/src/init/icu_util.cc
                                    const char* icu_data_file) {
  #if !defined(V8_INTL_SUPPORT)
 diff -r -u --color up/v8/src/init/icu_util.h nw/v8/src/init/icu_util.h
---- up/v8/src/init/icu_util.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/init/icu_util.h	2026-04-25 12:56:39.674788149 +0000
+--- up/v8/src/init/icu_util.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/init/icu_util.h	2026-05-02 09:15:27.266272562 +0000
 @@ -20,6 +20,8 @@
  V8_WARN_UNUSED_RESULT bool InitializeICUDefaultLocation(
      const char* exec_path, const char* icu_data_file);
@@ -829,8 +1004,8 @@ diff -r -u --color up/v8/src/init/icu_util.h nw/v8/src/init/icu_util.h
  }  // namespace v8
  
 diff -r -u --color up/v8/src/init/startup-data-util.cc nw/v8/src/init/startup-data-util.cc
---- up/v8/src/init/startup-data-util.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/init/startup-data-util.cc	2026-04-25 12:56:39.675625034 +0000
+--- up/v8/src/init/startup-data-util.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/init/startup-data-util.cc	2026-05-02 09:15:27.266272562 +0000
 @@ -77,10 +77,23 @@
  
  void InitializeExternalStartupData(const char* directory_path) {
@@ -856,8 +1031,8 @@ diff -r -u --color up/v8/src/init/startup-data-util.cc nw/v8/src/init/startup-da
  }
  
 diff -r -u --color up/v8/src/init/v8.cc nw/v8/src/init/v8.cc
---- up/v8/src/init/v8.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/init/v8.cc	2026-04-25 12:56:39.675625034 +0000
+--- up/v8/src/init/v8.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/init/v8.cc	2026-05-02 09:15:27.266272562 +0000
 @@ -105,11 +105,20 @@
  #endif
  
@@ -901,8 +1076,8 @@ diff -r -u --color up/v8/src/init/v8.cc nw/v8/src/init/v8.cc
    DCHECK(platform);
    return platform;
 diff -r -u --color up/v8/src/init/v8.h nw/v8/src/init/v8.h
---- up/v8/src/init/v8.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/init/v8.h	2026-04-25 12:56:39.675625034 +0000
+--- up/v8/src/init/v8.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/init/v8.h	2026-05-02 09:15:27.266272562 +0000
 @@ -36,6 +36,8 @@
    V8_EXPORT_PRIVATE static const OOMDetails kNoOOMDetails;
    V8_EXPORT_PRIVATE static const OOMDetails kHeapOOM;
@@ -913,8 +1088,8 @@ diff -r -u --color up/v8/src/init/v8.h nw/v8/src/init/v8.h
    V8_EXPORT_PRIVATE static void InitializePlatformForTesting(
        v8::Platform* platform);
 diff -r -u --color up/v8/src/inspector/v8-heap-profiler-agent-impl.cc nw/v8/src/inspector/v8-heap-profiler-agent-impl.cc
---- up/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2026-04-25 12:56:39.677625016 +0000
+--- up/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/inspector/v8-heap-profiler-agent-impl.cc	2026-05-02 09:15:27.269272601 +0000
 @@ -389,6 +389,15 @@
      progress.reset(new HeapSnapshotProgress(&m_frontend));
  
@@ -943,8 +1118,8 @@ diff -r -u --color up/v8/src/inspector/v8-heap-profiler-agent-impl.cc nw/v8/src/
    HeapSnapshotOutputStream stream(&m_frontend);
    snapshot->Serialize(&stream);
 diff -r -u --color up/v8/src/inspector/v8-stack-trace-impl.cc nw/v8/src/inspector/v8-stack-trace-impl.cc
---- up/v8/src/inspector/v8-stack-trace-impl.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/inspector/v8-stack-trace-impl.cc	2026-04-25 12:56:39.678625007 +0000
+--- up/v8/src/inspector/v8-stack-trace-impl.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/inspector/v8-stack-trace-impl.cc	2026-05-02 09:15:27.270272614 +0000
 @@ -164,8 +164,8 @@
        m_lineNumber(lineNumber),
        m_columnNumber(columnNumber),
@@ -957,8 +1132,8 @@ diff -r -u --color up/v8/src/inspector/v8-stack-trace-impl.cc nw/v8/src/inspecto
  
  const String16& StackFrame::functionName() const { return m_functionName; }
 diff -r -u --color up/v8/src/libplatform/tracing/trace-object.cc nw/v8/src/libplatform/tracing/trace-object.cc
---- up/v8/src/libplatform/tracing/trace-object.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/libplatform/tracing/trace-object.cc	2026-04-25 12:56:39.685308949 +0000
+--- up/v8/src/libplatform/tracing/trace-object.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/libplatform/tracing/trace-object.cc	2026-05-02 09:15:27.279434118 +0000
 @@ -99,7 +99,7 @@
    }
  }
@@ -970,8 +1145,8 @@ diff -r -u --color up/v8/src/libplatform/tracing/trace-object.cc nw/v8/src/libpl
    duration_ = timestamp - ts_;
 Only in nw/v8/src: nwjc.cc
 diff -r -u --color up/v8/src/objects/backing-store.cc nw/v8/src/objects/backing-store.cc
---- up/v8/src/objects/backing-store.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/backing-store.cc	2026-04-25 12:56:39.700044916 +0000
+--- up/v8/src/objects/backing-store.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/backing-store.cc	2026-05-02 09:15:27.297494804 +0000
 @@ -112,7 +112,8 @@
        byte_length_(byte_length),
        max_byte_length_(max_byte_length),
@@ -1017,8 +1192,8 @@ diff -r -u --color up/v8/src/objects/backing-store.cc nw/v8/src/objects/backing-
    TRACE_BS("BS:wrap   bs=%p mem=%p (length=%zu)\n", result,
             result->buffer_start(), result->byte_length());
 diff -r -u --color up/v8/src/objects/backing-store.h nw/v8/src/objects/backing-store.h
---- up/v8/src/objects/backing-store.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/backing-store.h	2026-04-25 12:56:39.700044916 +0000
+--- up/v8/src/objects/backing-store.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/backing-store.h	2026-05-02 09:15:27.297494804 +0000
 @@ -80,7 +80,7 @@
    static std::unique_ptr<BackingStore> WrapAllocation(
        void* allocation_base, size_t allocation_length,
@@ -1054,8 +1229,8 @@ diff -r -u --color up/v8/src/objects/backing-store.h nw/v8/src/objects/backing-s
  
  // A global, per-process mapping from buffer addresses to backing stores
 diff -r -u --color up/v8/src/objects/js-array-buffer-inl.h nw/v8/src/objects/js-array-buffer-inl.h
---- up/v8/src/objects/js-array-buffer-inl.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/js-array-buffer-inl.h	2026-04-25 12:56:39.706624751 +0000
+--- up/v8/src/objects/js-array-buffer-inl.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/js-array-buffer-inl.h	2026-05-02 09:15:27.306273083 +0000
 @@ -229,6 +229,8 @@
                      JSArrayBuffer::IsResizableByJsBit)
  BIT_FIELD_ACCESSORS(JSArrayBuffer, bit_field, is_immutable,
@@ -1066,8 +1241,8 @@ diff -r -u --color up/v8/src/objects/js-array-buffer-inl.h nw/v8/src/objects/js-
  bool JSArrayBuffer::IsEmpty() const {
    auto backing_store = GetBackingStore();
 diff -r -u --color up/v8/src/objects/js-array-buffer.h nw/v8/src/objects/js-array-buffer.h
---- up/v8/src/objects/js-array-buffer.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/js-array-buffer.h	2026-04-25 12:56:39.706624751 +0000
+--- up/v8/src/objects/js-array-buffer.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/js-array-buffer.h	2026-05-02 09:15:27.306273083 +0000
 @@ -74,6 +74,7 @@
  
    // [was_detached]: true => the buffer was previously detached.
@@ -1077,8 +1252,8 @@ diff -r -u --color up/v8/src/objects/js-array-buffer.h nw/v8/src/objects/js-arra
    // [is_shared]: true if this is a SharedArrayBuffer or a
    // GrowableSharedArrayBuffer.
 diff -r -u --color up/v8/src/objects/js-array-buffer.tq nw/v8/src/objects/js-array-buffer.tq
---- up/v8/src/objects/js-array-buffer.tq	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/js-array-buffer.tq	2026-04-25 12:56:39.706624751 +0000
+--- up/v8/src/objects/js-array-buffer.tq	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/js-array-buffer.tq	2026-05-02 09:15:27.306273083 +0000
 @@ -10,6 +10,7 @@
    is_shared: bool: 1 bit;
    is_resizable_by_js: bool: 1 bit;
@@ -1088,8 +1263,8 @@ diff -r -u --color up/v8/src/objects/js-array-buffer.tq nw/v8/src/objects/js-arr
  
  const kNoView: Smi = 0;
 diff -r -u --color up/v8/src/objects/js-function.cc nw/v8/src/objects/js-function.cc
---- up/v8/src/objects/js-function.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/js-function.cc	2026-04-25 12:56:39.709624723 +0000
+--- up/v8/src/objects/js-function.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/js-function.cc	2026-05-02 09:15:27.310273135 +0000
 @@ -1432,6 +1432,13 @@
      return NativeCodeFunctionSourceString(isolate, shared_info);
    }
@@ -1117,8 +1292,8 @@ diff -r -u --color up/v8/src/objects/js-function.cc nw/v8/src/objects/js-functio
    // information.
  #if V8_ENABLE_WEBASSEMBLY
 diff -r -u --color up/v8/src/objects/script.h nw/v8/src/objects/script.h
---- up/v8/src/objects/script.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/objects/script.h	2026-04-25 12:56:39.721624613 +0000
+--- up/v8/src/objects/script.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/objects/script.h	2026-05-02 09:15:27.326273344 +0000
 @@ -287,8 +287,10 @@
    friend FactoryBase<Factory>;
    friend FactoryBase<LocalFactory>;
@@ -1131,8 +1306,8 @@ diff -r -u --color up/v8/src/objects/script.h nw/v8/src/objects/script.h
    // Bit positions in the flags field.
    DEFINE_TORQUE_GENERATED_SCRIPT_FLAGS()
 diff -r -u --color up/v8/src/profiler/tracing-cpu-profiler.cc nw/v8/src/profiler/tracing-cpu-profiler.cc
---- up/v8/src/profiler/tracing-cpu-profiler.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/profiler/tracing-cpu-profiler.cc	2026-04-25 12:56:39.732624513 +0000
+--- up/v8/src/profiler/tracing-cpu-profiler.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/profiler/tracing-cpu-profiler.cc	2026-05-02 09:15:27.340273526 +0000
 @@ -28,6 +28,7 @@
  #if defined(V8_USE_PERFETTO)
    TrackEvent::RemoveSessionObserver(this);
@@ -1156,8 +1331,8 @@ diff -r -u --color up/v8/src/profiler/tracing-cpu-profiler.cc nw/v8/src/profiler
  
  void TracingCpuProfilerImpl::StartProfiling() {
 diff -r -u --color up/v8/src/snapshot/code-serializer.cc nw/v8/src/snapshot/code-serializer.cc
---- up/v8/src/snapshot/code-serializer.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/snapshot/code-serializer.cc	2026-04-25 12:56:39.748142316 +0000
+--- up/v8/src/snapshot/code-serializer.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/snapshot/code-serializer.cc	2026-05-02 09:15:27.359863205 +0000
 @@ -530,6 +530,7 @@
    if (!maybe_result.ToHandle(&result)) {
      // Deserializing may fail if the reservations cannot be fulfilled.
@@ -1180,8 +1355,8 @@ diff -r -u --color up/v8/src/snapshot/code-serializer.cc nw/v8/src/snapshot/code
      cached_data->Reject();
      return SerializedCodeData(nullptr, 0);
 diff -r -u --color up/v8/src/snapshot/deserializer.cc nw/v8/src/snapshot/deserializer.cc
---- up/v8/src/snapshot/deserializer.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/snapshot/deserializer.cc	2026-04-25 12:56:39.748142316 +0000
+--- up/v8/src/snapshot/deserializer.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/snapshot/deserializer.cc	2026-05-02 09:15:27.359863205 +0000
 @@ -352,7 +352,9 @@
  #ifdef DEBUG
    num_api_references_ = GetNumApiReferences(isolate);
@@ -1194,8 +1369,8 @@ diff -r -u --color up/v8/src/snapshot/deserializer.cc nw/v8/src/snapshot/deseria
  
  template <typename IsolateT>
 diff -r -u --color up/v8/src/snapshot/deserializer.h nw/v8/src/snapshot/deserializer.h
---- up/v8/src/snapshot/deserializer.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/snapshot/deserializer.h	2026-04-25 12:56:39.748142316 +0000
+--- up/v8/src/snapshot/deserializer.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/snapshot/deserializer.h	2026-05-02 09:15:27.359863205 +0000
 @@ -123,6 +123,8 @@
  
    DirectHandle<HeapObject> ReadObject();
@@ -1206,8 +1381,8 @@ diff -r -u --color up/v8/src/snapshot/deserializer.h nw/v8/src/snapshot/deserial
    // A circular queue of hot objects. This is added to in the same order as in
    // Serializer::HotObjectsList, but this stores the objects as a vector of
 diff -r -u --color up/v8/src/snapshot/object-deserializer.cc nw/v8/src/snapshot/object-deserializer.cc
---- up/v8/src/snapshot/object-deserializer.cc	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/snapshot/object-deserializer.cc	2026-04-25 12:56:39.748887923 +0000
+--- up/v8/src/snapshot/object-deserializer.cc	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/snapshot/object-deserializer.cc	2026-05-02 09:15:27.360822533 +0000
 @@ -36,6 +36,8 @@
  
  MaybeDirectHandle<HeapObject> ObjectDeserializer::Deserialize() {
@@ -1218,8 +1393,8 @@ diff -r -u --color up/v8/src/snapshot/object-deserializer.cc nw/v8/src/snapshot/
    DirectHandle<HeapObject> result;
    {
 diff -r -u --color up/v8/src/strings/string-hasher-inl.h nw/v8/src/strings/string-hasher-inl.h
---- up/v8/src/strings/string-hasher-inl.h	2026-04-17 08:21:16.000000000 +0000
-+++ nw/v8/src/strings/string-hasher-inl.h	2026-04-25 12:56:39.751504077 +0000
+--- up/v8/src/strings/string-hasher-inl.h	2026-04-28 16:05:51.000000000 +0000
++++ nw/v8/src/strings/string-hasher-inl.h	2026-05-02 09:15:27.364409571 +0000
 @@ -60,7 +60,7 @@
    // For 2-byte strings we need to preserve the same hash for strings in just
    // the latin-1 range.
