@@ -1,0 +1,39 @@
+name: patch
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install Packages
+        uses: ConorMacBride/install-package@v1.1.0
+        with:
+          apt: patchutils
+
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Make patches
+        run: bash .github/patch
+
+      - name: Commit patches
+        run: |
+          git add patches/*.patch
+          if git diff --cached --quiet; then
+            echo "Patches are up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update NW.js patches"
+          git push
