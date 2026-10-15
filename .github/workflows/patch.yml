@@ -36,6 +36,13 @@ jobs:
       #     key: ${{ runner.os }}-patches
 
       - name: Commit patches
-        uses: GuillaumeFalourd/git-commit-push@v1.3
-        with:
-          commit_message: "Update NW.js patches"
+        run: |
+          git add patches/*.patch
+          if git diff --cached --quiet; then
+            echo "Patches are up to date."
+            exit 0
+          fi
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git commit -m "Update NW.js patches"
+          git push

@@ -1,0 +1,67 @@
+name: release
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.2
+
+      - name: Check for new NW.js release
+        id: bump
+        run: bash .github/bump
+
+      - name: Check for existing pull request branch
+        id: branch
+        if: steps.bump.outputs.updated == 'true'
+        run: |
+          branch="patches/nw-${{ steps.bump.outputs.nw }}"
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+            echo "Branch $branch already exists, skipping."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check upstream tags exist
+        if: steps.bump.outputs.updated == 'true' && steps.branch.outputs.exists == 'false'
+        run: |
+          git ls-remote --exit-code --tags https://github.com/chromium/chromium "refs/tags/${{ steps.bump.outputs.chromium }}"
+          git ls-remote --exit-code --tags https://github.com/nodejs/node "refs/tags/v${{ steps.bump.outputs.node }}"
+          git ls-remote --exit-code --tags https://github.com/v8/v8 "refs/tags/${{ steps.bump.outputs.v8 }}"
+
+      - name: Make patches
+        if: steps.bump.outputs.updated == 'true' && steps.branch.outputs.exists == 'false'
+        run: bash .github/patch
+
+      - name: Create pull request
+        if: steps.bump.outputs.updated == 'true' && steps.branch.outputs.exists == 'false'
+        uses: peter-evans/create-pull-request@v7.0.8
+        with:
+          branch: ${{ steps.branch.outputs.name }}
+          commit-message: ${{ steps.bump.outputs.nw }}
+          title: Update patches for NW.js ${{ steps.bump.outputs.nw }}
+          body: |
+            New NW.js release detected on https://nwjs.io/versions.json.
+
+            - NW: ${{ steps.bump.outputs.nw }}
+            - Chromium: ${{ steps.bump.outputs.chromium }}
+            - Node: ${{ steps.bump.outputs.node }}
+            - V8: ${{ steps.bump.outputs.v8 }}
+          add-paths: |
+            .github/patch
+            README.md
+            patches/*.patch
