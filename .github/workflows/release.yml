@@ -1,5 +1,8 @@
 name: release
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -13,8 +16,11 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
+  check:
     runs-on: ubuntu-24.04
+    outputs:
+      branch: ${{ steps.branch.outputs.name }}
+      create: ${{ steps.branch.outputs.exists == 'false' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6.0.2
@@ -37,18 +43,14 @@ jobs:
           fi
 
       - name: Check upstream tags exist
-        if: steps.bump.outputs.updated == 'true' && steps.branch.outputs.exists == 'false'
+        if: steps.branch.outputs.exists == 'false'
         run: |
           git ls-remote --exit-code --tags https://github.com/chromium/chromium "refs/tags/${{ steps.bump.outputs.chromium }}"
           git ls-remote --exit-code --tags https://github.com/nodejs/node "refs/tags/v${{ steps.bump.outputs.node }}"
           git ls-remote --exit-code --tags https://github.com/v8/v8 "refs/tags/${{ steps.bump.outputs.v8 }}"
 
-      - name: Make patches
-        if: steps.bump.outputs.updated == 'true' && steps.branch.outputs.exists == 'false'
-        run: bash .github/patch
-
       - name: Create pull request
-        if: steps.bump.outputs.updated == 'true' && steps.branch.outputs.exists == 'false'
+        if: steps.branch.outputs.exists == 'false'
         uses: peter-evans/create-pull-request@v7.0.8
         with:
           branch: ${{ steps.branch.outputs.name }}
@@ -61,7 +63,38 @@ jobs:
             - Chromium: ${{ steps.bump.outputs.chromium }}
             - Node: ${{ steps.bump.outputs.node }}
             - V8: ${{ steps.bump.outputs.v8 }}
+
+            Patches are generated and committed to this pull request by the `patch` job.
           add-paths: |
             .github/patch
             README.md
-            patches/*.patch
+
+  patch:
+    needs: check
+    if: needs.check.outputs.create == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install Packages
+        uses: ConorMacBride/install-package@v1.1.0
+        with:
+          apt: patchutils
+
+      - name: Checkout pull request branch
+        uses: actions/checkout@v6.0.2
+        with:
+          ref: ${{ needs.check.outputs.branch }}
+
+      - name: Make patches
+        run: bash .github/patch
+
+      - name: Commit patches
+        run: |
+          git add patches/*.patch
+          if git diff --cached --quiet; then
+            echo "Patches are up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update NW.js patches"
+          git push origin "HEAD:${{ needs.check.outputs.branch }}"
