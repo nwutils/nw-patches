@@ -67,7 +67,7 @@ jobs:
           git push --force origin "$BRANCH"
 
           gh pr create \
-            --title "Update versions to NW.js $NW" \
+            --title "chore: update NW.js to version $NW" \
             --body "NW.js released [\`v$NW\`](https://nwjs.io/versions.json).
 
           - NW: $NW
