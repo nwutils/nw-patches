@@ -4,10 +4,10 @@ Understand how NW.js changes upstream behaviour.
 
 ## Versions
 
-- NW: 0.118.0
-- Chromium: 155.0.8059.40
+- NW: 0.119.0
+- Chromium: 156.0.8078.36
 - Node: 26.7.0
-- V8: 15.5.35.20
+- V8: 15.6.75.19
 
 ## Patching process
 
