@@ -35,5 +35,5 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update NW.js patches"
+          git commit -m "chore: update NW.js patches"
           git push
