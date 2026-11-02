@@ -48,6 +48,10 @@ jobs:
           git ls-remote --exit-code --tags https://github.com/nodejs/node "refs/tags/v${{ steps.bump.outputs.node }}"
           git ls-remote --exit-code --tags https://github.com/v8/v8 "refs/tags/${{ steps.bump.outputs.v8 }}"
 
+      - name: Make patches
+        if: steps.branch.outputs.open == 'false'
+        run: bash .github/patch
+
       - name: Commit, push and open PR
         if: steps.branch.outputs.open == 'false'
         env:
@@ -62,7 +66,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -B "$BRANCH"
-          git add .github/patch README.md
+          git add .github/patch README.md patches/*.patch
           git commit -m "$NW"
           git push --force origin "$BRANCH"
 

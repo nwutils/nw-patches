@@ -1,10 +1,15 @@
 #!/bin/bash
 
-NW_DIR="nw"
-NW_URI=https://github.com/nwjs
-NW_VER=119.2
+# Generates patches/{chromium,node,v8}.patch by diffing the upstream release
+# sources against NW.js's forks.
+#
+# Fails without writing a patch if a source cannot be fetched or if a tree's
+# version does not match the versions below.
 
-UP_DIR="up"
+set -euo pipefail
+
+NW_URI="https://github.com/nwjs"
+NW_VER=119.2
 
 CHROMIUM_URI="https://github.com/chromium/chromium"
 CHROMIUM_VER="156.0.8078.48"
@@ -15,73 +20,87 @@ NODE_VER="26.12.1"
 V8_URI="https://github.com/v8/v8"
 V8_VER="15.6.75.19"
 
-if [[ ! -d "patches" ]]; then
-    mkdir patches
-fi
+cd "$(dirname "$0")/.."
 
-cd patches
+PATCH_DIR="$PWD/patches"
+WORK_DIR="$PATCH_DIR/work"
 
-if [[ ! -d $NW_DIR ]]; then
-    mkdir $NW_DIR
-fi
+rm -rf "$WORK_DIR"
+mkdir -p "$WORK_DIR/nw" "$WORK_DIR/up"
+trap 'rm -rf "$WORK_DIR"' EXIT
 
-if [[ ! -d "$NW_DIR/chromium" ]]; then
-    git clone --depth=1 $NW_URI/chromium.src.git $NW_DIR/chromium
-fi
+# Clones nwjs/$1 into nw/$2, using the release tag when nwjs publishes one.
+clone_nw() {
+    local repo="$1" name="$2" ref="main"
+    if git ls-remote --exit-code --tags "$NW_URI/$repo.git" "refs/tags/nw-v0.$NW_VER" > /dev/null; then
+        ref="nw-v0.$NW_VER"
+    fi
+    git clone --quiet --depth=1 --branch "$ref" "$NW_URI/$repo.git" "$WORK_DIR/nw/$name"
+    echo "nwjs/$repo $ref $(git -C "$WORK_DIR/nw/$name" rev-parse HEAD)"
+    rm -rf "$WORK_DIR/nw/$name/.git"
+}
 
-if [[ ! -d "$NW_DIR/node" ]]; then
-    git clone --depth=1 $NW_URI/node.git $NW_DIR/node
-fi
+# Downloads tag $3 of $1 into up/$2.
+fetch_up() {
+    local uri="$1" name="$2" tag="$3"
+    mkdir "$WORK_DIR/up/$name"
+    curl -fsSL "$uri/archive/refs/tags/$tag.tar.gz" | tar -xz --strip-components=1 -C "$WORK_DIR/up/$name"
+}
 
-if [[ ! -d "$NW_DIR/v8" ]]; then
-    git clone --depth=1 $NW_URI/v8.git $NW_DIR/v8
-fi
+chromium_version() {
+    awk -F= '{ v[$1] = $2 } END { print v["MAJOR"] "." v["MINOR"] "." v["BUILD"] "." v["PATCH"] }' "$1/chrome/VERSION"
+}
 
-if [[ ! -d $UP_DIR ]]; then
-    mkdir $UP_DIR
-fi
+node_version() {
+    awk '$1 == "#define" { v[$2] = $3 } END { print v["NODE_MAJOR_VERSION"] "." v["NODE_MINOR_VERSION"] "." v["NODE_PATCH_VERSION"] }' "$1/src/node_version.h"
+}
 
-if [[ ! -d "$UP_DIR/chromium" ]]; then
-    curl -L $CHROMIUM_URI/archive/refs/tags/$CHROMIUM_VER.tar.gz | tar -xz -C $UP_DIR
-    mv $UP_DIR/chromium-$CHROMIUM_VER $UP_DIR/chromium
-fi
+v8_version() {
+    awk '$1 == "#define" { v[$2] = $3 } END { print v["V8_MAJOR_VERSION"] "." v["V8_MINOR_VERSION"] "." v["V8_BUILD_NUMBER"] "." v["V8_PATCH_LEVEL"] }' "$1/include/v8-version.h"
+}
 
-if [[ ! -d "$UP_DIR/node" ]]; then
-    curl -L $NODE_URI/archive/refs/tags/v$NODE_VER.tar.gz | tar -xz -C $UP_DIR
-    mv $UP_DIR/node-$NODE_VER $UP_DIR/node
-fi
+# Fails if the nw and up trees of $1 are not both at version $2.
+check_version() {
+    local name="$1" expected="$2" side actual
+    for side in nw up; do
+        actual=$("${name}_version" "$WORK_DIR/$side/$name")
+        if [[ "$actual" != "$expected" ]]; then
+            echo "$side/$name is $actual, expected $expected" >&2
+            exit 1
+        fi
+    done
+}
 
-if [[ ! -d "$UP_DIR/v8" ]]; then
-    curl -L $V8_URI/archive/refs/tags/$V8_VER.tar.gz | tar -xz -C $UP_DIR
-    mv $UP_DIR/v8-$V8_VER $UP_DIR/v8
-fi
+# Writes the diff from up/$1 to nw/$1 to $1.patch. Uses git diff so headers
+# carry no timestamps and added files are included in full. Deleted files are
+# listed without their contents.
+make_patch() {
+    local name="$1" status=0
+    (
+        cd "$WORK_DIR"
+        git -c core.quotePath=false diff --no-index --no-color --no-ext-diff \
+            --no-renames --irreversible-delete --src-prefix=a/ --dst-prefix=b/ \
+            "up/$name" "nw/$name"
+    ) > "$WORK_DIR/$name.patch" || status=$?
+    # git diff exits with 1 when the trees differ.
+    if (( status > 1 )); then
+        exit "$status"
+    fi
+    mv "$WORK_DIR/$name.patch" "$PATCH_DIR/$name.patch"
+}
 
-if [[ ! -d "0.$NW_VER.x" ]]; then
-    mkdir 0.$NW_VER.x
-fi
+clone_nw chromium.src chromium
+clone_nw node node
+clone_nw v8 v8
 
-diff -r -u --color $UP_DIR/chromium $NW_DIR/chromium > chromium.patch
+fetch_up "$CHROMIUM_URI" chromium "$CHROMIUM_VER"
+fetch_up "$NODE_URI" node "v$NODE_VER"
+fetch_up "$V8_URI" v8 "$V8_VER"
 
-if [[ ! -d "0.$NW_VER.x/chromium" ]]; then
-    mkdir 0.$NW_VER.x/chromium
-fi
+check_version chromium "$CHROMIUM_VER"
+check_version node "$NODE_VER"
+check_version v8 "$V8_VER"
 
-# splitdiff -a -d -p 2 -D 0.$NW_VER.x/chromium 0.$NW_VER.x/chromium.patch
-
-diff -r -u --color $UP_DIR/node $NW_DIR/node > node.patch
-
-if [[ ! -d "0.$NW_VER.x/node" ]]; then
-    mkdir 0.$NW_VER.x/node
-fi
-
-# splitdiff -a -d -p 2 -D 0.$NW_VER.x/node 0.$NW_VER.x/node.patch
-
-diff -r -u --color $UP_DIR/v8 $NW_DIR/v8 > v8.patch
-
-if [[ ! -d "0.$NW_VER.x/v8" ]]; then
-    mkdir 0.$NW_VER.x/v8
-fi
-
-# splitdiff -a -d -p 2 -D 0.$NW_VER.x/v8 0.$NW_VER.x/v8.patch
-
-rm -rf $NW_DIR $UP_DIR
+make_patch chromium
+make_patch node
+make_patch v8

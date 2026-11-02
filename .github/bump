@@ -35,6 +35,11 @@ nw_ver="${latest#v0.}"
 chromium_ver=$(jq -r '.components.chromium' <<< "$release")
 node_ver=$(jq -r '.components.node' <<< "$release")
 
+if [[ ! "$chromium_ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ || ! "$node_ver" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "Could not read Chromium and Node.js versions for $latest from $VERSIONS_URL" >&2
+    exit 1
+fi
+
 current_nw_ver=$(sed -n 's/^NW_VER=//p' "$PATCH_SCRIPT")
 
 if [[ "$nw_ver" == "$current_nw_ver" ]]; then
