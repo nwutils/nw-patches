@@ -1,11 +1,11 @@
 name: patch
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.head_ref }}
   cancel-in-progress: true
 
 permissions:
@@ -15,13 +15,10 @@ jobs:
   patch:
     runs-on: ubuntu-24.04
     steps:
-      - name: Install Packages
-        uses: ConorMacBride/install-package@v1.1.0
-        with:
-          apt: patchutils
-
       - name: Checkout repository
         uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Make patches
         run: bash .github/patch
