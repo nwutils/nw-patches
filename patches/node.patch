@@ -179,7 +179,7 @@ diff --git a/up/node/.github/workflows/update-wpt.yml b/up/node/.github/workflow
 deleted file mode 100644
 index 7b59a2f..0000000
 diff --git a/up/node/common.gypi b/nw/node/common.gypi
-index 2967d1e..14bc5e7 100644
+index 2967d1e..b899522 100644
 --- a/up/node/common.gypi
 +++ b/nw/node/common.gypi
 @@ -6,27 +6,53 @@
@@ -676,8 +676,14 @@ index 2967d1e..14bc5e7 100644
            [ 'OS=="solaris"', {
              'cflags': [ '-pthreads' ],
              'ldflags': [ '-pthreads' ],
-@@ -773,7 +1010,44 @@
-           ['_type!="static_library"', {
+@@ -770,10 +1007,49 @@
+           ],
+         },
+         'target_conditions': [
+-          ['_type!="static_library"', {
++          # NW.js: these link flags are for the mac target; host toolset tools
++          # (node_js2c, ...) are linked natively during a cross-OS build.
++          ['_type!="static_library" and _toolset=="target"', {
              'xcode_settings': {
                'OTHER_LDFLAGS': [
 -                '-Wl,-search_paths_first'
@@ -7535,6 +7541,51 @@ index 083d0b3..9b8a641 100644
      },
    ]
  }
+diff --git a/nw/node/deps/perfetto/reset_compat.cc b/nw/node/deps/perfetto/reset_compat.cc
+new file mode 100644
+index 0000000..8b9fe54
+--- /dev/null
++++ b/nw/node/deps/perfetto/reset_compat.cc
+@@ -0,0 +1,39 @@
++// nwjs: compat shim for the Chromium-linked perfetto.
++//
++// NW links the Chromium-built perfetto (Windows: ../nw/obj/third_party/
++// perfetto/libperfettonode.lib; macOS: -force_load libperfettonode.a) so that
++// node and the co-linked Chromium v8 share one perfetto instance. That library
++// is built from Chromium's perfetto, where Message::Reset gained a third
++// `Encoding` parameter and the two-argument overload became an inline
++// forwarder, so it exports no out-of-line two-argument Message::Reset. This
++// SDK's headers (58.2, pre-Encoding) declare the two-argument Reset
++// out-of-line (sdk/perfetto.cc:14566) and its inline machinery (e.g.
++// IncrementalState::Clear -> serialized_interned_data.Reset()) needs exactly
++// that symbol. Define it here, mirroring the 58.2 implementation. The member
++// layout is a prefix-compatible subset of Chromium's (its extra `encoding_`
++// field is declared last), so this is sound for the objects node's SDK-driven
++// code creates.
++//
++// Everything else node's inlined SDK code calls resolves against
++// libperfettonode; only this definition is provided here, and it cannot
++// collide (Chromium's library does not define this symbol out-of-line).
++
++#define PERFETTO_IMPLEMENTATION 1
++#include "perfetto.h"
++
++namespace protozero {
++
++void Message::Reset(ScatteredStreamWriter* stream_writer, MessageArena* arena) {
++  static_assert(std::is_trivially_constructible<Message>::value,
++                "Message must be trivially constructible");
++  static_assert(std::is_trivially_destructible<Message>::value,
++                "Message must be trivially destructible");
++  stream_writer_ = stream_writer;
++  arena_ = arena;
++  size_ = 0;
++  size_field_ = nullptr;
++  nested_message_ = nullptr;
++  message_state_ = MessageState::kNotFinalized;
++}
++
++}  // namespace protozero
 diff --git a/up/node/deps/simdjson/simdjson.h b/nw/node/deps/simdjson/simdjson.h
 index 58041ff..0a7a98f 100644
 --- a/up/node/deps/simdjson/simdjson.h
@@ -8010,17 +8061,18 @@ index 45e85ed..f05db17 100644
                       arguments,
                       NULL,
 diff --git a/up/node/deps/uv/uv.gyp b/nw/node/deps/uv/uv.gyp
-index 760a3cd..91eef6e 100644
+index 760a3cd..8240431 100644
 --- a/up/node/deps/uv/uv.gyp
 +++ b/nw/node/deps/uv/uv.gyp
-@@ -1,5 +1,6 @@
+@@ -1,5 +1,7 @@
  {
    'variables': {
 +    'uv_library%': 'static_library',
++    'host_os%': '',  # set by tools/gyp/gyp_main.py (mac/win/linux)
      'conditions': [
        ['OS=="win"', {
          'shared_unix_defines': [ ],
-@@ -159,11 +160,7 @@
+@@ -159,11 +161,7 @@
          'include',
          'src/',
        ],
@@ -8033,7 +8085,7 @@ index 760a3cd..91eef6e 100644
        'direct_dependent_settings': {
          'defines': [
            '<@(shared_mac_defines)',
-@@ -187,10 +184,11 @@
+@@ -187,10 +185,11 @@
            '-Wall',
            '-Wextra',
            '-Wno-unused-parameter',
@@ -8046,26 +8098,47 @@ index 760a3cd..91eef6e 100644
        'conditions': [
          [ 'OS=="win"', {
            'defines': [
-@@ -267,6 +265,7 @@
+@@ -267,9 +266,13 @@
              '-Wno-unused-parameter',
              '-Wstrict-prototypes',
              '-fno-strict-aliasing',
 +            '-Wno-varargs',
            ],
          }],
-         [ 'OS in "mac ios"', {
-@@ -278,8 +277,8 @@
+-        [ 'OS in "mac ios"', {
++        # NW.js: in a cross-OS build (e.g. linux host -> mac target) the
++        # 'host' toolset is compiled for the *host* OS, so it needs the linux
++        # sources instead of the apple ones.
++        [ 'OS in "mac ios" and (_toolset!="host" or host_os=="mac")', {
+           'sources': [
+             '<@(uv_sources_apple)',
+           ],
+@@ -278,8 +281,15 @@
              '_DARWIN_UNLIMITED_SELECT=1',
            ]
          }],
 -        [ 'OS=="linux" or OS=="openharmony"', {
 -          'defines': [ '_GNU_SOURCE' ],
-+        [ 'OS=="linux"', {
++        # NW.js: pick sources by HOST os for the host toolset. gyp sets
++        # _toolset=="host" in native builds too, so _toolset
++        # alone cannot tell a cross-OS host apart (it broke native mac and
++        # windows builds); gyp_main.py defines host_os for this. Native
++        # builds keep the upstream behaviour; in a linux host -> mac target
++        # cross the host toolset takes the linux sources, giving the linux
++        # sources here while the target one takes the apple sources above.
++        [ 'OS=="linux" or (_toolset=="host" and host_os=="linux")', {
 +          #'defines': [ '_FILE_OFFSET_BITS=64' ],
            'sources': [
              '<@(uv_sources_linux)',
            ],
-@@ -396,7 +395,7 @@
+@@ -391,12 +401,13 @@
+             'src/unix/bsd-proctitle.c'
+           ],
+         }],
+-        [ 'OS in "ios mac freebsd dragonflybsd openbsd netbsd".split()', {
++        [ 'OS in "ios mac freebsd dragonflybsd openbsd netbsd".split()' +
++              ' and (_toolset!="host" or host_os=="mac")', {
+           'sources': [
              '<@(uv_sources_bsd_common)',
            ],
          }],
@@ -8529,7 +8602,7 @@ index cdca2d8..3eec0a9 100644
    MessagePort.prototype,
    kCreateEvent,
 diff --git a/up/node/node.gyp b/nw/node/node.gyp
-index 5334b8a..2b632e5 100644
+index 5334b8a..00c1905 100644
 --- a/up/node/node.gyp
 +++ b/nw/node/node.gyp
 @@ -1,18 +1,37 @@
@@ -9099,7 +9172,62 @@ index 5334b8a..2b632e5 100644
          [ 'openssl_default_cipher_list!=""', {
            'defines': [
              'NODE_OPENSSL_DEFAULT_CIPHER_LIST="<(openssl_default_cipher_list)"'
-@@ -960,14 +1355,12 @@
+@@ -942,12 +1337,50 @@
+         [ 'v8_use_perfetto==1', {
+           'sources': [
+             '<@(node_tracing_perfetto_sources)',
++            # nwjs: compile the bundled perfetto amalgamation into
++            # node_base itself. node_base is whole-archive linked, so the
++            # definitions are guaranteed to end up in node.dll/libnode,
++            # whereas a dependency on the separate perfetto_sdk
++            # static_library is not propagated to the final link (deps of
++            # a static_library are dropped - see the OS==win libraries
++            # below, moved here for the same reason). Chromium perfetto
++            # cannot substitute: nw exports no perfetto symbols (hidden
++            # visibility) and its revision differs from this SDK.
++            'deps/perfetto/sdk/perfetto.cc',
++          ],
++          'include_dirs': [
++            'deps/perfetto/sdk',
+           ],
+           'conditions': [
+-            ['node_shared_perfetto=="false"', {
+-              'dependencies': [
+-                'deps/perfetto/perfetto.gyp:perfetto_sdk',
+-              ],
++            ['OS=="win"', {
++              # nwjs: Windows uses the Chromium-built perfetto from
++              # libperfettonode.lib (linked below), so the bundled
++              # amalgamation must NOT be compiled too. On posix the
++              # sdk must stay in node_base: nw exports no perfetto
++              # symbols (hidden visibility), so libnode would load
++              # with undefined perfetto::*.
++              'sources!': [ 'deps/perfetto/sdk/perfetto.cc' ],
++              # ... but that SDK's inline header machinery still needs
++              # this one out-of-line definition. Chromium perfetto has
++              # only the three-argument Reset (Encoding) exported and the
++              # two-argument overload as an inline forwarder. Supply it,
++              # instead of linking the whole amalgamation (which would
++              # collide with libperfettonode).
++              'sources': [ 'deps/perfetto/reset_compat.cc' ],
++              # The amalgamation includes <windows.h> and then
++              # <winsock2.h>; without WIN32_LEAN_AND_MEAN the first
++              # pulls in Winsock 1.1 and winsock2.h then redefines
++              # protoent/WSAData. The standalone perfetto_sdk target
++              # set this; keep it here as the source moved.
++              'defines': [ 'WIN32_LEAN_AND_MEAN' ],
++            }],
++            ['OS=="mac"', {
++              # nwjs: as on Windows, the SDK would duplicate Chromium's
++              # perfetto: node.gypi force-loads libperfettonode.a. Keep it
++              # out and supply only its two-argument Message::Reset, which
++              # the Chromium revision offers only as a 3-arg forwarder.
++              'sources!': [ 'deps/perfetto/sdk/perfetto.cc' ],
++              'sources': [ 'deps/perfetto/reset_compat.cc' ],
+             }],
+           ],
+         }, {
+@@ -960,14 +1393,12 @@
          }, {
            'defines': [ 'HAVE_INSPECTOR=0' ]
          }],
@@ -9120,7 +9248,7 @@ index 5334b8a..2b632e5 100644
          [ 'node_use_openssl=="true"', {
            'sources': [
              '<@(node_crypto_sources)',
-@@ -1188,11 +1581,15 @@
+@@ -1188,11 +1619,15 @@
                '-Wl,-force_load,<(PRODUCT_DIR)/<(STATIC_LIB_PREFIX)node_base<(STATIC_LIB_SUFFIX)',
              ],
            },
@@ -9138,7 +9266,7 @@ index 5334b8a..2b632e5 100644
                ],
              },
            },
-@@ -1203,6 +1600,17 @@
+@@ -1203,6 +1638,17 @@
                    '-Wl,-force_load,<(PRODUCT_DIR)/<(STATIC_LIB_PREFIX)v8_base_without_compiler<(STATIC_LIB_SUFFIX)',
                  ],
                },
@@ -9156,7 +9284,7 @@ index 5334b8a..2b632e5 100644
              }],
              # gyp automatically applies `--whole-archive` to static dependencies of `shared_library` targets.
              # No need to add the flags again here.
-@@ -1223,7 +1631,7 @@
+@@ -1223,7 +1669,7 @@
          }],
          [ 'node_shared=="true" and OS=="win"', {
            'sources': [
@@ -9165,7 +9293,7 @@ index 5334b8a..2b632e5 100644
            ],
            'libraries': [
              'Dbghelp.lib',
-@@ -1231,6 +1639,23 @@
+@@ -1231,6 +1677,23 @@
              'Ws2_32.lib',
            ],
          }],
@@ -9174,9 +9302,9 @@ index 5334b8a..2b632e5 100644
 +        [ 'OS=="win"', {
 +          'conditions': [
 +            [ 'component == "shared_library"', {
-+              'libraries': [ 'Winmm', 'ws2_32', '-lpsapi.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libbase.lib', '<(PRODUCT_DIR)/../nw/obj/third_party/perfetto/libperfettonode.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libplatform.lib', '<(PRODUCT_DIR)/../nw/libc++.dll.lib'],
++              'libraries': [ 'Winmm', 'ws2_32', '-lpsapi.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libbase.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libplatform.lib', '<(PRODUCT_DIR)/../nw/obj/third_party/perfetto/libperfettonode.lib', '<(PRODUCT_DIR)/../nw/libc++.dll.lib'],
 +            }, {
-+              'libraries': [ 'Winmm', 'ws2_32', '-lpsapi.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libbase.lib', '<(PRODUCT_DIR)/../nw/obj/third_party/perfetto/libperfettonode.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libplatform.lib', '<(PRODUCT_DIR)/../nw/obj/buildtools/third_party/libc++/libcpp.lib'],
++              'libraries': [ 'Winmm', 'ws2_32', '-lpsapi.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libbase.lib', '<(PRODUCT_DIR)/../nw/obj/v8/v8_libplatform.lib', '<(PRODUCT_DIR)/../nw/obj/third_party/perfetto/libperfettonode.lib', '<(PRODUCT_DIR)/../nw/obj/buildtools/third_party/libc++/libcpp.lib'],
 +            }],
 +            [ 'nw_browser_tests == 1', {
 +              'libraries': [ '<(PRODUCT_DIR)/../nw/browser_tests.lib'],
@@ -9189,7 +9317,7 @@ index 5334b8a..2b632e5 100644
        ],
      }, # node_lib_target_name
      { # fuzz_env
-@@ -1352,7 +1777,7 @@
+@@ -1352,7 +1815,7 @@
        'include_dirs': [
          'src',
          'tools/msvs/genfiles',
@@ -9198,7 +9326,7 @@ index 5334b8a..2b632e5 100644
          'deps/cares/include',
          'deps/uv/include',
          'test/cctest',
-@@ -1364,7 +1789,7 @@
+@@ -1364,7 +1827,7 @@
          'NODE_WANT_INTERNALS=1',
        ],
  
@@ -9207,7 +9335,7 @@ index 5334b8a..2b632e5 100644
  
        'conditions': [
          [ 'node_shared_gtest=="false"', {
-@@ -1634,6 +2059,7 @@
+@@ -1634,6 +2097,7 @@
        'include_dirs': [
          'tools',
          'src',
@@ -9215,15 +9343,21 @@ index 5334b8a..2b632e5 100644
        ],
        'sources': [
          'tools/js2c.cc',
-@@ -1642,6 +2068,7 @@
+@@ -1642,9 +2106,12 @@
          'src/embedded_data.cc',
          'src/builtin_info.h',
          'src/builtin_info.cc',
 +        '../simdutf/simdutf.cpp',
        ],
        'conditions': [
-         [ 'OS=="mac"', {
-@@ -1655,6 +2082,7 @@
+-        [ 'OS=="mac"', {
++        # NW.js: node_js2c is a host tool, so in a cross-OS build it is
++        # linked for the host OS and must not pull in mac frameworks.
++        [ 'OS=="mac" and _toolset!="host"', {
+           'libraries': [ '-framework CoreFoundation -framework Security' ],
+         }],
+         [ 'node_shared_simdutf=="false" and node_use_bundled_v8!="false"', {
+@@ -1655,6 +2122,7 @@
          }],
          [ 'OS in "linux mac openharmony"', {
            'defines': ['NODE_JS2C_USE_STRING_LITERALS'],
@@ -12713,10 +12847,10 @@ index 1794749..3dcecf5 100644
  }
  
 diff --git a/up/node/tools/gyp/gyp_main.py b/nw/node/tools/gyp/gyp_main.py
-index bf16987..956d8ce 100755
+index bf16987..0752f02 100755
 --- a/up/node/tools/gyp/gyp_main.py
 +++ b/nw/node/tools/gyp/gyp_main.py
-@@ -39,7 +39,45 @@ def UnixifyPath(path):
+@@ -39,7 +39,58 @@ def UnixifyPath(path):
  # else the 'gyp' library will not be found
  path = UnixifyPath(sys.argv[0])
  sys.path.insert(0, os.path.join(os.path.dirname(path), "pylib"))
@@ -12761,6 +12895,19 @@ index bf16987..956d8ce 100755
 +
  if __name__ == "__main__":
 +    UseChromiumClangOnMac()
++    # nwjs: gyp has no host-os notion: OS is the target OS, and
++    # _toolset=="host" is set for host-toolset targets in
++    # native builds too, so toolset-aware conditions cannot tell a
++    # cross-OS build's host apart (see deps/uv/uv.gyp). Define
++    # host_os (mac/win/linux) from the machine running gyp.
++    if not any(a == 'host_os' or
++               a.startswith('host_os=')
++               for a in sys.argv[1:]):
++        sys.argv += ['-D',
++                      'host_os=' +
++                      {'darwin': 'mac',
++                       'win32': 'win'}.get(
++                          sys.platform, 'linux')]
      sys.exit(gyp.script_main())
 diff --git a/up/node/tools/gyp/pylib/gyp/common.py b/nw/node/tools/gyp/pylib/gyp/common.py
 index 223ce47..5dd096a 100644
